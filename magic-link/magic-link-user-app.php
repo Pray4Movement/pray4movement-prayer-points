@@ -3,9 +3,9 @@ if ( !defined( 'ABSPATH' ) ) { exit; } // Exit if accessed directly.
 
 
 /**
- * Class Disciple_Tools_Plugin_Starter_Template_Magic_User_App
+ * Class Pray4Movement_Prayer_Points_Magic_User_App
  */
-class Disciple_Tools_Plugin_Starter_Template_Magic_User_App extends DT_Magic_Url_Base {
+class Pray4Movement_Prayer_Points_Magic_User_App extends DT_Magic_Url_Base {
 
     public $page_title = 'Starter - Magic Links - User App';
     public $page_description = 'User App - Magic Links.';
@@ -164,7 +164,7 @@ class Disciple_Tools_Plugin_Starter_Template_Magic_User_App extends DT_Magic_Url
                 'nonce' => wp_create_nonce( 'wp_rest' ),
                 'parts' => $this->parts,
                 'translations' => [
-                    'add' => __( 'Add Magic', 'disciple-tools-plugin-starter-template' ),
+                    'add' => __( 'Add Magic', 'pray4movement-prayer-points' ),
                 ],
             ]) ?>][0]
 
@@ -355,4 +355,4 @@ class Disciple_Tools_Plugin_Starter_Template_Magic_User_App extends DT_Magic_Url
         return $data;
     }
 }
-Disciple_Tools_Plugin_Starter_Template_Magic_User_App::instance();
+Pray4Movement_Prayer_Points_Magic_User_App::instance();

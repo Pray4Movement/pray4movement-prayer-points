@@ -1,7 +1,7 @@
 <?php
 if ( !defined( 'ABSPATH' ) ) { exit; } // Exit if accessed directly.
 
-class Disciple_Tools_Plugin_Starter_Template_Tile
+class Pray4Movement_Prayer_Points_Tile
 {
     private static $_instance = null;
     public static function instance(){
@@ -28,8 +28,8 @@ class Disciple_Tools_Plugin_Starter_Template_Tile
      * @return mixed
      */
     public function dt_details_additional_tiles( $tiles, $post_type = "" ) {
-        if ( $post_type === "contacts" || $post_type === "starter_post_type" ){
-            $tiles["disciple_tools_plugin_starter_template"] = [ "label" => __( "Plugin Starter Template", 'disciple-tools-plugin-starter-template' ) ];
+        if ( $post_type === "contacts" || $post_type === "prayer_point" ){
+            $tiles["pray4movement_prayer_points"] = [ "label" => __( "Pray4Movement Prayer Points", 'pray4movement-prayer-points' ) ];
         }
         return $tiles;
     }
@@ -43,7 +43,7 @@ class Disciple_Tools_Plugin_Starter_Template_Tile
         /**
          * @todo set the post type
          */
-        if ( $post_type === "contacts" || $post_type === "starter_post_type" ){
+        if ( $post_type === "contacts" || $post_type === "prayer_point" ){
             /**
              * @todo Add the fields that you want to include in your tile.
              *
@@ -58,26 +58,26 @@ class Disciple_Tools_Plugin_Starter_Template_Tile
             /**
              * This is an example of a text field
              */
-            $fields['disciple_tools_plugin_starter_template_text'] = [
-                'name'        => __( 'Text', 'disciple-tools-plugin-starter-template' ),
-                'description' => _x( 'Text', 'Optional Documentation', 'disciple-tools-plugin-starter-template' ),
+            $fields['pray4movement_prayer_points_text'] = [
+                'name'        => __( 'Text', 'pray4movement-prayer-points' ),
+                'description' => _x( 'Text', 'Optional Documentation', 'pray4movement-prayer-points' ),
                 'type'        => 'text',
                 'default'     => '',
-                'tile' => 'disciple_tools_plugin_starter_template',
+                'tile' => 'pray4movement_prayer_points',
                 'icon' => get_template_directory_uri() . '/dt-assets/images/edit.svg',
             ];
             /**
              * This is an example of a multiselect field
              */
-            $fields["disciple_tools_plugin_starter_template_multiselect"] = [
-                "name" => __( 'Multiselect', 'disciple-tools-plugin-starter-template' ),
+            $fields["pray4movement_prayer_points_multiselect"] = [
+                "name" => __( 'Multiselect', 'pray4movement-prayer-points' ),
                 "default" => [
-                    "one" => [ "label" => __( "One", 'disciple-tools-plugin-starter-template' ) ],
-                    "two" => [ "label" => __( "Two", 'disciple-tools-plugin-starter-template' ) ],
-                    "three" => [ "label" => __( "Three", 'disciple-tools-plugin-starter-template' ) ],
-                    "four" => [ "label" => __( "Four", 'disciple-tools-plugin-starter-template' ) ],
+                    "one" => [ "label" => __( "One", 'pray4movement-prayer-points' ) ],
+                    "two" => [ "label" => __( "Two", 'pray4movement-prayer-points' ) ],
+                    "three" => [ "label" => __( "Three", 'pray4movement-prayer-points' ) ],
+                    "four" => [ "label" => __( "Four", 'pray4movement-prayer-points' ) ],
                 ],
-                "tile" => "disciple_tools_plugin_starter_template",
+                "tile" => "pray4movement_prayer_points",
                 "type" => "multi_select",
                 "hidden" => false,
                 'icon' => get_template_directory_uri() . '/dt-assets/images/edit.svg',
@@ -85,24 +85,24 @@ class Disciple_Tools_Plugin_Starter_Template_Tile
             /**
              * This is an example of a key select field
              */
-            $fields["disciple_tools_plugin_starter_template_keyselect"] = [
+            $fields["pray4movement_prayer_points_keyselect"] = [
                 'name' => "Key Select",
                 'type' => 'key_select',
-                "tile" => "disciple_tools_plugin_starter_template",
+                "tile" => "pray4movement_prayer_points",
                 'default' => [
                     'first'   => [
-                        "label" => _x( 'First', 'Key Select Label', 'disciple-tools-plugin-starter-template' ),
-                        "description" => _x( "First Key Description", "Training Status field description", 'disciple-tools-plugin-starter-template' ),
+                        "label" => _x( 'First', 'Key Select Label', 'pray4movement-prayer-points' ),
+                        "description" => _x( "First Key Description", "Training Status field description", 'pray4movement-prayer-points' ),
                         'color' => "#ff9800"
                     ],
                     'second'   => [
-                        "label" => _x( 'Second', 'Key Select Label', 'disciple-tools-plugin-starter-template' ),
-                        "description" => _x( "Second Key Description", "Training Status field description", 'disciple-tools-plugin-starter-template' ),
+                        "label" => _x( 'Second', 'Key Select Label', 'pray4movement-prayer-points' ),
+                        "description" => _x( "Second Key Description", "Training Status field description", 'pray4movement-prayer-points' ),
                         'color' => "#4CAF50"
                     ],
                     'third'   => [
-                        "label" => _x( 'Third', 'Key Select Label', 'disciple-tools-plugin-starter-template' ),
-                        "description" => _x( "Third Key Description", "Training Status field description", 'disciple-tools-plugin-starter-template' ),
+                        "label" => _x( 'Third', 'Key Select Label', 'pray4movement-prayer-points' ),
+                        "description" => _x( "Third Key Description", "Training Status field description", 'pray4movement-prayer-points' ),
                         'color' => "#366184"
                     ],
                 ],
@@ -118,7 +118,7 @@ class Disciple_Tools_Plugin_Starter_Template_Tile
         /**
          * @todo set the post type and the section key that you created in the dt_details_additional_tiles() function
          */
-        if ( ( $post_type === "contacts" || $post_type === "starter_post_type" ) && $section === "disciple_tools_plugin_starter_template" ){
+        if ( ( $post_type === "contacts" || $post_type === "prayer_point" ) && $section === "pray4movement_prayer_points" ){
             /**
              * These are two sets of key data:
              * $this_post is the details for this specific post
@@ -143,4 +143,4 @@ class Disciple_Tools_Plugin_Starter_Template_Tile
         <?php }
     }
 }
-Disciple_Tools_Plugin_Starter_Template_Tile::instance();
+Pray4Movement_Prayer_Points_Tile::instance();

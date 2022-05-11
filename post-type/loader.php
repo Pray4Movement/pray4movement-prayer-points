@@ -19,19 +19,19 @@ add_filter( 'dt_post_type_modules', function( $modules ){
      * @todo Add more modules by adding a new array element. i.e. 'starter_base_two'.
      */
     $modules["starter_base"] = [
-        "name" => __( "Starter", "disciple-tools-plugin-starter-template" ),
+        "name" => __( "Starter", "pray4movement-prayer-points" ),
         "enabled" => true,
         "locked" => true,
         "prerequisites" => [ "contacts_base" ],
-        "post_type" => "starter_post_type",
-        "description" => __( "Default starter functionality", "disciple-tools-plugin-starter-template" )
+        "post_type" => "prayer_point",
+        "description" => __( "Default starter functionality", "pray4movement-prayer-points" )
     ];
 
     return $modules;
 }, 20, 1 );
 
 require_once 'module-base.php';
-Disciple_Tools_Plugin_Starter_Template_Base::instance();
+Pray4Movement_Prayer_Points_Base::instance();
 
 /**
  * @todo require_once and load additional modules
