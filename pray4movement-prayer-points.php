@@ -184,7 +184,60 @@ class Pray4Movement_Prayer_Points {
      * @return void
      */
     public static function activation() {
-        // add elements here that need to fire on activation
+        // If tables don't exist, create them
+        self::create_prayer_points_table();
+        self::create_prayer_points_lib_table();
+        self::create_prayer_points_meta_table();
+    }
+
+    public static function create_prayer_points_table() {
+        global $wpdb;
+        $charset_collate = $wpdb->get_charset_collate();
+        $test = $wpdb->query( "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points` (
+                `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `lib_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
+                `content` LONGTEXT COLLATE utf8mb4_unicode_520_ci NOT NULL,
+                `hash` VARCHAR(65) DEFAULT NULL,
+                `status` VARCHAR(20) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'unpublished',
+                PRIMARY KEY (`id`)
+            ) $charset_collate;" //@phpcs:ignore
+        );
+        if ( !$test ) {
+            throw new Exception( 'Could not create table dt_prayer_points' );
+        }
+    }
+
+    public static function create_prayer_points_lib_table() {
+        global $wpdb;
+        $charset_collate = $wpdb->get_charset_collate();
+        $test = $wpdb->query( "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points_lib` (
+                `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `key` VARCHAR(255) NOT NULL,
+                `name` VARCHAR(191) NOT NULL,
+                `description` LONGTEXT DEFAULT NULL,
+                `status` VARCHAR(20) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'unpublished',
+                PRIMARY KEY (`id`)
+            ) $charset_collate;" //@phpcs:ignore
+        );
+        if ( !$test ) {
+            throw new Exception( 'Could not create table dt_prayer_points_lib' );
+        }
+    }
+
+    public static function create_prayer_points_meta_table() {
+        global $wpdb;
+        $charset_collate = $wpdb->get_charset_collate();
+        $test = $wpdb->query( "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points_meta` (
+                `meta_id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `prayer_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
+                `meta_key` varchar(255) DEFAULT NULL,
+                `meta_value` LONGTEXT,
+                PRIMARY KEY (`meta_id`)
+            ) $charset_collate;" //@phpcs:ignore
+        );
+        if ( !$test ) {
+            throw new Exception( 'Could not create table dt_prayer_points_meta' );
+        }
     }
 
     /**
