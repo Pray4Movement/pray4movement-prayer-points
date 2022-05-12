@@ -229,9 +229,9 @@ class Pray4Movement_Prayer_Points_Tab_General {
             ?>
         <tr>
             <td><img src="<?php echo esc_html( $prayer_icon ); ?>" width="50px"></td>
-            <td><?php echo esc_html( $prayer_library['name'] ); ?></td>
+            <td><a href="prayer-points/<?php echo esc_html( $prayer_library ); ?>"><?php echo esc_html( $prayer_library['name'] ); ?></a></td>
             <td><?php echo esc_html( $prayer_library['description'] ); ?></td>
-            <td><?php esc_html_e( 'Select', 'disciple_tools' ); ?></td>
+            <td><a href="#"><?php esc_html_e( 'Export', 'disciple_tools' ); ?></a></td>
         </tr>
         <?php endforeach;
     }
