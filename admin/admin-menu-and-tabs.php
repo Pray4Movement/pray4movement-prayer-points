@@ -52,7 +52,7 @@ class Pray4Movement_Prayer_Points_Menu {
     }
 
     public static function get_prayer_points_icon() {
-        return 'data:image/svg+xml;base64,PHN2ZyBpZD0ic3ZnIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiB2aWV3Qm94PSIwLCAwLCA0MDAsNDAwIj48ZyBpZD0ic3ZnZyI+PHBhdGggaWQ9InBhdGgwIiBkPSJNMjE5LjcxNiAxOS4yNDggQyAxMzkuNDUzIDMzLjcwNyw5Ni42MDggMTI3LjA1OSwxMzcuODU3IDE5Ny42MDAgTCAxNDEuNjAwIDIwNC4wMDAgMTU3LjExOSAyMDMuNTQzIEwgMTcyLjYzOCAyMDMuMDg2IDE2NC4yNDIgMTkwLjc0MyBDIDEyMS40OTUgMTI3LjkwMSwxNjUuMDQwIDQ0LjU0OSwyNDAuODAwIDQ0LjIwMCBDIDMyMS4xODkgNDMuODI4LDM2NC43NzIgMTM1LjA0OCwzMTQuMjM4IDE5Ny45MDggTCAzMTAuMTMyIDIwMy4wMTYgMzE2LjEwNyAyMDEuMzY2IEMgMzE5LjM5NCAyMDAuNDU5LDMyNS4wMzQgMjAwLjA5NywzMjguNjQyIDIwMC41NjIgQyAzMzIuMjQ5IDIwMS4wMjcsMzM2Ljk0OCAyMDEuNjMxLDMzOS4wODQgMjAxLjkwNCBDIDM0Ny45NDYgMjAzLjAzNiwzNjEuNjAwIDE2NC44MTcsMzYxLjYwMCAxMzguODc3IEMgMzYxLjYwMCA2My4zMjQsMjkzLjU0OSA1Ljk0NywyMTkuNzE2IDE5LjI0OCBNMjI4LjgwMCA4NS42MDAgTCAyMjguODAwIDk3LjYwMCAyMTEuMjAwIDk3LjYwMCBMIDE5My42MDAgOTcuNjAwIDE5My42MDAgMTExLjIwMCBMIDE5My42MDAgMTI0LjgwMCAyMTEuMjAwIDEyNC44MDAgTCAyMjguODAwIDEyNC44MDAgMjI4LjgwMCAxNjEuNjAwIEwgMjI4LjgwMCAxOTguNDAwIDI0Mi40MDAgMTk4LjQwMCBMIDI1Ni4wMDAgMTk4LjQwMCAyNTYuMDAwIDE2MS42MDAgTCAyNTYuMDAwIDEyNC44MDAgMjcyLjgwMCAxMjQuODAwIEwgMjg5LjYwMCAxMjQuODAwIDI4OS42MDAgMTExLjIwMCBMIDI4OS42MDAgOTcuNjAwIDI3Mi44MDAgOTcuNjAwIEwgMjU2LjAwMCA5Ny42MDAgMjU2LjAwMCA4NS42MDAgTCAyNTYuMDAwIDczLjYwMCAyNDIuNDAwIDczLjYwMCBMIDIyOC44MDAgNzMuNjAwIDIyOC44MDAgODUuNjAwIE0yOTcuNjIzIDIyNy43MTkgQyAyNjkuMjU3IDIzNi43MTgsMjcwLjU4MSAyMzUuNzkxLDI2OC4wMTggMjQ4LjQ0MCBDIDI2NC41ODUgMjY1LjM4NiwyNDkuMDY4IDI3MS45NjQsMTk5LjIwMCAyNzcuNjEzIEMgMTY0LjE5NiAyODEuNTc4LDE1OC40MDAgMjgwLjUyMiwxNTguNDAwIDI3MC4xODAgQyAxNTguNDAwIDI2MS45OTIsMTYwLjc2MyAyNjEuMDA3LDE4NC44MDAgMjU5LjE3MyBDIDIzNy4zNjAgMjU1LjE2NSwyNTIuNjcyIDI0OS4yNTYsMjQ4Ljk0OCAyMzQuNDIwIEMgMjQ2LjgwNCAyMjUuODc3LDI0My4xNTIgMjI1LjEwNCwxOTcuODE0IDIyMy42MDcgQyAxNTEuNTM3IDIyMi4wNzksMTQ1LjMyNSAyMjIuNDQzLDEzNS45NDYgMjI3LjIyOCBDIDEyOC43MjcgMjMwLjkxMCw2My45NDIgMjc4LjM2Myw2NC4xMDQgMjc5Ljg0OSBDIDY0LjE2MSAyODAuMzcyLDc5LjY3OCAyOTIuMTg3LDk4LjU4NyAzMDYuMTA1IEwgMTMyLjk2NiAzMzEuNDEwIDE3MC4wODMgMzM0LjczMyBDIDIxMS41ODMgMzM4LjQ1MCwyMTkuMzkzIDMzNy44NjMsMjMxLjA4MyAzMzAuMTUxIEMgMjQyLjQ2MCAzMjIuNjQ2LDMzNS44MzQgMjQ3Ljk3OCwzMzguMzY5IDI0NC4zNTggQyAzNDMuNjgxIDIzNi43NzUsMzM5LjY1NiAyMjMuOTg4LDMzMS4wMTAgMjIwLjk3MyBDIDMyNC42MDUgMjE4Ljc0MSwzMjguMjMyIDIxOC4wMDgsMjk3LjYyMyAyMjcuNzE5IE0zNy4yMDAgMzA4LjM0MCBDIDI0LjgwMSAzMjQuNjk5LDIzLjUyNiAzMjguNzcxLDI5LjIwMCAzMzMuODg5IEMgNDIuOTY5IDM0Ni4zMDgsODYuODgzIDM3Ni4yMjYsOTAuMTQyIDM3NS40MDggQyA5My4yNzggMzc0LjYyMSwxMTIuMjYwIDM1MC45NTMsMTE0LjU1OCAzNDQuOTY2IEMgMTE1LjA0MiAzNDMuNzA1LDEwNC4zMDMgMzM0LjYzNCw4Ni44NzQgMzIxLjU4MiBDIDcxLjIxMyAzMDkuODU1LDU2LjI0MCAyOTguNjM0LDUzLjYwMCAyOTYuNjQ4IEwgNDguODAwIDI5My4wMzYgMzcuMjAwIDMwOC4zNDAgIiBzdHJva2U9Im5vbmUiIGZpbGw9IiMwMDAwMDAiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPjwvZz48L3N2Zz4=';
+        return 'PHN2ZyBpZD0ic3ZnIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiB2aWV3Qm94PSIwLCAwLCA0MDAsNDAwIj48ZyBpZD0ic3ZnZyI+PHBhdGggaWQ9InBhdGgwIiBkPSJNMjE5LjcxNiAxOS4yNDggQyAxMzkuNDUzIDMzLjcwNyw5Ni42MDggMTI3LjA1OSwxMzcuODU3IDE5Ny42MDAgTCAxNDEuNjAwIDIwNC4wMDAgMTU3LjExOSAyMDMuNTQzIEwgMTcyLjYzOCAyMDMuMDg2IDE2NC4yNDIgMTkwLjc0MyBDIDEyMS40OTUgMTI3LjkwMSwxNjUuMDQwIDQ0LjU0OSwyNDAuODAwIDQ0LjIwMCBDIDMyMS4xODkgNDMuODI4LDM2NC43NzIgMTM1LjA0OCwzMTQuMjM4IDE5Ny45MDggTCAzMTAuMTMyIDIwMy4wMTYgMzE2LjEwNyAyMDEuMzY2IEMgMzE5LjM5NCAyMDAuNDU5LDMyNS4wMzQgMjAwLjA5NywzMjguNjQyIDIwMC41NjIgQyAzMzIuMjQ5IDIwMS4wMjcsMzM2Ljk0OCAyMDEuNjMxLDMzOS4wODQgMjAxLjkwNCBDIDM0Ny45NDYgMjAzLjAzNiwzNjEuNjAwIDE2NC44MTcsMzYxLjYwMCAxMzguODc3IEMgMzYxLjYwMCA2My4zMjQsMjkzLjU0OSA1Ljk0NywyMTkuNzE2IDE5LjI0OCBNMjI4LjgwMCA4NS42MDAgTCAyMjguODAwIDk3LjYwMCAyMTEuMjAwIDk3LjYwMCBMIDE5My42MDAgOTcuNjAwIDE5My42MDAgMTExLjIwMCBMIDE5My42MDAgMTI0LjgwMCAyMTEuMjAwIDEyNC44MDAgTCAyMjguODAwIDEyNC44MDAgMjI4LjgwMCAxNjEuNjAwIEwgMjI4LjgwMCAxOTguNDAwIDI0Mi40MDAgMTk4LjQwMCBMIDI1Ni4wMDAgMTk4LjQwMCAyNTYuMDAwIDE2MS42MDAgTCAyNTYuMDAwIDEyNC44MDAgMjcyLjgwMCAxMjQuODAwIEwgMjg5LjYwMCAxMjQuODAwIDI4OS42MDAgMTExLjIwMCBMIDI4OS42MDAgOTcuNjAwIDI3Mi44MDAgOTcuNjAwIEwgMjU2LjAwMCA5Ny42MDAgMjU2LjAwMCA4NS42MDAgTCAyNTYuMDAwIDczLjYwMCAyNDIuNDAwIDczLjYwMCBMIDIyOC44MDAgNzMuNjAwIDIyOC44MDAgODUuNjAwIE0yOTcuNjIzIDIyNy43MTkgQyAyNjkuMjU3IDIzNi43MTgsMjcwLjU4MSAyMzUuNzkxLDI2OC4wMTggMjQ4LjQ0MCBDIDI2NC41ODUgMjY1LjM4NiwyNDkuMDY4IDI3MS45NjQsMTk5LjIwMCAyNzcuNjEzIEMgMTY0LjE5NiAyODEuNTc4LDE1OC40MDAgMjgwLjUyMiwxNTguNDAwIDI3MC4xODAgQyAxNTguNDAwIDI2MS45OTIsMTYwLjc2MyAyNjEuMDA3LDE4NC44MDAgMjU5LjE3MyBDIDIzNy4zNjAgMjU1LjE2NSwyNTIuNjcyIDI0OS4yNTYsMjQ4Ljk0OCAyMzQuNDIwIEMgMjQ2LjgwNCAyMjUuODc3LDI0My4xNTIgMjI1LjEwNCwxOTcuODE0IDIyMy42MDcgQyAxNTEuNTM3IDIyMi4wNzksMTQ1LjMyNSAyMjIuNDQzLDEzNS45NDYgMjI3LjIyOCBDIDEyOC43MjcgMjMwLjkxMCw2My45NDIgMjc4LjM2Myw2NC4xMDQgMjc5Ljg0OSBDIDY0LjE2MSAyODAuMzcyLDc5LjY3OCAyOTIuMTg3LDk4LjU4NyAzMDYuMTA1IEwgMTMyLjk2NiAzMzEuNDEwIDE3MC4wODMgMzM0LjczMyBDIDIxMS41ODMgMzM4LjQ1MCwyMTkuMzkzIDMzNy44NjMsMjMxLjA4MyAzMzAuMTUxIEMgMjQyLjQ2MCAzMjIuNjQ2LDMzNS44MzQgMjQ3Ljk3OCwzMzguMzY5IDI0NC4zNTggQyAzNDMuNjgxIDIzNi43NzUsMzM5LjY1NiAyMjMuOTg4LDMzMS4wMTAgMjIwLjk3MyBDIDMyNC42MDUgMjE4Ljc0MSwzMjguMjMyIDIxOC4wMDgsMjk3LjYyMyAyMjcuNzE5IE0zNy4yMDAgMzA4LjM0MCBDIDI0LjgwMSAzMjQuNjk5LDIzLjUyNiAzMjguNzcxLDI5LjIwMCAzMzMuODg5IEMgNDIuOTY5IDM0Ni4zMDgsODYuODgzIDM3Ni4yMjYsOTAuMTQyIDM3NS40MDggQyA5My4yNzggMzc0LjYyMSwxMTIuMjYwIDM1MC45NTMsMTE0LjU1OCAzNDQuOTY2IEMgMTE1LjA0MiAzNDMuNzA1LDEwNC4zMDMgMzM0LjYzNCw4Ni44NzQgMzIxLjU4MiBDIDcxLjIxMyAzMDkuODU1LDU2LjI0MCAyOTguNjM0LDUzLjYwMCAyOTYuNjQ4IEwgNDguODAwIDI5My4wMzYgMzcuMjAwIDMwOC4zNDAgIiBzdHJva2U9Im5vbmUiIGZpbGw9IiMwMDAwMDAiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPjwvZz48L3N2Zz4=';
     }
 
     /**
@@ -206,41 +206,35 @@ class Pray4Movement_Prayer_Points_Tab_General {
     }
 
     public function get_prayer_libraries() {
-        $prayer_libraries = [
-            'prayer_library_acts' => [
-                'name' => 'Book of Acts',
-                'description' => 'Pray through the book of Acts',
-                'icon' => 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGRhdGEtbmFtZT0iTGF5ZXIgMSIgdmlld0JveD0iMCAwIDY0IDY0IiB4PSIwcHgiIHk9IjBweCI+PHBhdGggZD0iTTE0LDJBNiw2LDAsMCwwLDgsOFY1NmE2LDYsMCwwLDAsNiw2SDU1YTEsMSwwLDAsMCwxLTFWM2ExLDEsMCwwLDAtMS0xWm0wLDJWNTBhNiw2LDAsMCwwLTQsMS41NFY4QTQsNCwwLDAsMSwxNCw0Wk01NCw2MEgxNGE0LDQsMCwwLDEsMC04SDU0Wm0wLTEwSDE2VjRINTRaIj48L3BhdGg+PHJlY3QgeD0iNDYiIHk9IjU1IiB3aWR0aD0iNiIgaGVpZ2h0PSIyIj48L3JlY3Q+PHJlY3QgeD0iMTIiIHk9IjU1IiB3aWR0aD0iMzIiIGhlaWdodD0iMiI+PC9yZWN0PjxwYXRoIGQ9Ik0xOSw0MWE2LDYsMCwwLDEsNiw2LDEsMSwwLDAsMCwxLDFINDRhMSwxLDAsMCwwLDEtMSw2LDYsMCwwLDEsNi02LDEsMSwwLDAsMCwxLTFWMTRhMSwxLDAsMCwwLTEtMSw2LDYsMCwwLDEtNi02LDEsMSwwLDAsMC0xLTFIMjZhMSwxLDAsMCwwLTEsMSw2LDYsMCwwLDEtNiw2LDEsMSwwLDAsMC0xLDFWNDBBMSwxLDAsMCwwLDE5LDQxWm0xLTI2LjA2QTgsOCwwLDAsMCwyNi45NCw4SDQzLjA2QTgsOCwwLDAsMCw1MCwxNC45NFYzOS4wNkE4LDgsMCwwLDAsNDMuMDYsNDZIMjYuOTRBOCw4LDAsMCwwLDIwLDM5LjA2WiI+PC9wYXRoPjxwYXRoIGQ9Ik0zMiw0M2ExLDEsMCwwLDAsMSwxaDRhMSwxLDAsMCwwLDEtMVYyM2g5YTEsMSwwLDAsMCwxLTFWMThhMSwxLDAsMCwwLTEtMUgzOFYxMWExLDEsMCwwLDAtMS0xSDMzYTEsMSwwLDAsMC0xLDF2NkgyM2ExLDEsMCwwLDAtMSwxdjRhMSwxLDAsMCwwLDEsMWg5Wk0yNCwyMVYxOWg5YTEsMSwwLDAsMCwxLTFWMTJoMnY2YTEsMSwwLDAsMCwxLDFoOXYySDM3YTEsMSwwLDAsMC0xLDFWNDJIMzRWMjJhMSwxLDAsMCwwLTEtMVoiPjwvcGF0aD48L3N2Zz4=',
-            ],
-            'prayer_library_p4t' => [
-                'name' => 'Pray 4 Tunisia',
-                'description' => 'The standard Pray 4 Tunisia prayer fuel library',
-            ],
-        ]; //todo add code
+        global $wpdb;
+        $prayer_libraries = $wpdb->get_results(
+            "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib`;", ARRAY_A
+        );
         return $prayer_libraries;
     }
 
     public function display_prayer_libraries( $prayer_libraries ) {
-        foreach ( $prayer_libraries as $prayer_library ) :
+        foreach ( $prayer_libraries as $library ) :
             $prayer_icon = Pray4Movement_Prayer_Points_Menu::get_prayer_points_icon();
-            if ( isset( $prayer_library['icon'] ) ) {
-                $prayer_icon = $prayer_library['icon'];
+            if ( isset( $library['icon'] ) ) {
+                $prayer_icon = $library['icon'];
             }
             ?>
         <tr>
-            <td><img src="<?php echo esc_html( $prayer_icon ); ?>" width="50px"></td>
-            <td><a href="prayer-points/<?php echo esc_html( $prayer_library ); ?>"><?php echo esc_html( $prayer_library['name'] ); ?></a></td>
-            <td><?php echo esc_html( $prayer_library['description'] ); ?></td>
+            <td><img src="data:image/svg+xml;base64,<?php echo esc_html( $prayer_icon ); ?>" width="50px"></td>
+            <td><a href="prayer-points/<?php echo esc_html( $library['key'] ); ?>"><?php echo esc_html( $library['name'] ); ?></a></td>
+            <td><?php echo esc_html( $library['description'] ); ?></td>
             <td><a href="#"><?php esc_html_e( 'Export', 'disciple_tools' ); ?></a></td>
         </tr>
         <?php endforeach;
     }
 
     public function display_add_prayer_library() {
+        $prayer_libraries = self::get_prayer_libraries();
         ?>
         <tr>
             <td>
-                <?php self::display_prayer_libraries_list(); ?>    
+                <?php self::display_prayer_libraries_list( $prayer_libraries ); ?>    
             </td>
             <td>
                 <input class="new_library_td" type="text" name="new_library_name" placeholder="<?php esc_html_e( 'Library Name', 'pray4movement_prayer_points' ); ?>" style="display:none;">
@@ -260,21 +254,17 @@ class Pray4Movement_Prayer_Points_Tab_General {
         <?php
     }
 
-    public function display_prayer_libraries_list() {
-        $libraries = [
-            'prayer_library_acts' => [
-                'name' => 'Book of Acts',
-            ],
-            'prayer_library_p4t' => [
-                'name' => 'Pray 4 Tunisia'
-            ],
-        ]; //todo write code
+    public function display_prayer_libraries_list( $prayer_libraries ) {
         ?>
         <select id="prayer_library_dropdown" onchange="javascript:check_new_library();">
                 <option hidden><?php esc_html_e( 'Select a Prayer Library', 'pray4movement_prayer_points' ); ?></option>
-                <?php foreach ( $libraries as $library ) : ?>
-                <option><?php echo esc_html( $library['name'] ); ?></option>
-                <?php endforeach; ?>
+                <?php if ( empty( $prayer_libraries ) ) : ?>
+                    <option disabled>No prayer libraries found</option>
+                <?php else : ?>
+                    <?php foreach ( $prayer_libraries as $library ) : ?>
+                    <option><?php echo esc_html( $library['name'] ); ?></option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
                 <option disabled>--------------</option>
                 <option value="add_new"><?php esc_html_e( 'Add a new Prayer Library...', 'pray4movement_prayer_points' ); ?></option>
         </select>

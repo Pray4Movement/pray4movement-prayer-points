@@ -193,7 +193,8 @@ class Pray4Movement_Prayer_Points {
     public static function create_prayer_points_table() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
-        $test = $wpdb->query( "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points` (
+        $test = $wpdb->query(
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points` (
                 `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `lib_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
                 `content` LONGTEXT COLLATE utf8mb4_unicode_520_ci NOT NULL,
@@ -210,11 +211,13 @@ class Pray4Movement_Prayer_Points {
     public static function create_prayer_points_lib_table() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
-        $test = $wpdb->query( "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points_lib` (
+        $test = $wpdb->query(
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points_lib` (
                 `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `key` VARCHAR(255) NOT NULL,
                 `name` VARCHAR(191) NOT NULL,
                 `description` LONGTEXT DEFAULT NULL,
+                `icon` LONGTEXT COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
                 `status` VARCHAR(20) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'unpublished',
                 PRIMARY KEY (`id`)
             ) $charset_collate;" //@phpcs:ignore
@@ -227,7 +230,8 @@ class Pray4Movement_Prayer_Points {
     public static function create_prayer_points_meta_table() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
-        $test = $wpdb->query( "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points_meta` (
+        $test = $wpdb->query(
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points_meta` (
                 `meta_id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `prayer_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
                 `meta_key` varchar(255) DEFAULT NULL,
