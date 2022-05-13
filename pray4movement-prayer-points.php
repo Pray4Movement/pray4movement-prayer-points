@@ -88,9 +88,7 @@ class Pray4Movement_Prayer_Points {
          * @todo Decide if you want to use the REST API example
          * To remove: delete this following line and remove the folder named /rest-api
          */
-        if ( $is_rest && strpos( dt_get_url_path(), 'pray4movement-prayer-points' ) !== false ) {
-            require_once( 'rest-api/rest-api.php' ); // adds starter rest api class
-        }
+        require_once( 'rest-api/rest-api.php' ); // adds starter rest api class
 
         /**
          * @todo Decide if you want to create a new post type

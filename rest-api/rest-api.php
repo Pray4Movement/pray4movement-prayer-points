@@ -22,9 +22,9 @@ class Pray4Movement_Prayer_Points_Endpoints
         $namespace = 'pray4movement-prayer-points/v1';
 
         register_rest_route(
-            $namespace, '/endpoint', [
-                'methods'  => "GET",
-                'callback' => [ $this, 'endpoint' ],
+            $namespace, '/delete_prayer_library/(?P<lib_id>\d+)', [
+                'methods'  => "POST",
+                'callback' => [ $this, 'endpoint_delete_prayer_lib' ],
                 'permission_callback' => function( WP_REST_Request $request ) {
                     return $this->has_permission();
                 },
@@ -33,10 +33,45 @@ class Pray4Movement_Prayer_Points_Endpoints
     }
 
 
-    public function endpoint( WP_REST_Request $request ) {
+    public function endpoint_delete_prayer_lib( WP_REST_Request $request ) {
+        $params = $request->get_params();
+        if ( !isset( $params['lib_id'] ) ) {
+            return new WP_Error( __METHOD__, 'Missing a valid prayer library id', [ 'status' => 400 ] );
+        }
+        $lib_id = esc_sql( $params['lib_id'] );
+        $current_user_id = get_current_user_id();
+        // todo define can_delete
+        // if ( !Pray4Movement_Prayer_Points::can_delete( 'libraries', $current_user_id = get_current_user_id() ) ) {
+        //     return new WP_Error( __METHOD__, 'You do not have permission for this', [ 'status' => 403 ] );
+        // }
+        self::delete_prayer_lib( $lib_id );
+        self::delete_prayer_points_by_lib( $lib_id );
+        return true;
+    }
 
-        // @todo run your function here
+    private function delete_prayer_lib( $lib_id ) {
+        if ( !isset( $lib_id ) ) {
+            return new WP_Error( __METHOD__, 'Missing valid action parameters', [ 'status' => 400 ] );
+        }
+        global $wpdb;
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %s;", $lib_id
+            )
+        );
+        return true;
+    }
 
+    private function delete_prayer_points_by_lib( $lib_id ) {
+        if ( !isset( $lib_id ) ) {
+            return new WP_Error( __METHOD__, 'Missing valid action parameters', [ 'status' => 400 ] );
+        }
+        global $wpdb;
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %s;", $lib_id
+            )
+        );
         return true;
     }
 

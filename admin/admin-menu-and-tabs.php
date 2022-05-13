@@ -151,12 +151,12 @@ class Pray4Movement_Prayer_Points_Tab_General {
         <table class="widefat striped">
             <thead>
                 <tr>
-                    <th colspan="4"><?php esc_html_e( 'Prayer Libraries', 'pray4movement_prayer_points' ); ?></th>
+                    <th colspan="5"><?php esc_html_e( 'Prayer Libraries', 'pray4movement_prayer_points' ); ?></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td colspan="4">
+                    <td colspan="5">
                         <?php esc_html_e( 'Please select a Prayer Library to continue', 'pray4movement_prayer_points' ); ?>
                     </td>
                 </tr>
@@ -208,6 +208,21 @@ class Pray4Movement_Prayer_Points_Tab_General {
                 </tbody>
             </table>
         </form>
+        <script>
+            jQuery( '.delete_library' ).on( 'click', function () {
+                var lib_id = jQuery( this ).data( 'id' );
+                jQuery.ajax( {
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    url: window.location.origin + '/wp-json/pray4movement-prayer-points/v1/delete_prayer_library/' + lib_id,
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
+                    },
+                } );
+                jQuery( '#delete-library-' + lib_id ).remove();
+            } );
+        </script>
         <?php
     }
 
@@ -291,11 +306,12 @@ class Pray4Movement_Prayer_Points_Tab_General {
                 }
             }
             ?>
-        <tr>
+        <tr id="delete-library-<?php echo esc_html( $library['id'] ); ?>">
             <td><img src="<?php echo esc_html( $prayer_icon ); ?>" width="50px"></td>
             <td><a href="prayer-points/<?php echo esc_html( $library['key'] ); ?>"><?php echo esc_html( $library['name'] ); ?></a></td>
             <td><?php echo esc_html( $library['description'] ); ?></td>
             <td><a href="#"><?php esc_html_e( 'Export', 'pray4movement_prayer_points' ); ?></a></td>
+            <td><a href="#" style="color:#b32d2e;" class="delete_library" data-id="<?php echo esc_html( $library['id'] ); ?>"><?php esc_html_e( 'Delete', 'pray4movement_prayer_points' ); ?></a></td>
         </tr>
         <?php endforeach;
     }
