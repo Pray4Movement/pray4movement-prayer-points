@@ -70,8 +70,16 @@ class Pray4Movement_Prayer_Points_Menu {
             wp_die( 'You do not have sufficient permissions to access this page.' );
         }
 
-        if ( isset( $_GET["tab"] ) ) {
-            $tab = sanitize_key( wp_unslash( $_GET["tab"] ) );
+        if ( isset( $_GET['view_lib'] ) ) {
+            $lib_id = sanitize_key( wp_unslash( $_GET['view_lib'] ) );
+            $object = new Pray4Movement_Prayer_Points_View_Lib();
+            $object->get_prayer_points( $lib_id );
+            $object->content();
+            return;
+        }
+
+        if ( isset( $_GET['tab'] ) && !isset( $_GET['view_lib'] ) ) {
+            $tab = sanitize_key( wp_unslash( $_GET['tab'] ) );
         } else {
             $tab = 'general';
         }
@@ -93,10 +101,7 @@ class Pray4Movement_Prayer_Points_Menu {
                     $object = new Pray4Movement_Prayer_Points_Tab_General();
                     $object->content();
                     break;
-                case "second":
-                    $object = new Pray4Movement_Prayer_Points_Tab_Second();
-                    $object->content();
-                    break;
+                    // todo: if no other cases exist, remove switch case
                 default:
                     break;
             }
@@ -104,6 +109,19 @@ class Pray4Movement_Prayer_Points_Menu {
 
         </div><!-- End wrap -->
 
+        <?php
+    }
+
+    /**
+     * Display admin notice
+     * @param $notice string
+     * @param $type string error|success|warning
+     */
+    public static function admin_notice( string $notice, string $type ) {
+        ?>
+        <div class="notice notice-<?php echo esc_attr( $type ) ?> is-dismissible">
+            <p><?php echo esc_html( $notice ) ?></p>
+        </div>
         <?php
     }
 }
@@ -210,18 +228,31 @@ class Pray4Movement_Prayer_Points_Tab_General {
         </form>
         <script>
             jQuery( '.delete_library' ).on( 'click', function () {
-                var lib_id = jQuery( this ).data( 'id' );
-                jQuery.ajax( {
-                    type: 'POST',
-                    contentType: 'application/json; charset=utf-8',
-                    dataType: 'json',
-                    url: window.location.origin + '/wp-json/pray4movement-prayer-points/v1/delete_prayer_library/' + lib_id,
-                    beforeSend: function(xhr) {
-                        xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
-                    },
-                } );
-                jQuery( '#delete-library-' + lib_id ).remove();
+                var lib_name = jQuery( this ).data('name');
+                if(confirm(`Delete the '${lib_name}' Prayer Library?`)) {
+                    var lib_id = jQuery( this ).data('id');
+                    jQuery.ajax( {
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        url: window.location.origin + '/wp-json/pray4movement-prayer-points/v1/delete_prayer_library/' + lib_id,
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
+                        },
+                        success: delete_success( lib_id, lib_name),
+                    } );
+                }
             } );
+
+            function delete_success( lib_id, lib_name ) {
+                jQuery( '#delete-library-' + lib_id ).remove();
+                    let admin_notice = `
+                        <div class="notice notice-success is-dismissible">
+                            <p>'${lib_name}' Prayer Library deleted successfully</p>
+                        </div>
+                    `;
+                    jQuery('.nav-tab-wrapper').before(admin_notice);
+            }
         </script>
         <?php
     }
@@ -283,10 +314,10 @@ class Pray4Movement_Prayer_Points_Tab_General {
             ( %s, %s, %s, %s );", $new_library_key, $new_library_name, $new_library_desc, $new_library_icon
         ) );
         if ( !$test ) {
-            self::admin_notice( __( 'Could not add new prayer library to table', 'pray4movement_prayer_points' ), 'error' );
+            Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Could not add new prayer library to table', 'pray4movement_prayer_points' ), 'error' );
             return;
         }
-        self::admin_notice( __( 'Prayer Library created successfully', 'pray4movement_prayer_points' ), 'success' );
+        Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Library created successfully', 'pray4movement_prayer_points' ), 'success' );
     }
 
     public function get_prayer_libraries() {
@@ -308,10 +339,10 @@ class Pray4Movement_Prayer_Points_Tab_General {
             ?>
         <tr id="delete-library-<?php echo esc_html( $library['id'] ); ?>">
             <td><img src="<?php echo esc_html( $prayer_icon ); ?>" width="50px"></td>
-            <td><a href="prayer-points/<?php echo esc_html( $library['key'] ); ?>"><?php echo esc_html( $library['name'] ); ?></a></td>
+            <td><a href="/wp-admin/admin.php?page=pray4movement_prayer_points&view_lib=<?php echo esc_html( $library['id'] ); ?>"><?php echo esc_html( $library['name'] ); ?></a></td>
             <td><?php echo esc_html( $library['description'] ); ?></td>
             <td><a href="#"><?php esc_html_e( 'Export', 'pray4movement_prayer_points' ); ?></a></td>
-            <td><a href="#" style="color:#b32d2e;" class="delete_library" data-id="<?php echo esc_html( $library['id'] ); ?>"><?php esc_html_e( 'Delete', 'pray4movement_prayer_points' ); ?></a></td>
+            <td><a href="#" style="color:#b32d2e;" class="delete_library" data-id="<?php echo esc_html( $library['id'] ); ?>" data-name="<?php echo esc_html( $library['name'] ); ?>"><?php esc_html_e( 'Delete', 'pray4movement_prayer_points' ); ?></a></td>
         </tr>
         <?php endforeach;
     }
@@ -332,26 +363,23 @@ class Pray4Movement_Prayer_Points_Tab_General {
         </select>
         <?php
     }
-
-    /**
-     * Display admin notice
-     * @param $notice string
-     * @param $type string error|success|warning
-     */
-    public static function admin_notice( string $notice, string $type ) {
-        ?>
-        <div class="notice notice-<?php echo esc_attr( $type ) ?> is-dismissible">
-            <p><?php echo esc_html( $notice ) ?></p>
-        </div>
-        <?php
-    }
 }
 
 
 /**
- * Class Pray4Movement_Prayer_Points_Tab_Second
+ * Class Pray4Movement_Prayer_Points_Tab_Details
  */
-class Pray4Movement_Prayer_Points_Tab_Second {
+class Pray4Movement_Prayer_Points_View_Lib {
+    public function get_prayer_points( $lib_id ) {
+        $lib_id = esc_sql( $lib_id );
+        global $wpdb;
+        $prayer_points = $wpdb->query(
+            $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d", $lib_id )
+        );
+        return $prayer_points;
+    }
+
+
     public function content() {
         ?>
         <div class="wrap">

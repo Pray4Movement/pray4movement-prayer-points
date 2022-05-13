@@ -69,7 +69,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         global $wpdb;
         $wpdb->query(
             $wpdb->prepare(
-                "DELETE FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %s;", $lib_id
+                "DELETE FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $lib_id
             )
         );
         return true;
