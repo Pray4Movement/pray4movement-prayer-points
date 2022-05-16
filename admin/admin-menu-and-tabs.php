@@ -236,12 +236,12 @@ class Pray4Movement_Prayer_Points_Tab_General {
                         beforeSend: function(xhr) {
                             xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
                         },
-                        success: delete_success( lib_id, lib_name),
+                        success: delete_lib_success(lib_id, lib_name),
                     } );
                 }
             } );
 
-            function delete_success( lib_id, lib_name ) {
+            function delete_lib_success( lib_id, lib_name ) {
                 jQuery( '#delete-library-' + lib_id ).remove();
                     let admin_notice = `
                         <div class="notice notice-success is-dismissible">
@@ -717,7 +717,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
                 }
             }
             ?>
-                <tr>
+                <tr id="delete-prayer-<?php echo esc_html( $prayer_point['id'] ); ?>">
                     <td>
                         <?php echo esc_html( $prayer_point['id'] ); ?>
                     </td>
@@ -734,10 +734,39 @@ class Pray4Movement_Prayer_Points_View_Lib {
                         <?php echo esc_html( implode( ', ', $tags ) ); ?>
                     </td>
                     <td>
-                        <a href="#">Delete</a>
+                        <a href="#" style="color:#b32d2e;" class="delete_prayer"  data-id="<?php echo esc_html( $prayer_point['id'] ); ?>" data-title="<?php echo esc_html( $prayer_title ); ?>">Delete</a>
                     </td>
                 </tr>
-        <?php endforeach;
+        <?php endforeach; ?>
+        <script>
+            jQuery( '.delete_prayer' ).on( 'click', function () {
+                var prayer_title = jQuery( this ).data('title');
+                if(confirm(`Delete the '${prayer_title}' Prayer Point?`)) {
+                    var prayer_id = jQuery( this ).data('id');
+                    jQuery.ajax( {
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        url: window.location.origin + '/wp-json/pray4movement-prayer-points/v1/delete_prayer_point/' + prayer_id,
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
+                        },
+                        success: delete_prayer_success(prayer_id, prayer_title),
+                    } );
+                }
+            } );
+
+            function delete_prayer_success( prayer_id, prayer_title ) {
+                jQuery( '#delete-prayer-' + prayer_id ).remove();
+                    let admin_notice = `
+                        <div class="notice notice-success is-dismissible">
+                            <p>'${prayer_title}' Prayer Point deleted successfully</p>
+                        </div>
+                    `;
+                    jQuery('#post-body-content').prepend(admin_notice);
+            }
+        </script>
+        <?php
     }
 
     public function right_column() {

@@ -30,6 +30,16 @@ class Pray4Movement_Prayer_Points_Endpoints
                 },
             ]
         );
+
+        register_rest_route(
+            $namespace, '/delete_prayer_point/(?P<prayer_id>\d+)', [
+                'methods'  => "POST",
+                'callback' => [ $this, 'endpoint_delete_prayer_point' ],
+                'permission_callback' => function( WP_REST_Request $request ) {
+                    return $this->has_permission();
+                },
+            ]
+        );
     }
 
 
@@ -49,7 +59,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         return true;
     }
 
-    private function delete_prayer_lib( $lib_id ) {
+    public function delete_prayer_lib( $lib_id ) {
         if ( !isset( $lib_id ) ) {
             return new WP_Error( __METHOD__, 'Missing valid action parameters', [ 'status' => 400 ] );
         }
@@ -61,6 +71,36 @@ class Pray4Movement_Prayer_Points_Endpoints
         );
         return true;
     }
+
+    public function endpoint_delete_prayer_point( WP_REST_Request $request ) {
+        $params = $request->get_params();
+        if ( !isset( $params['prayer_id'] ) ) {
+            return new WP_Error( __METHOD__, 'Missing a valid prayer point id', [ 'status' => 400 ] );
+        }
+        $prayer_id = esc_sql( $params['prayer_id'] );
+        $current_user_id = get_current_user_id();
+        // todo define can_delete
+        // if ( !Pray4Movement_Prayer_Points::can_delete( 'prayers', $current_user_id = get_current_user_id() ) ) {
+        //     return new WP_Error( __METHOD__, 'You do not have permission for this', [ 'status' => 403 ] );
+        // }
+        self::delete_prayer_point( $prayer_id );
+        return true;
+    }
+
+    public function delete_prayer_point( $prayer_id ) {
+        if ( !isset( $prayer_id ) ) {
+            return new WP_Error( __METHOD__, 'Missing valid action parameters', [ 'status' => 400 ] );
+        }
+        global $wpdb;
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM `{$wpdb->prefix}dt_prayer_points` WHERE id = %s;", $prayer_id
+            )
+        );
+        return true;
+    }
+
+
 
     private function delete_prayer_points_by_lib( $lib_id ) {
         if ( !isset( $lib_id ) ) {
