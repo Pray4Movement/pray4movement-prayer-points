@@ -171,9 +171,11 @@ class Pray4Movement_Prayer_Points_Tab_General {
             </thead>
             <tbody>
                 <tr>
-                    <td colspan="5">
-                        <?php esc_html_e( 'Please select a Prayer Library to continue', 'pray4movement_prayer_points' ); ?>
-                    </td>
+                    <th></th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Prayer Points</th>
+                    <th>Actions</th>
                 </tr>
                 <?php
                 $prayer_libraries = self::get_prayer_libraries();
@@ -339,10 +341,26 @@ class Pray4Movement_Prayer_Points_Tab_General {
             <td><img src="<?php echo esc_html( $prayer_icon ); ?>" width="50px"></td>
             <td><a href="/wp-admin/admin.php?page=pray4movement_prayer_points&view_lib=<?php echo esc_html( $library['id'] ); ?>"><?php echo esc_html( $library['name'] ); ?></a></td>
             <td><?php echo esc_html( $library['description'] ); ?></td>
-            <td><a href="#"><?php esc_html_e( 'Export', 'pray4movement_prayer_points' ); ?></a></td>
-            <td><a href="#" style="color:#b32d2e;" class="delete_library" data-id="<?php echo esc_html( $library['id'] ); ?>" data-name="<?php echo esc_html( $library['name'] ); ?>"><?php esc_html_e( 'Delete', 'pray4movement_prayer_points' ); ?></a></td>
+            <td><?php echo esc_html( self::count_prayer_points( $library['id'] ) ); ?></td>
+            <td>
+                <a href="#"><?php esc_html_e( 'Export', 'pray4movement_prayer_points' ); ?></a> | 
+                <a href="#" style="color:#b32d2e;" class="delete_library" data-id="<?php echo esc_html( $library['id'] ); ?>" data-name="<?php echo esc_html( $library['name'] ); ?>"><?php esc_html_e( 'Delete', 'pray4movement_prayer_points' ); ?></a>
+            </td>
         </tr>
         <?php endforeach;
+    }
+
+    public function count_prayer_points( $lib_id ) {
+        if ( !isset( $lib_id ) ) {
+            return;
+        }
+        global $wpdb;
+        $count_prayer_points = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT(*) FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $lib_id
+            )
+        );
+        return $count_prayer_points;
     }
 
     public function display_prayer_libraries_list( $prayer_libraries ) {
