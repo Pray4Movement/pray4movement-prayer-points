@@ -79,7 +79,7 @@ class Pray4Movement_Prayer_Points_Menu {
         if ( isset( $_GET['tab'] ) && !isset( $_GET['view_lib'] ) ) {
             $tab = sanitize_key( wp_unslash( $_GET['tab'] ) );
         } else {
-            $tab = 'general';
+            $tab = 'explore';
         }
 
         $link = 'admin.php?page='.$this->token.'&tab=';
@@ -87,15 +87,15 @@ class Pray4Movement_Prayer_Points_Menu {
         <div class="wrap">
             <h2><?php echo esc_html( $this->page_title ) ?></h2>
             <h2 class="nav-tab-wrapper">
-                <a href="<?php echo esc_attr( $link ) . 'general' ?>"
-                   class="nav-tab <?php echo esc_html( ( $tab == 'general' || !isset( $tab ) ) ? 'nav-tab-active' : '' ); ?>">General</a>
-                <a href="<?php echo esc_attr( $link ) . 'second' ?>" class="nav-tab <?php echo esc_html( ( $tab == 'second' ) ? 'nav-tab-active' : '' ); ?>">Second</a>
+                <a href="<?php echo esc_attr( $link ) . 'explore' ?>"
+                   class="nav-tab <?php echo esc_html( ( $tab == 'explore' || !isset( $tab ) ) ? 'nav-tab-active' : '' ); ?>">Explore</a>
+                <a href="<?php echo esc_attr( $link ) . 'import' ?>" class="nav-tab <?php echo esc_html( ( $tab == 'import' ) ? 'nav-tab-active' : '' ); ?>">Import</a>
             </h2>
 
             <?php
             switch ( $tab ) {
-                case "general":
-                    $object = new Pray4Movement_Prayer_Points_Tab_General();
+                case "explore":
+                    $object = new Pray4Movement_Prayer_Points_Tab_Explore();
                     $object->content();
                     break;
                     // todo: if no other cases exist, remove switch case
@@ -125,9 +125,9 @@ class Pray4Movement_Prayer_Points_Menu {
 Pray4Movement_Prayer_Points_Menu::instance();
 
 /**
- * Class Pray4Movement_Prayer_Points_Tab_General
+ * Class Pray4Movement_Prayer_Points_Tab_Explore
  */
-class Pray4Movement_Prayer_Points_Tab_General {
+class Pray4Movement_Prayer_Points_Tab_Explore {
     public function content() {
         ?>
         <div class="wrap">
