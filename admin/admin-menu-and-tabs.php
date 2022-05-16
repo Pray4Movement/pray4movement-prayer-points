@@ -383,9 +383,24 @@ class Pray4Movement_Prayer_Points_View_Lib {
         $lib_id = esc_sql( $lib_id );
         global $wpdb;
         $prayer_points = $wpdb->get_results(
-            $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $lib_id )
+            $wpdb->prepare(
+                "SELECT * FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $lib_id
+            ), ARRAY_A
         );
         return $prayer_points;
+    }
+
+    public function get_prayer_meta( $prayer_id, $meta_key ) {
+        $prayer_id = esc_sql( sanitize_text_field( $prayer_id ) );
+        $meta_key = esc_sql( sanitize_text_field( $meta_key ) );
+        global $wpdb;
+        $prayer_meta = $wpdb->get_col(
+            $wpdb->prepare(
+                "SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = %s AND prayer_id = %d;",
+                $meta_key, $prayer_id
+            )
+        );
+        return $prayer_meta;
     }
 
 
@@ -436,18 +451,22 @@ class Pray4Movement_Prayer_Points_View_Lib {
             <thead>
                 <tr>
                     <?php if ( !empty( $prayer_library ) ) : ?>
-                        <th><?php echo esc_html( $prayer_library['name'] ); ?></th>
+                        <th colspan="6"><?php echo esc_html( $prayer_library['name'] ); ?></th>
                     <?php else : ?>
-                        <td><?php esc_html_e( 'Error: Prayer Library not found', 'pray4movement-prayer-points' ); ?></td>
+                        <td colspan="6"><?php esc_html_e( 'Error: Prayer Library not found', 'pray4movement-prayer-points' ); ?></td>
                     <?php endif; ?>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>
-                        <?php self::display_prayer_points( $lib_id ); ?>
-                    </td>
+                    <th>#</th>    
+                    <th>Title</th>
+                    <th>Reference</th>
+                    <th>Content</th>
+                    <th>Tags</th>
+                    <th>Actions</th>
                 </tr>
+                <?php self::display_prayer_points( $lib_id ); ?>
             </tbody>
         </table>
         <br>
@@ -678,18 +697,44 @@ class Pray4Movement_Prayer_Points_View_Lib {
         $prayer_points = self::get_prayer_points( $lib_id );
         if ( !$prayer_points ) : ?>
             <tr>
-                <td colspan="5">
+                <td colspan="6">
                     <i><?php esc_html_e( 'This Prayer Library is currently empty.', 'pray4movement_prayer_points' ); ?></i>
                 </td>
             </tr>
             <?php
             return;
-        endif;
+            endif;
 
-        foreach ( $prayer_points as $prayer_point ) : dt_write_log( $prayer_point ); ?>
+        foreach ( $prayer_points as $prayer_point ) :
+            $prayer_title = self::get_prayer_meta( $prayer_point['id'], 'title' )[0];
+            $prayer_reference = self::get_prayer_meta( $prayer_point['id'], 'reference' )[0];
+            $prayer_tags = self::get_prayer_meta( $prayer_point['id'], 'tags' );
+
+            $tags = [];
+            if ( $prayer_tags ) {
+                foreach ( $prayer_tags as $prayer_tag ) {
+                    $tags[] = $prayer_tag;
+                }
+            }
+            ?>
                 <tr>
-                    <td colspan="5">
-                        Foo Bar
+                    <td>
+                        <?php echo esc_html( $prayer_point['id'] ); ?>
+                    </td>
+                    <td>
+                        <?php echo esc_html( $prayer_title ); ?>
+                    </td>
+                    <td>
+                        <?php echo esc_html( $prayer_reference ); ?>
+                    </td>
+                    <td>
+                        <?php echo esc_html( $prayer_point['content'] ); ?>
+                    </td>
+                    <td>
+                        <?php echo esc_html( implode( ', ', $tags ) ); ?>
+                    </td>
+                    <td>
+                        <a href="#">Delete</a>
                     </td>
                 </tr>
         <?php endforeach;
