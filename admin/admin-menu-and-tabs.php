@@ -71,9 +71,7 @@ class Pray4Movement_Prayer_Points_Menu {
         }
 
         if ( isset( $_GET['view_lib'] ) ) {
-            $lib_id = sanitize_key( wp_unslash( $_GET['view_lib'] ) );
             $object = new Pray4Movement_Prayer_Points_View_Lib();
-            $object->get_prayer_points( $lib_id );
             $object->content();
             return;
         }
@@ -370,11 +368,22 @@ class Pray4Movement_Prayer_Points_Tab_General {
  * Class Pray4Movement_Prayer_Points_Tab_Details
  */
 class Pray4Movement_Prayer_Points_View_Lib {
+    public function get_prayer_library( $lib_id ) {
+        $lib_id = esc_sql( $lib_id );
+        global $wpdb;
+        $prayer_library = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d;", $lib_id
+            ), ARRAY_A
+        );
+        return $prayer_library;
+    }
+
     public function get_prayer_points( $lib_id ) {
         $lib_id = esc_sql( $lib_id );
         global $wpdb;
-        $prayer_points = $wpdb->query(
-            $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d", $lib_id )
+        $prayer_points = $wpdb->get_results(
+            $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $lib_id )
         );
         return $prayer_points;
     }
@@ -408,18 +417,29 @@ class Pray4Movement_Prayer_Points_View_Lib {
     }
 
     public function main_column() {
+        // todo: fix validate view_lib param is present and is_numeric
+        if ( !isset( $_GET['view_lib'] ) || is_null( $_GET['view_lib'] ) ) {
+            return new WP_Error( __METHOD__, 'Invalid Prayer Library ID' );
+        }
+        $lib_id = sanitize_key( wp_unslash( $_GET['view_lib'] ) );
+        $prayer_library = self::get_prayer_library( $lib_id );
+        dt_write_log( $prayer_library );
         ?>
         <!-- Box -->
         <table class="widefat striped">
             <thead>
                 <tr>
-                    <th>Header</th>
+                    <?php if ( !empty( $prayer_library ) ) : ?>
+                        <th><?php echo esc_html( $prayer_library['name'] ); ?></th>
+                    <?php else : ?>
+                        <td><?php esc_html_e( 'Error: Prayer Library not found', 'pray4movement-prayer-points' ); ?></td>
+                    <?php endif; ?>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>
-                        Content
+                        <?php self::display_prayer_points( $lib_id ); ?>
                     </td>
                 </tr>
             </tbody>
@@ -427,6 +447,28 @@ class Pray4Movement_Prayer_Points_View_Lib {
         <br>
         <!-- End Box -->
         <?php
+    }
+
+    private function display_prayer_points( $lib_id ) {
+        $prayer_points = self::get_prayer_points( $lib_id );
+        if ( !$prayer_points ) : ?>
+            <tr>
+                <td colspan="5">
+                    <i><?php esc_html_e( 'This Prayer Library is currently empty.', 'pray4movement_prayer_points' ); ?></i>
+                </td>
+            </tr>
+            <?php
+            return;
+        endif;
+
+        foreach ( $prayer_points as $prayer_point ) : ?>
+            $output += `
+                <tr>
+                    <td colspan="5">
+                        Foo Bar
+                    </td>
+                </tr>
+        <?php endforeach;
     }
 
     public function right_column() {
