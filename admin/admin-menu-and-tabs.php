@@ -1015,7 +1015,7 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
             <tbody>
             <tr>
                 <td colspan="2">
-                    <a href=""><< <?php esc_html_e( 'Back', 'pray4movement_prayer_points' ); ?></a>
+                    <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&view_lib=<?php echo esc_attr( $prayer_point['lib_id'] ); ?>"><< <?php esc_html_e( 'Back', 'pray4movement_prayer_points' ); ?></a>
                 </td>
             </tr>
             <tr>
