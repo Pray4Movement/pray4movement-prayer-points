@@ -76,6 +76,8 @@ class Pray4Movement_Prayer_Points_Endpoints
         }
         $lib_id = $request['lib_id'];
         global $wpdb;
+        
+        // One query to rule them all...
         $prayer_points = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT
