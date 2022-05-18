@@ -93,8 +93,9 @@ class Pray4Movement_Prayer_Points_Menu {
             <h2><?php echo esc_html( $this->page_title ) ?></h2>
             <h2 class="nav-tab-wrapper">
                 <a href="<?php echo esc_attr( $link ) . 'explore' ?>"
-                   class="nav-tab <?php echo esc_html( ( $tab == 'explore' || !isset( $tab ) ) ? 'nav-tab-active' : '' ); ?>">Explore</a>
-                <a href="<?php echo esc_attr( $link ) . 'import' ?>" class="nav-tab <?php echo esc_html( ( $tab == 'import' ) ? 'nav-tab-active' : '' ); ?>">Import</a>
+                   class="nav-tab <?php echo esc_html( ( $tab == 'explore' || !isset( $tab ) ) ? 'nav-tab-active' : '' ); ?>"><?php echo esc_html( 'Explore', 'pray4movement_prayer_points' ); ?></a>
+                <a href="<?php echo esc_attr( $link ) . 'import' ?>" class="nav-tab <?php echo esc_html( ( $tab == 'import' ) ? 'nav-tab-active' : '' ); ?>"><?php echo esc_html( 'Import', 'pray4movement_prayer_points' ); ?></a>
+                <a href="<?php echo esc_attr( $link ) . 'export' ?>" class="nav-tab <?php echo esc_html( ( $tab == 'export' ) ? 'nav-tab-active' : '' ); ?>"><?php echo esc_html( 'Export', 'pray4movement_prayer_points' ); ?></a>
             </h2>
 
             <?php
@@ -105,6 +106,10 @@ class Pray4Movement_Prayer_Points_Menu {
                     break;
                 case 'import':
                     $object = new Pray4Movement_Prayer_Points_Tab_Import();
+                    $object->content();
+                    break;
+                case 'export':
+                    $object = new Pray4Movement_Prayer_Points_Tab_Export();
                     $object->content();
                     break;
                 default:
@@ -331,7 +336,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Library created successfully', 'pray4movement_prayer_points' ), 'success' );
     }
 
-    public function get_prayer_libraries() {
+    public static function get_prayer_libraries() {
         global $wpdb;
         $prayer_libraries = $wpdb->get_results(
             "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib`;", ARRAY_A
@@ -354,7 +359,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             <td><?php echo esc_html( $library['description'] ); ?></td>
             <td><?php echo esc_html( self::count_prayer_points( $library['id'] ) ); ?></td>
             <td>
-                <a href="#"><?php esc_html_e( 'Export', 'pray4movement_prayer_points' ); ?></a> | 
+                <a href="#"><?php esc_html_e( 'Edit', 'pray4movement_prayer_points' ); ?></a> | 
                 <a href="#" style="color:#b32d2e;" class="delete_library" data-id="<?php echo esc_html( $library['id'] ); ?>" data-name="<?php echo esc_html( $library['name'] ); ?>"><?php esc_html_e( 'Delete', 'pray4movement_prayer_points' ); ?></a>
             </td>
         </tr>
@@ -559,72 +564,73 @@ class Pray4Movement_Prayer_Points_View_Lib {
                         </td>
                         <td>
                             <select name="prayer_reference_book" id="">
-                            <option value="Genesis">Genesis</option>
-                            <option value="Exodus">Exodus</option>
-                            <option value="Leviticus">Leviticus</option>
-                            <option value="Numbers">Numbers</option>
-                            <option value="Deuteronomy">Deuteronomy</option>
-                            <option value="Joshua">Joshua</option>
-                            <option value="Judges">Judges</option>
-                            <option value="Ruth">Ruth</option>
-                            <option value="1 Samuel">1 Samuel</option>
-                            <option value="2 Samuel">2 Samuel</option>
-                            <option value="1 Kings">1 Kings</option>
-                            <option value="2 Kings">2 Kings</option>
-                            <option value="1 Chronicles">1 Chronicles</option>
-                            <option value="2 Chronicles">2 Chronicles</option>
-                            <option value="Ezra">Ezra</option>
-                            <option value="Nehemiah">Nehemiah</option>
-                            <option value="Esther">Esther</option>
-                            <option value="Job">Job</option>
-                            <option value="Psalm">Psalm</option>
-                            <option value="Proverbs">Proverbs</option>
-                            <option value="Ecclesiastes">Ecclesiastes</option>
-                            <option value="Song of Solomon">Song of Solomon</option>
-                            <option value="Isaiah">Isaiah</option>
-                            <option value="Jeremiah">Jeremiah</option>
-                            <option value="Lamentations">Lamentations</option>
-                            <option value="Ezekiel">Ezekiel</option>
-                            <option value="Daniel">Daniel</option>
-                            <option value="Hosea">Hosea</option>
-                            <option value="Joel">Joel</option>
-                            <option value="Amos">Amos</option>
-                            <option value="Obadiah">Obadiah</option>
-                            <option value="Jonah">Jonah</option>
-                            <option value="Micah">Micah</option>
-                            <option value="Nahum">Nahum</option>
-                            <option value="Habakkuk">Habakkuk</option>
-                            <option value="Zephaniah">Zephaniah</option>
-                            <option value="Haggai">Haggai</option>
-                            <option value="Zechariah">Zechariah</option>
-                            <option value="Malachi">Malachi</option>
-                            <option value="Matthew">Matthew</option>
-                            <option value="Mark">Mark</option>
-                            <option value="Luke">Luke</option>
-                            <option value="John">John</option>
-                            <option value="Acts">Acts</option>
-                            <option value="Romans">Romans</option>
-                            <option value="1 Corinthians">1 Corinthians</option>
-                            <option value="2 Corinthians">2 Corinthians</option>
-                            <option value="Galatians">Galatians</option>
-                            <option value="Ephesians">Ephesians</option>
-                            <option value="Philippians">Philippians</option>
-                            <option value="Colossians">Colossians</option>
-                            <option value="1 Thessalonians">1 Thessalonians</option>
-                            <option value="2 Thessalonians">2 Thessalonians</option>
-                            <option value="1 Timothy">1 Timothy</option>
-                            <option value="2 Timothy">2 Timothy</option>
-                            <option value="Titus">Titus</option>
-                            <option value="Philemon">Philemon</option>
-                            <option value="Hebrews">Hebrews</option>
-                            <option value="James">James</option>
-                            <option value="1 Peter">1 Peter</option>
-                            <option value="2 Peter">2 Peter</option>
-                            <option value="1 John">1 John</option>
-                            <option value="2 John">2 John</option>
-                            <option value="3 John">3 John</option>
-                            <option value="Jude">Jude</option>
-                            <option value="Revelation">Revelation</option>
+                                <option value="no_reference">(No Reference)</option>
+                                <option value="Genesis">Genesis</option>
+                                <option value="Exodus">Exodus</option>
+                                <option value="Leviticus">Leviticus</option>
+                                <option value="Numbers">Numbers</option>
+                                <option value="Deuteronomy">Deuteronomy</option>
+                                <option value="Joshua">Joshua</option>
+                                <option value="Judges">Judges</option>
+                                <option value="Ruth">Ruth</option>
+                                <option value="1 Samuel">1 Samuel</option>
+                                <option value="2 Samuel">2 Samuel</option>
+                                <option value="1 Kings">1 Kings</option>
+                                <option value="2 Kings">2 Kings</option>
+                                <option value="1 Chronicles">1 Chronicles</option>
+                                <option value="2 Chronicles">2 Chronicles</option>
+                                <option value="Ezra">Ezra</option>
+                                <option value="Nehemiah">Nehemiah</option>
+                                <option value="Esther">Esther</option>
+                                <option value="Job">Job</option>
+                                <option value="Psalm">Psalm</option>
+                                <option value="Proverbs">Proverbs</option>
+                                <option value="Ecclesiastes">Ecclesiastes</option>
+                                <option value="Song of Solomon">Song of Solomon</option>
+                                <option value="Isaiah">Isaiah</option>
+                                <option value="Jeremiah">Jeremiah</option>
+                                <option value="Lamentations">Lamentations</option>
+                                <option value="Ezekiel">Ezekiel</option>
+                                <option value="Daniel">Daniel</option>
+                                <option value="Hosea">Hosea</option>
+                                <option value="Joel">Joel</option>
+                                <option value="Amos">Amos</option>
+                                <option value="Obadiah">Obadiah</option>
+                                <option value="Jonah">Jonah</option>
+                                <option value="Micah">Micah</option>
+                                <option value="Nahum">Nahum</option>
+                                <option value="Habakkuk">Habakkuk</option>
+                                <option value="Zephaniah">Zephaniah</option>
+                                <option value="Haggai">Haggai</option>
+                                <option value="Zechariah">Zechariah</option>
+                                <option value="Malachi">Malachi</option>
+                                <option value="Matthew">Matthew</option>
+                                <option value="Mark">Mark</option>
+                                <option value="Luke">Luke</option>
+                                <option value="John">John</option>
+                                <option value="Acts">Acts</option>
+                                <option value="Romans">Romans</option>
+                                <option value="1 Corinthians">1 Corinthians</option>
+                                <option value="2 Corinthians">2 Corinthians</option>
+                                <option value="Galatians">Galatians</option>
+                                <option value="Ephesians">Ephesians</option>
+                                <option value="Philippians">Philippians</option>
+                                <option value="Colossians">Colossians</option>
+                                <option value="1 Thessalonians">1 Thessalonians</option>
+                                <option value="2 Thessalonians">2 Thessalonians</option>
+                                <option value="1 Timothy">1 Timothy</option>
+                                <option value="2 Timothy">2 Timothy</option>
+                                <option value="Titus">Titus</option>
+                                <option value="Philemon">Philemon</option>
+                                <option value="Hebrews">Hebrews</option>
+                                <option value="James">James</option>
+                                <option value="1 Peter">1 Peter</option>
+                                <option value="2 Peter">2 Peter</option>
+                                <option value="1 John">1 John</option>
+                                <option value="2 John">2 John</option>
+                                <option value="3 John">3 John</option>
+                                <option value="Jude">Jude</option>
+                                <option value="Revelation">Revelation</option>
                             </select>
                             <input type="text" name="prayer_reference_verse" size="30">
                         </td>
@@ -741,7 +747,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
             $tags = explode( ',', $tags_text );
 
             foreach ( $tags as $tag ) {
-                $tag = trim( $tag );
+                $tag = strtolower( trim( $tag ) );
                 $wpdb->insert(
                     $wpdb->prefix.'dt_prayer_points_meta',
                     [
@@ -778,22 +784,57 @@ class Pray4Movement_Prayer_Points_View_Lib {
             $new_prayer_content_hash = md5( $prayer_content );
         }
 
-        $meta_args = [];
-        $meta_args['title'] = $prayer_title;
-        $meta_args['reference'] = null;
-        if ( !empty( $_POST['prayer_reference_book'] ) && !empty( $_POST['prayer_reference_verse'] ) ) {
-            $book = sanitize_text_field( wp_unslash( $_POST['prayer_reference_book'] ) );
-            $verse = sanitize_text_field( wp_unslash( $_POST['prayer_reference_verse'] ) );
-            $reference = "$book $verse";
-            $meta_args['reference'] = $reference;
-            $meta_args['book'] = $book;
-            $meta_args['verse'] = $verse;
-        }
-
+        global $wpdb;
         $prayer_id = sanitize_key( wp_unslash( $_POST['prayer_id'] ) );
         $new_prayer_status = 'unpublished'; //todo delete this test line
 
-        global $wpdb;
+        $meta_args = [];
+        $meta_args['title'] = $prayer_title;
+        $meta_args['reference'] = null;
+        if ( isset( $_POST['prayer_reference_book'] ) && isset( $_POST['prayer_reference_verse'] ) ) {
+            $book = sanitize_text_field( wp_unslash( $_POST['prayer_reference_book'] ) );
+            $verse = sanitize_text_field( wp_unslash( $_POST['prayer_reference_verse'] ) );
+            $reference_args['book'] = $book;
+            $reference_args['verse'] = $verse;
+            $reference_args['reference'] = "$book $verse";
+
+            if ( $book === 'no_reference' ) {
+                unset( $reference_args );
+                // User unset the reference book, so we delete reference-related metas
+                $wpdb->query(
+                    $wpdb->prepare(
+                    "DELETE FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'reference' AND prayer_id = %d;", $prayer_id)
+                );
+
+                $wpdb->query(
+                    $wpdb->prepare(
+                    "DELETE FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'book' AND prayer_id = %d;", $prayer_id)
+                );
+
+                $wpdb->query(
+                    $wpdb->prepare(
+                    "DELETE FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'verse' AND prayer_id = %d;", $prayer_id)
+                );
+            }
+
+            if ( isset( $reference_args ) ) {
+                foreach ( $reference_args as $ref_key => $ref_val ) {
+                    $wpdb->insert(
+                        $wpdb->prefix.'dt_prayer_points_meta',
+                        [
+                            'prayer_id' => $prayer_id,
+                            'meta_key' => $ref_key,
+                            'meta_value' => $ref_val,
+                        ],
+                        [
+                            '%d', // prayer_id
+                            '%s', // meta_key
+                            '%s', // meta_value
+                        ]
+                    );
+                }
+            }
+        }
 
         $wpdb->update(
             $wpdb->prefix.'dt_prayer_points',
@@ -1033,72 +1074,73 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
                 </td>
                 <td>
                     <select name="prayer_reference_book" id="prayer_reference_book">
-                    <option value="Genesis">Genesis</option>
-                    <option value="Exodus">Exodus</option>
-                    <option value="Leviticus">Leviticus</option>
-                    <option value="Numbers">Numbers</option>
-                    <option value="Deuteronomy">Deuteronomy</option>
-                    <option value="Joshua">Joshua</option>
-                    <option value="Judges">Judges</option>
-                    <option value="Ruth">Ruth</option>
-                    <option value="1 Samuel">1 Samuel</option>
-                    <option value="2 Samuel">2 Samuel</option>
-                    <option value="1 Kings">1 Kings</option>
-                    <option value="2 Kings">2 Kings</option>
-                    <option value="1 Chronicles">1 Chronicles</option>
-                    <option value="2 Chronicles">2 Chronicles</option>
-                    <option value="Ezra">Ezra</option>
-                    <option value="Nehemiah">Nehemiah</option>
-                    <option value="Esther">Esther</option>
-                    <option value="Job">Job</option>
-                    <option value="Psalm">Psalm</option>
-                    <option value="Proverbs">Proverbs</option>
-                    <option value="Ecclesiastes">Ecclesiastes</option>
-                    <option value="Song of Solomon">Song of Solomon</option>
-                    <option value="Isaiah">Isaiah</option>
-                    <option value="Jeremiah">Jeremiah</option>
-                    <option value="Lamentations">Lamentations</option>
-                    <option value="Ezekiel">Ezekiel</option>
-                    <option value="Daniel">Daniel</option>
-                    <option value="Hosea">Hosea</option>
-                    <option value="Joel">Joel</option>
-                    <option value="Amos">Amos</option>
-                    <option value="Obadiah">Obadiah</option>
-                    <option value="Jonah">Jonah</option>
-                    <option value="Micah">Micah</option>
-                    <option value="Nahum">Nahum</option>
-                    <option value="Habakkuk">Habakkuk</option>
-                    <option value="Zephaniah">Zephaniah</option>
-                    <option value="Haggai">Haggai</option>
-                    <option value="Zechariah">Zechariah</option>
-                    <option value="Malachi">Malachi</option>
-                    <option value="Matthew">Matthew</option>
-                    <option value="Mark">Mark</option>
-                    <option value="Luke">Luke</option>
-                    <option value="John">John</option>
-                    <option value="Acts">Acts</option>
-                    <option value="Romans">Romans</option>
-                    <option value="1 Corinthians">1 Corinthians</option>
-                    <option value="2 Corinthians">2 Corinthians</option>
-                    <option value="Galatians">Galatians</option>
-                    <option value="Ephesians">Ephesians</option>
-                    <option value="Philippians">Philippians</option>
-                    <option value="Colossians">Colossians</option>
-                    <option value="1 Thessalonians">1 Thessalonians</option>
-                    <option value="2 Thessalonians">2 Thessalonians</option>
-                    <option value="1 Timothy">1 Timothy</option>
-                    <option value="2 Timothy">2 Timothy</option>
-                    <option value="Titus">Titus</option>
-                    <option value="Philemon">Philemon</option>
-                    <option value="Hebrews">Hebrews</option>
-                    <option value="James">James</option>
-                    <option value="1 Peter">1 Peter</option>
-                    <option value="2 Peter">2 Peter</option>
-                    <option value="1 John">1 John</option>
-                    <option value="2 John">2 John</option>
-                    <option value="3 John">3 John</option>
-                    <option value="Jude">Jude</option>
-                    <option value="Revelation">Revelation</option>
+                        <option value="no_reference">(No Reference)</option>
+                        <option value="Genesis">Genesis</option>
+                        <option value="Exodus">Exodus</option>
+                        <option value="Leviticus">Leviticus</option>
+                        <option value="Numbers">Numbers</option>
+                        <option value="Deuteronomy">Deuteronomy</option>
+                        <option value="Joshua">Joshua</option>
+                        <option value="Judges">Judges</option>
+                        <option value="Ruth">Ruth</option>
+                        <option value="1 Samuel">1 Samuel</option>
+                        <option value="2 Samuel">2 Samuel</option>
+                        <option value="1 Kings">1 Kings</option>
+                        <option value="2 Kings">2 Kings</option>
+                        <option value="1 Chronicles">1 Chronicles</option>
+                        <option value="2 Chronicles">2 Chronicles</option>
+                        <option value="Ezra">Ezra</option>
+                        <option value="Nehemiah">Nehemiah</option>
+                        <option value="Esther">Esther</option>
+                        <option value="Job">Job</option>
+                        <option value="Psalm">Psalm</option>
+                        <option value="Proverbs">Proverbs</option>
+                        <option value="Ecclesiastes">Ecclesiastes</option>
+                        <option value="Song of Solomon">Song of Solomon</option>
+                        <option value="Isaiah">Isaiah</option>
+                        <option value="Jeremiah">Jeremiah</option>
+                        <option value="Lamentations">Lamentations</option>
+                        <option value="Ezekiel">Ezekiel</option>
+                        <option value="Daniel">Daniel</option>
+                        <option value="Hosea">Hosea</option>
+                        <option value="Joel">Joel</option>
+                        <option value="Amos">Amos</option>
+                        <option value="Obadiah">Obadiah</option>
+                        <option value="Jonah">Jonah</option>
+                        <option value="Micah">Micah</option>
+                        <option value="Nahum">Nahum</option>
+                        <option value="Habakkuk">Habakkuk</option>
+                        <option value="Zephaniah">Zephaniah</option>
+                        <option value="Haggai">Haggai</option>
+                        <option value="Zechariah">Zechariah</option>
+                        <option value="Malachi">Malachi</option>
+                        <option value="Matthew">Matthew</option>
+                        <option value="Mark">Mark</option>
+                        <option value="Luke">Luke</option>
+                        <option value="John">John</option>
+                        <option value="Acts">Acts</option>
+                        <option value="Romans">Romans</option>
+                        <option value="1 Corinthians">1 Corinthians</option>
+                        <option value="2 Corinthians">2 Corinthians</option>
+                        <option value="Galatians">Galatians</option>
+                        <option value="Ephesians">Ephesians</option>
+                        <option value="Philippians">Philippians</option>
+                        <option value="Colossians">Colossians</option>
+                        <option value="1 Thessalonians">1 Thessalonians</option>
+                        <option value="2 Thessalonians">2 Thessalonians</option>
+                        <option value="1 Timothy">1 Timothy</option>
+                        <option value="2 Timothy">2 Timothy</option>
+                        <option value="Titus">Titus</option>
+                        <option value="Philemon">Philemon</option>
+                        <option value="Hebrews">Hebrews</option>
+                        <option value="James">James</option>
+                        <option value="1 Peter">1 Peter</option>
+                        <option value="2 Peter">2 Peter</option>
+                        <option value="1 John">1 John</option>
+                        <option value="2 John">2 John</option>
+                        <option value="3 John">3 John</option>
+                        <option value="Jude">Jude</option>
+                        <option value="Revelation">Revelation</option>
                     </select>
                     <input type="text" name="prayer_reference_verse" size="30" value="<?php echo esc_html( $prayer_verse ); ?>">
                 </td>
@@ -1199,10 +1241,127 @@ class Pray4Movement_Prayer_Points_Tab_Import {
 
     public function main_column() {
         ?>
-        <h2>Import Prayers</h2>
         <p>
             <?php echo esc_html( 'Howdy! Upload your Pray4Movement Prayer Library .CSV file and we’ll import the prayer library, prayer points, and tags into this site.', 'pray4movement_prayer_points' ); ?>
         </p>
+        <p>
+            <button>Choose file...</button>
+        </p>
+        <?php
+    }
+
+    public function right_column() {
+        ?>
+        <!-- Box -->
+        <table class="widefat striped">
+            <thead>
+                <tr>
+                    <th>Information</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    Content
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <br>
+        <!-- End Box -->
+        <?php
+    }
+}
+
+/**
+ * Class Pray4Movement_Prayer_Points_Tab_Export
+ */
+class Pray4Movement_Prayer_Points_Tab_Export {
+    public function content() {
+        if ( !current_user_can( 'manage_dt' ) ) { // manage dt is a permission that is specific to Disciple.Tools and allows admins, strategists and dispatchers into the wp-admin
+            wp_die( 'You do not have sufficient permissions to access this page.' );
+        }
+        ?>
+        <div class="wrap">
+            <div id="poststuff">
+                <div id="post-body" class="metabox-holder columns-2">
+                    <div id="post-body-content">
+                        <!-- Main Column -->
+
+                        <?php $this->main_column() ?>
+
+                        <!-- End Main Column -->
+                    </div><!-- end post-body-content -->
+                    <div id="postbox-container-1" class="postbox-container">
+                        <!-- Right Column -->
+
+                        <?php $this->right_column() ?>
+
+                        <!-- End Right Column -->
+                    </div><!-- postbox-container 1 -->
+                    <div id="postbox-container-2" class="postbox-container">
+                    </div><!-- postbox-container 2 -->
+                </div><!-- post-body meta box container -->
+            </div><!--poststuff end -->
+        </div><!-- wrap end -->
+        <?php
+    }
+
+    public function main_column() {
+        $prayer_libraries = Pray4Movement_Prayer_Points_Tab_Explore::get_prayer_libraries();
+        ?>
+        <form method="POST">
+            <table class="wp-list-table widefat plugins">
+                <thead>
+                <tr>
+                    <td id="cb" class="manage-column column-cb check-column">
+                        <label class="screen-reader-text" for="cb-select-all-1">Select All</label>
+                        <input id="cb-select-all-1" type="checkbox">
+                    </td>
+                    <th scope="col" id="name" class="manage-column column-name column-primary"><?php echo esc_html( 'Prayer Library', 'pray4movement_prayer_points' ); ?></th>
+                    <th scope="col" id="description" class="manage-column column-description"><?php echo esc_html( 'Description', 'pray4movement_prayer_points' ); ?></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ( $prayer_libraries as $prayer_library ): ?>
+                <tr class="inactive" data-slug="disciple-tools-bulk-contact-messaging" data-plugin="disciple-tools-bulk-contact-messaging/disciple-tools-bulk-contact-messaging.php">
+                    <th scope="row" class="check-column"><label class="screen-reader-text" for="checkbox_e7de485bc6f9c11a393a2db09ba1b861"><?php echo esc_html( $prayer_library['name'] ); ?></label>
+                        <input type="checkbox" name="checked[]" value="disciple-tools-bulk-contact-messaging/disciple-tools-bulk-contact-messaging.php" id="checkbox_e7de485bc6f9c11a393a2db09ba1b861">
+                    </th>
+                    <td>
+                        <strong>
+                            <?php echo esc_html( $prayer_library['name'] ); ?>
+                        </strong>
+                        <div class="row-actions visible">
+                            <span>
+                                <a href="#">
+                                    <?php echo esc_html( 'Export', 'pray4movement_prayer_points' ); ?>
+                                </a>
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        <div>
+                            <p><?php echo esc_html( $prayer_library['description'] ); ?></p>
+                        </div>
+                        <div>
+                            <i>
+                                <?php echo esc_html( 'Last updated:', 'pray4movement_prayer_points' ); ?> <?php echo esc_html( substr( $prayer_library['last_updated'] ), 0, 16 ); ?>
+                            </i>
+                        </div>
+                    </td>
+                </tr>
+                <?php endforeach; ?>
+                <tr>
+                    <td colspan="2">
+                        <button class="button" type="post"><?php echo esc_html( 'Export', 'pray4movement_prayer_points' ); ?></button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <br>
+        </form>
+        <br>
         <?php
     }
 
