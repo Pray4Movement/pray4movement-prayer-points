@@ -217,6 +217,7 @@ class Pray4Movement_Prayer_Points {
                 `description` LONGTEXT DEFAULT NULL,
                 `icon` LONGTEXT COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
                 `status` VARCHAR(20) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'unpublished',
+                `last_updated` TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
                 PRIMARY KEY (`id`)
             ) $charset_collate;" //@phpcs:ignore
         );
