@@ -819,6 +819,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
 
             if ( isset( $reference_args ) ) {
                 foreach ( $reference_args as $ref_key => $ref_val ) {
+                    dt_write_log( "$ref_key - $ref_val" );
                     $wpdb->insert(
                         $wpdb->prefix.'dt_prayer_points_meta',
                         [
@@ -1046,6 +1047,11 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         $prayer_title = Pray4Movement_Prayer_Points_View_Lib::get_prayer_meta( $prayer_id, 'title' );
         $prayer_book = Pray4Movement_Prayer_Points_View_Lib::get_prayer_meta( $prayer_id, 'book' );
         $prayer_verse = Pray4Movement_Prayer_Points_View_Lib::get_prayer_meta( $prayer_id, 'verse' );
+
+        if ( !$prayer_point ) {
+            esc_html_e( 'Error: Prayer Point does not exist.', 'pray4movement_prayer_points' );
+            return;
+        }
         ?>
         <!-- Box -->
         <form method="POST">
