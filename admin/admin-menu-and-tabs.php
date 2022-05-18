@@ -790,7 +790,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
 
         $meta_args = [];
         $meta_args['title'] = $prayer_title;
-        $meta_args['reference'] = null;
+
         if ( isset( $_POST['prayer_reference_book'] ) && isset( $_POST['prayer_reference_verse'] ) ) {
             $book = sanitize_text_field( wp_unslash( $_POST['prayer_reference_book'] ) );
             $verse = sanitize_text_field( wp_unslash( $_POST['prayer_reference_verse'] ) );
