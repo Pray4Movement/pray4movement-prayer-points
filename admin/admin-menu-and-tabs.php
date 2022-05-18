@@ -547,7 +547,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
                             <?php esc_html_e( 'Title', 'pray4movement_prayer_points' ); ?> (*)
                         </td>
                         <td>
-                            <input type="text" name="new_prayer_title" size="50" required>
+                            <input type="text" name="prayer_title" size="50" required>
                         </td>
                     </tr>
                     <tr>
@@ -555,7 +555,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
                             <?php esc_html_e( 'Reference', 'pray4movement_prayer_points' ); ?>
                         </td>
                         <td>
-                            <select name="new_prayer_reference_book" id="">
+                            <select name="prayer_reference_book" id="">
                             <option value="Genesis">Genesis</option>
                             <option value="Exodus">Exodus</option>
                             <option value="Leviticus">Leviticus</option>
@@ -623,7 +623,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
                             <option value="Jude">Jude</option>
                             <option value="Revelation">Revelation</option>
                             </select>
-                            <input type="text" name="new_prayer_reference_verse" size="30">
+                            <input type="text" name="prayer_reference_verse" size="30">
                         </td>
                     </tr>
                     <tr>
@@ -631,7 +631,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
                             <?php esc_html_e( 'Content', 'pray4movement_prayer_points' ); ?> (*)
                         </td>
                         <td>
-                            <textarea name="new_prayer_content" rows="10" cols="50" required></textarea>
+                            <textarea name="prayer_content" rows="10" cols="50" required></textarea>
                         </td>
                     </tr>
                     <tr>
@@ -644,7 +644,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
                     </tr>
                     <tr style="display:none;">
                         <td></td>
-                        <td><input type="hidden" name="new_prayer_libid" value="<?php echo esc_html( $lib_id ); ?>"></td>
+                        <td><input type="hidden" name="prayer_libid" value="<?php echo esc_html( $lib_id ); ?>"></td>
                     </tr>
                     <tr>
                         <td colspan="2">
@@ -662,32 +662,32 @@ class Pray4Movement_Prayer_Points_View_Lib {
             return;
         }
 
-        if ( !isset( $_POST['new_prayer_libid'] ) || !isset( $_POST['new_prayer_title'] ) || !isset( $_POST['new_prayer_content'] ) ) {
+        if ( !isset( $_POST['prayer_libid'] ) || !isset( $_POST['prayer_title'] ) || !isset( $_POST['prayer_content'] ) ) {
             return;
         }
 
-        if ( !empty( $_POST['new_prayer_title'] ) ) {
-            $new_prayer_title = sanitize_text_field( wp_unslash( $_POST['new_prayer_title'] ) );
+        if ( !empty( $_POST['prayer_title'] ) ) {
+            $prayer_title = sanitize_text_field( wp_unslash( $_POST['prayer_title'] ) );
         }
 
-        if ( !empty( $_POST['new_prayer_content'] ) ) {
-            $new_prayer_content = sanitize_text_field( wp_unslash( $_POST['new_prayer_content'] ) );
-            $new_prayer_content_hash = md5( $new_prayer_content );
+        if ( !empty( $_POST['prayer_content'] ) ) {
+            $prayer_content = sanitize_text_field( wp_unslash( $_POST['prayer_content'] ) );
+            $new_prayer_content_hash = md5( $prayer_content );
         }
 
         $meta_args = [];
-        $meta_args['title'] = $new_prayer_title;
+        $meta_args['title'] = $prayer_title;
         $meta_args['reference'] = null;
-        if ( !empty( $_POST['new_prayer_reference_book'] ) && !empty( $_POST['new_prayer_reference_verse'] ) ) {
-            $book = sanitize_text_field( wp_unslash( $_POST['new_prayer_reference_book'] ) );
-            $verse = sanitize_text_field( wp_unslash( $_POST['new_prayer_reference_verse'] ) );
+        if ( !empty( $_POST['prayer_reference_book'] ) && !empty( $_POST['prayer_reference_verse'] ) ) {
+            $book = sanitize_text_field( wp_unslash( $_POST['prayer_reference_book'] ) );
+            $verse = sanitize_text_field( wp_unslash( $_POST['prayer_reference_verse'] ) );
             $reference = "$book $verse";
             $meta_args['reference'] = $reference;
             $meta_args['book'] = $book;
             $meta_args['verse'] = $verse;
         }
 
-        $new_prayer_libid = sanitize_key( wp_unslash( $_POST['new_prayer_libid'] ) );
+        $prayer_libid = sanitize_key( wp_unslash( $_POST['prayer_libid'] ) );
         $new_prayer_status = 'unpublished'; //todo delete this test line
 
         global $wpdb;
@@ -695,8 +695,8 @@ class Pray4Movement_Prayer_Points_View_Lib {
         $test = $wpdb->insert(
             $wpdb->prefix.'dt_prayer_points',
             [
-                'lib_id' => $new_prayer_libid,
-                'content' => $new_prayer_content,
+                'lib_id' => $prayer_libid,
+                'content' => $prayer_content,
                 'hash' => $new_prayer_content_hash,
                 'status' => $new_prayer_status,
             ],
@@ -754,6 +754,105 @@ class Pray4Movement_Prayer_Points_View_Lib {
         }
 
         Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Point added successfully', 'pray4movement_prayer_points' ), 'success' );
+
+    }
+
+    public static function process_edit_prayer_point() {
+        if ( !isset( $_POST['edit_prayer_point_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['edit_prayer_point_nonce'] ), 'edit_prayer_point' ) ) {
+            return;
+        }
+
+        if ( !isset( $_POST['prayer_id'] ) || !isset( $_POST['prayer_title'] ) || !isset( $_POST['prayer_content'] ) ) {
+            return;
+        }
+
+        if ( !empty( $_POST['prayer_title'] ) ) {
+            $prayer_title = sanitize_text_field( wp_unslash( $_POST['prayer_title'] ) );
+        }
+
+        if ( !empty( $_POST['prayer_content'] ) ) {
+            $prayer_content = sanitize_text_field( wp_unslash( $_POST['prayer_content'] ) );
+            $new_prayer_content_hash = md5( $prayer_content );
+        }
+
+        $meta_args = [];
+        $meta_args['title'] = $prayer_title;
+        $meta_args['reference'] = null;
+        if ( !empty( $_POST['prayer_reference_book'] ) && !empty( $_POST['prayer_reference_verse'] ) ) {
+            $book = sanitize_text_field( wp_unslash( $_POST['prayer_reference_book'] ) );
+            $verse = sanitize_text_field( wp_unslash( $_POST['prayer_reference_verse'] ) );
+            $reference = "$book $verse";
+            $meta_args['reference'] = $reference;
+            $meta_args['book'] = $book;
+            $meta_args['verse'] = $verse;
+        }
+
+        $prayer_id = sanitize_key( wp_unslash( $_POST['prayer_id'] ) );
+        $new_prayer_status = 'unpublished'; //todo delete this test line
+
+        global $wpdb;
+
+        $wpdb->update(
+            $wpdb->prefix.'dt_prayer_points',
+            [
+                'content' => $prayer_content,
+                'hash' => $new_prayer_content_hash,
+                'status' => $new_prayer_status,
+            ],
+            [
+                'id' => $prayer_id
+            ],
+            [
+                '%s', // content
+                '%s', // hash
+                '%s', // status
+            ]
+        );
+
+        // Update Prayer Point Metas
+        foreach ( $meta_args as $arg_key => $arg_value ) {
+            $wpdb->update(
+                $wpdb->prefix.'dt_prayer_points_meta',
+                [
+                    'meta_value' => $arg_value,
+                ],
+                [
+                    'prayer_id' => $prayer_id,
+                    'meta_key' => $arg_key,
+                ],
+                [
+                    '%s', // meta_value
+                ]
+            );
+
+        }
+        if ( !empty( $_POST['prayer_tags'] ) ) {
+            $tags_text = sanitize_text_field( wp_unslash( $_POST['prayer_tags'] ) );
+            $tags = explode( ',', $tags_text );
+
+            $delete_tags = $wpdb->query(
+                $wpdb->prepare(
+                    "DELETE FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = %d;", $prayer_id
+                )
+            );
+
+            foreach ( $tags as $tag ) {
+                $tag = trim( $tag );
+                $wpdb->insert(
+                    $wpdb->prefix.'dt_prayer_points_meta',
+                    [
+                        'prayer_id' => $prayer_id,
+                        'meta_key' => 'tags',
+                        'meta_value' => $tag,
+                    ],
+                    [
+                        '%s', // meta_value
+                    ]
+                );
+            }
+        }
+
+        Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Point updated successfully', 'pray4movement_prayer_points' ), 'success' );
 
     }
 
@@ -890,6 +989,13 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
             return;
         }
 
+        if ( isset( $_POST['edit_prayer_point_nonce'] ) ) {
+            if ( !isset( $_POST['edit_prayer_point_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['edit_prayer_point_nonce'] ), 'edit_prayer_point' ) ) {
+                return;
+            }
+            Pray4Movement_Prayer_Points_View_Lib::process_edit_prayer_point();
+        }
+
         $prayer_id = esc_sql( sanitize_text_field( wp_unslash( $_GET['edit_prayer'] ) ) );
         $prayer_point = Pray4Movement_Prayer_Points_View_Lib::get_prayer_point( $prayer_id );
         $prayer_tags = Pray4Movement_Prayer_Points_View_Lib::get_prayer_tags( $prayer_id );
@@ -1014,7 +1120,7 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
             </tr>
             <tr style="display:none;">
                 <td></td>
-                <td><input type="hidden" name="prayer_libid" value="<?php echo esc_html( $prayer_id ); ?>"></td>
+                <td><input type="hidden" name="prayer_id" value="<?php echo esc_html( $prayer_id ); ?>"></td>
             </tr>
             <tr>
                 <td colspan="2">
