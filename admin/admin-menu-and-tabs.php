@@ -1352,7 +1352,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                         </div>
                         <div>
                             <i>
-                                <?php echo esc_html( 'Last updated:', 'pray4movement_prayer_points' ); ?> <?php echo esc_html( substr( $prayer_library['last_updated'] ), 0, 16 ); ?>
+                                <?php echo esc_html( 'Last updated:', 'pray4movement_prayer_points' ); ?> <?php echo esc_html( substr( $prayer_library['last_updated'], 0, 16 ) ); ?>
                             </i>
                         </div>
                     </td>
