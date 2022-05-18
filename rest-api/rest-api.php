@@ -23,7 +23,7 @@ class Pray4Movement_Prayer_Points_Endpoints
 
         register_rest_route(
             $namespace, '/delete_prayer_library/(?P<lib_id>\d+)', [
-                'methods'  => "POST",
+                'methods'  => 'POST',
                 'callback' => [ $this, 'endpoint_delete_prayer_lib' ],
                 'permission_callback' => function( WP_REST_Request $request ) {
                     return $this->has_permission();
@@ -33,8 +33,18 @@ class Pray4Movement_Prayer_Points_Endpoints
 
         register_rest_route(
             $namespace, '/delete_prayer_point/(?P<prayer_id>\d+)', [
-                'methods'  => "POST",
+                'methods'  => 'POST',
                 'callback' => [ $this, 'endpoint_delete_prayer_point' ],
+                'permission_callback' => function( WP_REST_Request $request ) {
+                    return $this->has_permission();
+                },
+            ]
+        );
+
+        register_rest_route(
+            $namespace, '/get_prayer_points/(?P<lib_id>\d+)', [
+                'methods' => 'POST',
+                'callback' => [ $this , 'endpoint_get_prayer_points' ],
                 'permission_callback' => function( WP_REST_Request $request ) {
                     return $this->has_permission();
                 },
@@ -57,6 +67,31 @@ class Pray4Movement_Prayer_Points_Endpoints
         self::delete_prayer_lib( $lib_id );
         self::delete_prayer_points_by_lib( $lib_id );
         return true;
+    }
+
+    public function endpoint_get_prayer_points ( WP_REST_Request $request ) {
+        $params = $request->get_params();
+        if ( !isset( $lib_id ) ) {
+            new WP_Error ( __METHOD__, 'Missing a valid prayer library id', [ 'status' => 400 ] );
+        }
+        $lib_id = $request['lib_id'];
+        global $wpdb;
+        $prayer_points = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT
+                    pp.lib_id,
+                    pp.id,
+                    (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'title' AND prayer_id = pp.id) AS 'title',
+                    pp.content,
+                    (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'reference' AND prayer_id = pp.id) AS 'reference',
+                    (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'book' AND prayer_id = pp.id) AS 'book',
+                    (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'verse' AND prayer_id = pp.id) AS 'verse',
+                    (SELECT GROUP_CONCAT(meta_value) FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = pp.id) AS 'tags',
+                    pp.status
+                FROM `{$wpdb->prefix}dt_prayer_points` pp
+                WHERE pp.lib_id = %d", $lib_id )
+            , ARRAY_A );
+        return $prayer_points;
     }
 
     public function delete_prayer_lib( $lib_id ) {
@@ -99,8 +134,6 @@ class Pray4Movement_Prayer_Points_Endpoints
         );
         return true;
     }
-
-
 
     private function delete_prayer_points_by_lib( $lib_id ) {
         if ( !isset( $lib_id ) ) {
