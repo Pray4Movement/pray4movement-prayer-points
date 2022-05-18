@@ -509,6 +509,9 @@ class Pray4Movement_Prayer_Points_View_Lib {
         }
         ?>
         <!-- Box -->
+        <p>
+            <a href="/wp-admin/admin.php?page=pray4movement_prayer_points"><< <?php esc_html_e( 'Back', 'pray4movement_prayer_points' ); ?></a>
+        </p>
         <table class="widefat striped">
             <thead>
                 <tr>
@@ -1006,6 +1009,9 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         <!-- Box -->
         <form method="POST">
         <?php wp_nonce_field( 'edit_prayer_point', 'edit_prayer_point_nonce' ); ?>
+        <p>
+            <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&view_lib=<?php echo esc_attr( $prayer_point['lib_id'] ); ?>"><< <?php esc_html_e( 'Back', 'pray4movement_prayer_points' ); ?></a>
+        </p>
         <table class="widefat striped">
             <thead>
                 <tr>
@@ -1013,11 +1019,6 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
                 </tr>
             </thead>
             <tbody>
-            <tr>
-                <td colspan="2">
-                    <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&view_lib=<?php echo esc_attr( $prayer_point['lib_id'] ); ?>"><< <?php esc_html_e( 'Back', 'pray4movement_prayer_points' ); ?></a>
-                </td>
-            </tr>
             <tr>
                 <td>
                     <?php esc_html_e( 'Title', 'pray4movement_prayer_points' ); ?> (*)
