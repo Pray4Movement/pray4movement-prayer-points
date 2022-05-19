@@ -95,7 +95,6 @@ class Pray4Movement_Prayer_Points_Endpoints
                 WHERE pp.lib_id IN ( " . implode( ',', array_fill( 0, count( $lib_id ), '%d' ) ) . " )
                 ORDER BY pp.lib_id ASC;", $lib_id )
             , ARRAY_A );
-        dt_write_log($wpdb->last_query);
         return $prayer_points;
     }
 
