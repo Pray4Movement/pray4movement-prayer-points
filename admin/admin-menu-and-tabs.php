@@ -344,6 +344,14 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         return $prayer_libraries;
     }
 
+    public static function get_prayer_lib_ids() {
+        global $wpdb;
+        $prayer_libraries = $wpdb->get_col(
+            "SELECT DISTINCT( id ) FROM `{$wpdb->prefix}dt_prayer_points_lib`;", ARRAY_A
+        );
+        return $prayer_libraries;
+    }
+
     public function display_prayer_libraries( $prayer_libraries ) {
         foreach ( $prayer_libraries as $library ) :
             $prayer_icon = Pray4Movement_Prayer_Points_Menu::get_prayer_library_icon();
@@ -1347,6 +1355,17 @@ class Pray4Movement_Prayer_Points_Tab_Import {
 
         if ( !isset( $_POST['prayer-library-id'] ) ) {
             Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( 'Destination Prayer Library not set', 'pray4movement_prayer_points' ), 'error' );
+            return;
+        }
+
+        if ( empty( $_POST['prayer-library-id'] ) ){
+            Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( 'Selected Prayer Library cannot be empty', 'pray4movement_prayer_points' ), 'error' );
+            return;
+        }
+
+        $existing_prayer_lib_ids = Pray4Movement_Prayer_Points_Tab_Explore::get_prayer_lib_ids();
+        if ( !in_array( $_POST['prayer-library-id'], $existing_prayer_lib_ids ) ) {
+            Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( 'No Prayer Library selected', 'pray4movement_prayer_points' ), 'error' );
             return;
         }
 

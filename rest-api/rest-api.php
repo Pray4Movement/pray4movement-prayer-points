@@ -58,13 +58,15 @@ class Pray4Movement_Prayer_Points_Endpoints
         if ( !isset( $params['lib_id'] ) ) {
             return new WP_Error( __METHOD__, 'Missing a valid prayer library id', [ 'status' => 400 ] );
         }
-        $lib_id = esc_sql( $params['lib_id'] );
-        $current_user_id = get_current_user_id();
+
         // todo define can_delete
+        // $current_user_id = get_current_user_id();
         // if ( !Pray4Movement_Prayer_Points::can_delete( 'libraries', $current_user_id = get_current_user_id() ) ) {
         //     return new WP_Error( __METHOD__, 'You do not have permission for this', [ 'status' => 403 ] );
         // }
+        $lib_id = $params['lib_id'];
         self::delete_prayer_lib( $lib_id );
+        self::delete_prayer_meta_by_lib( $lib_id );
         self::delete_prayer_points_by_lib( $lib_id );
         return true;
     }
@@ -103,9 +105,26 @@ class Pray4Movement_Prayer_Points_Endpoints
         global $wpdb;
         $wpdb->query(
             $wpdb->prepare(
-                "DELETE FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %s;", $lib_id
+                "DELETE FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d;", $lib_id
             )
         );
+        return true;
+    }
+
+    public function delete_prayer_meta_by_lib( $lib_id ) {
+        if ( !isset( $lib_id ) ) {
+            return new WP_Error( __METHOD__, 'Missing valid action parameters', [ 'status' => 400 ] );
+        }
+        global $wpdb;
+        // Get prayer ids for Prayer Library
+        $prayer_ids = self::get_prayer_ids_by_lib( $lib_id );
+        
+        // Delete Prayer Meta for those prayer ids
+        foreach ( $prayer_ids as $prayer_id ) {
+            $wpdb->query(
+                $wpdb->prepare( "DELETE FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE id = %d;" , $prayer_id )
+            );
+        }
         return true;
     }
 
@@ -154,6 +173,19 @@ class Pray4Movement_Prayer_Points_Endpoints
             )
         );
         return true;
+    }
+
+    private function get_prayer_ids_by_lib( $lib_id ) {
+        if ( !isset( $lib_id ) ) {
+            return new WP_Error( __METHOD__, 'Missing valid action parameters', [ 'status' => 400 ] );
+        }
+        global $wpdb;
+        $prayer_ids = $wpdb->get_col(
+            $wpdb->prepare(
+                "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $lib_id 
+            ), ARRAY_A
+        );
+        return $prayer_ids;
     }
 
     private static $_instance = null;
