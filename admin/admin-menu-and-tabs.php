@@ -402,7 +402,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
  * Class Pray4Movement_Prayer_Points_View_Lib
  */
 class Pray4Movement_Prayer_Points_View_Lib {
-    public function get_prayer_library( $lib_id ) {
+    public static function get_prayer_library( $lib_id ) {
         $lib_id = esc_sql( $lib_id );
         global $wpdb;
         $prayer_library = $wpdb->get_row(
@@ -515,7 +515,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
         ?>
         <!-- Box -->
         <p>
-            <a href="/wp-admin/admin.php?page=pray4movement_prayer_points"><< <?php esc_html_e( 'Back', 'pray4movement_prayer_points' ); ?></a>
+            <a href="/wp-admin/admin.php?page=pray4movement_prayer_points"><?php esc_html_e( '<< Back to Prayer Libraries', 'pray4movement_prayer_points' ); ?></a>
         </p>
         <table class="widefat striped">
             <thead>
@@ -687,13 +687,23 @@ class Pray4Movement_Prayer_Points_View_Lib {
         $meta_args = [];
         $meta_args['title'] = $prayer_title;
         $meta_args['reference'] = null;
-        if ( !empty( $_POST['prayer_reference_book'] ) && !empty( $_POST['prayer_reference_verse'] ) ) {
-            $book = sanitize_text_field( wp_unslash( $_POST['prayer_reference_book'] ) );
-            $verse = sanitize_text_field( wp_unslash( $_POST['prayer_reference_verse'] ) );
-            $reference = "$book $verse";
-            $meta_args['reference'] = $reference;
-            $meta_args['book'] = $book;
-            $meta_args['verse'] = $verse;
+
+        if ( !empty( $_POST['prayer_reference_book'] ) ) {
+            $meta_args['book'] = $prayer_book;
+            $meta_args['reference'] = $prayer_book;
+
+            if ( isset( $_POST['prayer_reference_book'] ) && isset( $_POST['prayer_reference_verse'] ) ) {
+                $prayer_book = sanitize_text_field( wp_unslash( $_POST['prayer_reference_book'] ) );
+                $prayer_verse = sanitize_text_field( wp_unslash( $_POST['prayer_reference_verse'] ) );
+                if ( !empty( $prayer_book ) ) {
+                    $meta_args['book'] = $prayer_book;
+                    $meta_args['reference'] = $prayer_book;
+                    if ( !empty( $prayer_verse ) ) {
+                        $meta_args['verse'] = $prayer_verse;
+                        $meta_args['reference'] = "$prayer_book $prayer_verse";
+                    }
+                }
+            }
         }
 
         $prayer_libid = sanitize_key( wp_unslash( $_POST['prayer_libid'] ) );
@@ -1047,6 +1057,8 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         $prayer_title = Pray4Movement_Prayer_Points_View_Lib::get_prayer_meta( $prayer_id, 'title' );
         $prayer_book = Pray4Movement_Prayer_Points_View_Lib::get_prayer_meta( $prayer_id, 'book' );
         $prayer_verse = Pray4Movement_Prayer_Points_View_Lib::get_prayer_meta( $prayer_id, 'verse' );
+        $prayer_library = Pray4Movement_Prayer_Points_View_Lib::get_prayer_library( $prayer_point['lib_id'] );
+        dt_write_log( $prayer_library );
 
         if ( !$prayer_point ) {
             esc_html_e( 'Error: Prayer Point does not exist.', 'pray4movement_prayer_points' );
@@ -1057,7 +1069,9 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         <form method="POST">
         <?php wp_nonce_field( 'edit_prayer_point', 'edit_prayer_point_nonce' ); ?>
         <p>
-            <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&view_lib=<?php echo esc_attr( $prayer_point['lib_id'] ); ?>"><< <?php esc_html_e( 'Back', 'pray4movement_prayer_points' ); ?></a>
+            <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&view_lib=<?php echo esc_attr( $prayer_point['lib_id'] ); ?>">
+                <?php echo esc_html( sprintf( __( "<< Back to '%s'", 'pray4movement_prayer_points' ), $prayer_library['name'] ) ); ?>
+            </a>
         </p>
         <table class="widefat striped">
             <thead>
@@ -1336,7 +1350,6 @@ class Pray4Movement_Prayer_Points_Tab_Import {
             $prayer_verse = sanitize_text_field( wp_unslash( $csv_data[4] ) );
             $prayer_tags = sanitize_text_field( wp_unslash( $csv_data[5] ) );
             $prayer_status = sanitize_text_field( wp_unslash( $csv_data[6] ) );
-            $prayer_reference = "$prayer_book $prayer_verse";
             $prayer_hash = md5( $prayer_content );
 
             // todo: Check if $hash not in db
@@ -1360,10 +1373,13 @@ class Pray4Movement_Prayer_Points_Tab_Import {
             $meta_args = [];
             $meta_args['title'] = $prayer_title;
             $meta_args['reference'] = null;
-            if ( !empty( $prayer_book ) && !empty( $prayer_verse ) ) {
-                $meta_args['reference'] = $prayer_reference;
+            if ( !empty( $prayer_book ) ) {
                 $meta_args['book'] = $prayer_book;
-                $meta_args['verse'] = $prayer_verse;
+                $meta_args['reference'] = $prayer_book;
+                if ( !empty( $prayer_verse ) ) {
+                    $meta_args['verse'] = $prayer_verse;
+                    $meta_args['reference'] = "$prayer_book $prayer_verse";
+                }
             }
 
             // Insert Prayer Point Metas
