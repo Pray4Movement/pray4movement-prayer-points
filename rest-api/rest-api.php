@@ -42,7 +42,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         );
 
         register_rest_route(
-            $namespace, '/get_prayer_points/(?P<lib_id>\d+)', [
+            $namespace, '/get_prayer_points/(?P<lib_id>\d*[,\d+]*)', [
                 'methods' => 'POST',
                 'callback' => [ $this , 'endpoint_get_prayer_points' ],
                 'permission_callback' => function( WP_REST_Request $request ) {
@@ -74,7 +74,8 @@ class Pray4Movement_Prayer_Points_Endpoints
         if ( !isset( $lib_id ) ) {
             new WP_Error ( __METHOD__, 'Missing a valid prayer library id', [ 'status' => 400 ] );
         }
-        $lib_id = $request['lib_id'];
+        $lib_id = sanitize_text_field( wp_unslash( $request['lib_id'] ) );
+        $lib_id = explode( ',', $lib_id );
         global $wpdb;
         
         // One query to rule them all...
@@ -91,8 +92,10 @@ class Pray4Movement_Prayer_Points_Endpoints
                     (SELECT GROUP_CONCAT(meta_value) FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = pp.id) AS 'tags',
                     pp.status
                 FROM `{$wpdb->prefix}dt_prayer_points` pp
-                WHERE pp.lib_id = %d", $lib_id )
+                WHERE pp.lib_id IN ( " . implode( ',', array_fill( 0, count( $lib_id ), '%d' ) ) . " )
+                ORDER BY pp.lib_id ASC;", $lib_id )
             , ARRAY_A );
+        dt_write_log($wpdb->last_query);
         return $prayer_points;
     }
 

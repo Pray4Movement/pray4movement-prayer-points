@@ -47,11 +47,11 @@ class Pray4Movement_Prayer_Points_Menu {
      */
     public function register_menu() {
         $this->page_title = __( "Pray4Movement Prayer Points", 'pray4movement-prayer-points' );
-        $menu_icon = self::get_prayer_points_icon();
+        $menu_icon = self::get_prayer_library_icon();
         add_menu_page( 'Prayer Points', 'Prayer Points', 'manage_dt', $this->token, [ $this, 'content' ], $menu_icon );
     }
 
-    public static function get_prayer_points_icon() {
+    public static function get_prayer_library_icon() {
         return 'data:image/svg+xml;base64,PHN2ZyBpZD0ic3ZnIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiB2aWV3Qm94PSIwLCAwLCA0MDAsNDAwIj48ZyBpZD0ic3ZnZyI+PHBhdGggaWQ9InBhdGgwIiBkPSJNMjE5LjcxNiAxOS4yNDggQyAxMzkuNDUzIDMzLjcwNyw5Ni42MDggMTI3LjA1OSwxMzcuODU3IDE5Ny42MDAgTCAxNDEuNjAwIDIwNC4wMDAgMTU3LjExOSAyMDMuNTQzIEwgMTcyLjYzOCAyMDMuMDg2IDE2NC4yNDIgMTkwLjc0MyBDIDEyMS40OTUgMTI3LjkwMSwxNjUuMDQwIDQ0LjU0OSwyNDAuODAwIDQ0LjIwMCBDIDMyMS4xODkgNDMuODI4LDM2NC43NzIgMTM1LjA0OCwzMTQuMjM4IDE5Ny45MDggTCAzMTAuMTMyIDIwMy4wMTYgMzE2LjEwNyAyMDEuMzY2IEMgMzE5LjM5NCAyMDAuNDU5LDMyNS4wMzQgMjAwLjA5NywzMjguNjQyIDIwMC41NjIgQyAzMzIuMjQ5IDIwMS4wMjcsMzM2Ljk0OCAyMDEuNjMxLDMzOS4wODQgMjAxLjkwNCBDIDM0Ny45NDYgMjAzLjAzNiwzNjEuNjAwIDE2NC44MTcsMzYxLjYwMCAxMzguODc3IEMgMzYxLjYwMCA2My4zMjQsMjkzLjU0OSA1Ljk0NywyMTkuNzE2IDE5LjI0OCBNMjI4LjgwMCA4NS42MDAgTCAyMjguODAwIDk3LjYwMCAyMTEuMjAwIDk3LjYwMCBMIDE5My42MDAgOTcuNjAwIDE5My42MDAgMTExLjIwMCBMIDE5My42MDAgMTI0LjgwMCAyMTEuMjAwIDEyNC44MDAgTCAyMjguODAwIDEyNC44MDAgMjI4LjgwMCAxNjEuNjAwIEwgMjI4LjgwMCAxOTguNDAwIDI0Mi40MDAgMTk4LjQwMCBMIDI1Ni4wMDAgMTk4LjQwMCAyNTYuMDAwIDE2MS42MDAgTCAyNTYuMDAwIDEyNC44MDAgMjcyLjgwMCAxMjQuODAwIEwgMjg5LjYwMCAxMjQuODAwIDI4OS42MDAgMTExLjIwMCBMIDI4OS42MDAgOTcuNjAwIDI3Mi44MDAgOTcuNjAwIEwgMjU2LjAwMCA5Ny42MDAgMjU2LjAwMCA4NS42MDAgTCAyNTYuMDAwIDczLjYwMCAyNDIuNDAwIDczLjYwMCBMIDIyOC44MDAgNzMuNjAwIDIyOC44MDAgODUuNjAwIE0yOTcuNjIzIDIyNy43MTkgQyAyNjkuMjU3IDIzNi43MTgsMjcwLjU4MSAyMzUuNzkxLDI2OC4wMTggMjQ4LjQ0MCBDIDI2NC41ODUgMjY1LjM4NiwyNDkuMDY4IDI3MS45NjQsMTk5LjIwMCAyNzcuNjEzIEMgMTY0LjE5NiAyODEuNTc4LDE1OC40MDAgMjgwLjUyMiwxNTguNDAwIDI3MC4xODAgQyAxNTguNDAwIDI2MS45OTIsMTYwLjc2MyAyNjEuMDA3LDE4NC44MDAgMjU5LjE3MyBDIDIzNy4zNjAgMjU1LjE2NSwyNTIuNjcyIDI0OS4yNTYsMjQ4Ljk0OCAyMzQuNDIwIEMgMjQ2LjgwNCAyMjUuODc3LDI0My4xNTIgMjI1LjEwNCwxOTcuODE0IDIyMy42MDcgQyAxNTEuNTM3IDIyMi4wNzksMTQ1LjMyNSAyMjIuNDQzLDEzNS45NDYgMjI3LjIyOCBDIDEyOC43MjcgMjMwLjkxMCw2My45NDIgMjc4LjM2Myw2NC4xMDQgMjc5Ljg0OSBDIDY0LjE2MSAyODAuMzcyLDc5LjY3OCAyOTIuMTg3LDk4LjU4NyAzMDYuMTA1IEwgMTMyLjk2NiAzMzEuNDEwIDE3MC4wODMgMzM0LjczMyBDIDIxMS41ODMgMzM4LjQ1MCwyMTkuMzkzIDMzNy44NjMsMjMxLjA4MyAzMzAuMTUxIEMgMjQyLjQ2MCAzMjIuNjQ2LDMzNS44MzQgMjQ3Ljk3OCwzMzguMzY5IDI0NC4zNTggQyAzNDMuNjgxIDIzNi43NzUsMzM5LjY1NiAyMjMuOTg4LDMzMS4wMTAgMjIwLjk3MyBDIDMyNC42MDUgMjE4Ljc0MSwzMjguMjMyIDIxOC4wMDgsMjk3LjYyMyAyMjcuNzE5IE0zNy4yMDAgMzA4LjM0MCBDIDI0LjgwMSAzMjQuNjk5LDIzLjUyNiAzMjguNzcxLDI5LjIwMCAzMzMuODg5IEMgNDIuOTY5IDM0Ni4zMDgsODYuODgzIDM3Ni4yMjYsOTAuMTQyIDM3NS40MDggQyA5My4yNzggMzc0LjYyMSwxMTIuMjYwIDM1MC45NTMsMTE0LjU1OCAzNDQuOTY2IEMgMTE1LjA0MiAzNDMuNzA1LDEwNC4zMDMgMzM0LjYzNCw4Ni44NzQgMzIxLjU4MiBDIDcxLjIxMyAzMDkuODU1LDU2LjI0MCAyOTguNjM0LDUzLjYwMCAyOTYuNjQ4IEwgNDguODAwIDI5My4wMzYgMzcuMjAwIDMwOC4zNDAgIiBzdHJva2U9Im5vbmUiIGZpbGw9IiMwMDAwMDAiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPjwvZz48L3N2Zz4=';
     }
 
@@ -346,7 +346,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
 
     public function display_prayer_libraries( $prayer_libraries ) {
         foreach ( $prayer_libraries as $library ) :
-            $prayer_icon = Pray4Movement_Prayer_Points_Menu::get_prayer_points_icon();
+            $prayer_icon = Pray4Movement_Prayer_Points_Menu::get_prayer_library_icon();
             if ( isset( $library['icon'] ) ) {
                 if ( $library['icon'] !== '' ) {
                     $prayer_icon = $library['icon'];
@@ -413,7 +413,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
         return $prayer_library;
     }
 
-    public function get_lib_prayer_points( $lib_id ) {
+    public static function get_lib_prayer_points( $lib_id ) {
         $lib_id = esc_sql( $lib_id );
         global $wpdb;
         $prayer_points = $wpdb->get_results(
@@ -1316,63 +1316,57 @@ class Pray4Movement_Prayer_Points_Tab_Export {
     public function main_column() {
         $prayer_libraries = Pray4Movement_Prayer_Points_Tab_Explore::get_prayer_libraries();
         ?>
-        <form method="POST">
-            <table class="wp-list-table widefat plugins">
-                <thead>
-                <tr>
-                    <td class="manage-column column-cb check-column">
-                        <label class="screen-reader-text">Select All</label>
-                        <input type="checkbox">
-                    </td>
-                    <th id="name" class="manage-column column-name column-primary"><?php echo esc_html( 'Prayer Library', 'pray4movement_prayer_points' ); ?></th>
-                    <th id="description" class="manage-column column-description"><?php echo esc_html( 'Description', 'pray4movement_prayer_points' ); ?></th>
-                </tr>
-                </thead>
-                <tbody>
-                <?php foreach ( $prayer_libraries as $prayer_library ): ?>
-                <tr class="inactive">
-                    <th class="check-column"><label class="screen-reader-text"><?php echo esc_html( $prayer_library['name'] ); ?></label>
-                        <input type="checkbox" name="checked[]" value="<?php echo esc_attr( $prayer_library['id'] ); ?>">
-                    </th>
-                    <td>
-                        <strong>
-                            <?php echo esc_html( $prayer_library['name'] ); ?>
-                        </strong>
-                        <div class="row-actions visible">
-                            <span>
-                                <a href="#" class="export_library" data-id="<?php echo esc_attr( $prayer_library['id'] ); ?>">
-                                    <?php echo esc_html( 'Export', 'pray4movement_prayer_points' ); ?>
-                                </a>
-                            </span>
-                        </div>
-                    </td>
-                    <td>
-                        <div>
-                            <p><?php echo esc_html( $prayer_library['description'] ); ?></p>
-                        </div>
-                        <div>
-                            <i>
-                                <?php echo esc_html( 'Last updated:', 'pray4movement_prayer_points' ); ?> <?php echo esc_html( substr( $prayer_library['last_updated'], 0, 16 ) ); ?>
-                            </i>
-                        </div>
-                    </td>
-                </tr>
-                <?php endforeach; ?>
-                <tr>
-                    <td colspan="2">
-                        <button class="button" type="post"><?php echo esc_html( 'Export', 'pray4movement_prayer_points' ); ?></button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <br>
-        </form>
-        <br>
-        <div id="csv"></div>
+        <table class="wp-list-table widefat plugins">
+            <thead>
+            <tr>
+                <td class="manage-column column-cb check-column">
+                    <label class="screen-reader-text">Select All</label>
+                    <input type="checkbox">
+                </td>
+                <th id="name" class="manage-column column-name column-primary"><?php echo esc_html( 'Prayer Library', 'pray4movement_prayer_points' ); ?></th>
+                <th id="description" class="manage-column column-description"><?php echo esc_html( 'Description', 'pray4movement_prayer_points' ); ?></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ( $prayer_libraries as $prayer_library ): ?>
+            <tr class="inactive">
+                <th class="check-column"><label class="screen-reader-text"><?php echo esc_html( $prayer_library['name'] ); ?></label>
+                    <input type="checkbox" name="checked[]" value="<?php echo esc_attr( $prayer_library['id'] ); ?>">
+                </th>
+                <td>
+                    <strong>
+                        <?php echo esc_html( $prayer_library['name'] ); ?>
+                    </strong>
+                    <div class="row-actions visible">
+                        <span>
+                            <a href="javascript:void(0);" class="export_library" onclick="export_csv(<?php echo esc_attr( $prayer_library['id'] ); ?>)">
+                                <?php echo esc_html( 'Export', 'pray4movement_prayer_points' ); ?>
+                            </a>
+                        </span>
+                    </div>
+                </td>
+                <td>
+                    <div>
+                        <p><?php echo esc_html( $prayer_library['description'] ); ?></p>
+                    </div>
+                    <div>
+                        <i>
+                            <?php echo esc_html( 'Last updated:', 'pray4movement_prayer_points' ); ?> <?php echo esc_html( substr( $prayer_library['last_updated'], 0, 16 ) ); ?>
+                        </i>
+                    </div>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+            <tr>
+                <td colspan="2">
+                    <button class="button" id="export-libraries"><?php echo esc_html( 'Export', 'pray4movement_prayer_points' ); ?></button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
         <script>
             // Export Prayer Library as CSV
-            jQuery('.export_library').on('click', function() {
-                let lib_id = jQuery(this).data('id');
+            function export_csv( lib_id ) {
                 jQuery.ajax( {
                         type: 'POST',
                         contentType: 'application/json; charset=utf-8',
@@ -1383,7 +1377,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                         },
                         success: function(response) {
                             let output = "data:text/csv;charset=utf-8,";
-                                output += "lib_id,id,title,content,book,verse,tags\r\n";
+                                output += `"lib_id","id","title","content","book","verse","tags","status"\r\n`;
                             response.forEach(function(row){
                                 output +=
                                 `"${row['lib_id']}","${row['id']}","${row['title']}","${row['content']}","${row['book']}","${row['verse']}","${row['tags']}","${row['status']}"\r\n`; 
@@ -1393,7 +1387,18 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                             window.open(encodedUri);
                         }
                     } );
+            }
+            // jQuery('.export_library').on('click', export_csv( jQuery(this).data('id') ));
+        </script>
+        <script>
+            jQuery('#export-libraries').on('click', function(){
+                lib_ids = [];
+                document.querySelectorAll( 'input[name="checked[]"]:checked' ).forEach( function(checked){
+                    lib_ids.push(checked.value);
                 });
+                lib_ids = lib_ids.join(',');
+                export_csv(lib_ids);
+            });
         </script>
         <?php
     }
