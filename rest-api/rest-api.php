@@ -82,7 +82,6 @@ class Pray4Movement_Prayer_Points_Endpoints
         $prayer_points = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT
-                    pp.lib_id,
                     (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'title' AND prayer_id = pp.id) AS 'title',
                     pp.content,
                     (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'reference' AND prayer_id = pp.id) AS 'reference',

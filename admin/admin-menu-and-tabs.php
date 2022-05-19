@@ -378,23 +378,6 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         );
         return $count_prayer_points;
     }
-
-    public function display_prayer_libraries_list( $prayer_libraries ) {
-        ?>
-        <select id="prayer_library_dropdown" onchange="javascript:check_new_library();">
-                <option hidden><?php esc_html_e( 'Select a Prayer Library', 'pray4movement_prayer_points' ); ?></option>
-                <?php if ( empty( $prayer_libraries ) ) : ?>
-                    <option disabled>No prayer libraries found</option>
-                <?php else : ?>
-                    <?php foreach ( $prayer_libraries as $library ) : ?>
-                    <option><?php echo esc_html( $library['name'] ); ?></option>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-                <option disabled>--------------</option>
-                <option value="add_new"><?php esc_html_e( 'Add a new Prayer Library...', 'pray4movement_prayer_points' ); ?></option>
-        </select>
-        <?php
-    }
 }
 
 
@@ -1267,41 +1250,79 @@ class Pray4Movement_Prayer_Points_Tab_Import {
             self::process_import_prayer_points();
         }
         ?>
-        <form method="POST" enctype="multipart/form-data">
-            <?php wp_nonce_field( 'import_prayer_points', 'import_prayer_points_nonce' ); ?>
-            <p>
-                <?php echo esc_html( 'Howdy!', 'pray4movement_prayer_points' ); ?>
-                <br>
-                <?php echo esc_html( 'Upload your Pray4Movement Prayer Library .CSV file and we’ll import the prayer library, prayer points, and tags into this site.', 'pray4movement_prayer_points' ); ?>
-                <br>
-                <br>
-                <?php echo esc_html( 'Make sure the document has the following columns in this exact order:', 'pray4movement_prayer_points' ); ?>
-                <br>
-                <pre>lib_id,title,content,book,verse,tags,status</pre>
-            </p>
-            <p>
-                <input type="file" name="import_file">
-                <input type="submit" name="btnImport" value="<?php esc_html_e( 'Import', 'pray4movement_prayer_points' ); ?>">
-            </p>
-        </form>
+            <form method="POST" enctype="multipart/form-data">
+                <?php wp_nonce_field( 'import_prayer_points', 'import_prayer_points_nonce' ); ?>
+                <table class="widefat striped">
+                    <thead>
+                        <tr>
+                            <td colspan="2">
+                                <?php esc_html_e( 'Import CSV', 'pray4movement_prayer_points' ); ?>
+                            </td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <?php esc_html_e( 'Select CSV file with prayer points', 'pray4movement_prayer_points' ); ?>
+                            </td>
+                            <td>
+                                <input type="file" name="import-file">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <?php esc_html_e( 'Please select the Prayer Library you want to insert the prayer points into', 'pray4movement_prayer_points' ); ?>
+                            </td>
+                            <td>
+                            <?php $prayer_libraries = Pray4Movement_Prayer_Points_Tab_Explore::get_prayer_libraries(); ?>
+                            <select name="prayer-library-id" required>
+                                    <option hidden><?php esc_html_e( 'Select a Prayer Library', 'pray4movement_prayer_points' ); ?></option>
+                                    <?php if ( empty( $prayer_libraries ) ) : ?>
+                                        <option disabled>No prayer libraries found</option>
+                                    <?php else : ?>
+                                        <?php foreach ( $prayer_libraries as $library ) : ?>
+                                        <option value="<?php echo esc_html( $library['id'] ); ?>"><?php echo esc_html( $library['name'] ); ?></option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                            </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align:right;">
+                                <input type="submit" class="button" value="<?php esc_html_e( 'Import', 'pray4movement_prayer_points' ); ?>">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
         <?php
     }
 
     public function right_column() {
         ?>
         <!-- Box -->
-        <table class="widefat striped">
+        <table class="widefat">
             <thead>
                 <tr>
-                    <th>Information</th>
+                    <th><?php esc_html_e( 'Help', 'pray4movement_prayer_points' ); ?></th>
                 </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>
-                    Content
-                </td>
-            </tr>
+                <tr>
+                    <td>
+                        <?php echo esc_html( 'Upload your Pray4Movement Prayer Library .CSV file and import your Prayer Points into a Prayer Library.', 'pray4movement_prayer_points' ); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <?php echo esc_html( 'Make sure the document has the following columns in this exact order:', 'pray4movement_prayer_points' ); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <pre>title,content,book,verse,tags,status</pre>    
+                    </td>
+                </tr>
             </tbody>
         </table>
         <br>
@@ -1310,26 +1331,38 @@ class Pray4Movement_Prayer_Points_Tab_Import {
     }
 
     public function process_import_prayer_points() {
-        if ( !isset( $_FILES['import_file'] ) ) {
-            esc_html_e( 'Error: file upload error', 'pray4movement_prayer_points' );
+        if ( !isset( $_POST['import_prayer_points_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['import_prayer_points_nonce'] ), 'import_prayer_points' ) ) {
             return;
         }
-        if ( !isset( $_FILES['import_file']['name'] ) ) {
-            esc_html_e( 'Error: file name error', 'pray4movement_prayer_points' );
+
+        if ( !isset( $_FILES['import-file'] ) ) {
+            Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( 'File upload error', 'pray4movement_prayer_points' ), 'error' );
             return;
         }
-        $file_name = sanitize_text_field( wp_unslash( $_FILES['import_file']['name'] ) );
+
+        if ( !isset( $_FILES['import-file']['name'] ) ) {
+            Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( 'File name error', 'pray4movement_prayer_points' ), 'error' );
+            return;
+        }
+
+        if ( !isset( $_POST['prayer-library-id'] ) ) {
+            Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( 'Destination Prayer Library not set', 'pray4movement_prayer_points' ), 'error' );
+            return;
+        }
+
+        $destination_prayer_lib = sanitize_text_field( wp_unslash( $_POST['prayer-library-id'] ) );
+        $file_name = sanitize_text_field( wp_unslash( $_FILES['import-file']['name'] ) );
 
         $file_extension = pathinfo( $file_name, PATHINFO_EXTENSION );
         if ( $file_extension !== 'csv' ) {
-            esc_html_e( "Error: file extension is not 'csv'", 'pray4movement_prayer_points' );
+            Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( "Error: file extension is not 'csv'", 'pray4movement_prayer_points' ), 'error' );
             return;
         }
-        if ( !isset( $_FILES['import_file']['tmp_name'] ) ) {
-            esc_html_e( 'Error: file name error', 'pray4movement_prayer_points' );
+        if ( !isset( $_FILES['import-file']['tmp_name'] ) ) {
+            Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( 'Error: file name error', 'pray4movement_prayer_points' ), 'error' );
             return;
         }
-        $file_tmp_name = sanitize_text_field( wp_unslash( $_FILES['import_file']['tmp_name'] ) );
+        $file_tmp_name = sanitize_text_field( wp_unslash( $_FILES['import-file']['tmp_name'] ) );
         $csv_input = fopen( $file_tmp_name, 'r' );
         fgetcsv( $csv_input );
 
@@ -1339,17 +1372,16 @@ class Pray4Movement_Prayer_Points_Tab_Import {
 
             // Row column length
             $data_col_count = count( $csv_data );
-            if ( $data_col_count !== 7 ) {
+            if ( $data_col_count !== 6 ) {
                 continue;
             }
 
-            $lib_id = sanitize_text_field( wp_unslash( $csv_data[0] ) );
-            $prayer_title = sanitize_text_field( wp_unslash( $csv_data[1] ) );
-            $prayer_content = sanitize_text_field( wp_unslash( $csv_data[2] ) );
-            $prayer_book = sanitize_text_field( wp_unslash( $csv_data[3] ) );
-            $prayer_verse = sanitize_text_field( wp_unslash( $csv_data[4] ) );
-            $prayer_tags = sanitize_text_field( wp_unslash( $csv_data[5] ) );
-            $prayer_status = sanitize_text_field( wp_unslash( $csv_data[6] ) );
+            $prayer_title = sanitize_text_field( wp_unslash( $csv_data[0] ) );
+            $prayer_content = sanitize_text_field( wp_unslash( $csv_data[1] ) );
+            $prayer_book = sanitize_text_field( wp_unslash( $csv_data[2] ) );
+            $prayer_verse = sanitize_text_field( wp_unslash( $csv_data[3] ) );
+            $prayer_tags = sanitize_text_field( wp_unslash( $csv_data[4] ) );
+            $prayer_status = sanitize_text_field( wp_unslash( $csv_data[5] ) );
             $prayer_hash = md5( $prayer_content );
 
             // todo: Check if $hash not in db
@@ -1357,7 +1389,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
             $wpdb->insert(
                 $wpdb->prefix . 'dt_prayer_points',
                 [
-                    'lib_id' => $lib_id,
+                    'lib_id' => $destination_prayer_lib,
                     'content' => $prayer_content,
                     'hash' => $prayer_hash,
                     'status' => $prayer_status,
@@ -1397,7 +1429,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
                         '%s', // prayer_id
                         '%s', // meta_key
                         '%s', // meta_value
-                    ]
+                        ]
                 );
             }
 
@@ -1525,10 +1557,10 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                         },
                         success: function(response) {
                             let output = "data:text/csv;charset=utf-8,";
-                                output += `"lib_id","id","title","content","book","verse","tags","status"\r\n`;
+                                output += `"title","content","book","verse","tags","status"\r\n`;
                             response.forEach(function(row){
                                 output +=
-                                `"${row['lib_id']}","${row['title']}","${row['content']}","${row['book']}","${row['verse']}","${row['tags']}","${row['status']}"\r\n`; 
+                                `"${row['title']}","${row['content']}","${row['book']}","${row['verse']}","${row['tags']}","${row['status']}"\r\n`; 
                             });
                             
                             var encodedUri = encodeURI(output);
