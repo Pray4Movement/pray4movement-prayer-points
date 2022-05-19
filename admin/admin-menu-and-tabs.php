@@ -1320,19 +1320,19 @@ class Pray4Movement_Prayer_Points_Tab_Export {
             <table class="wp-list-table widefat plugins">
                 <thead>
                 <tr>
-                    <td id="cb" class="manage-column column-cb check-column">
-                        <label class="screen-reader-text" for="cb-select-all-1">Select All</label>
-                        <input id="cb-select-all-1" type="checkbox">
+                    <td class="manage-column column-cb check-column">
+                        <label class="screen-reader-text">Select All</label>
+                        <input type="checkbox">
                     </td>
-                    <th scope="col" id="name" class="manage-column column-name column-primary"><?php echo esc_html( 'Prayer Library', 'pray4movement_prayer_points' ); ?></th>
-                    <th scope="col" id="description" class="manage-column column-description"><?php echo esc_html( 'Description', 'pray4movement_prayer_points' ); ?></th>
+                    <th id="name" class="manage-column column-name column-primary"><?php echo esc_html( 'Prayer Library', 'pray4movement_prayer_points' ); ?></th>
+                    <th id="description" class="manage-column column-description"><?php echo esc_html( 'Description', 'pray4movement_prayer_points' ); ?></th>
                 </tr>
                 </thead>
                 <tbody>
                 <?php foreach ( $prayer_libraries as $prayer_library ): ?>
-                <tr class="inactive" data-slug="disciple-tools-bulk-contact-messaging" data-plugin="disciple-tools-bulk-contact-messaging/disciple-tools-bulk-contact-messaging.php">
-                    <th scope="row" class="check-column"><label class="screen-reader-text" for="checkbox_e7de485bc6f9c11a393a2db09ba1b861"><?php echo esc_html( $prayer_library['name'] ); ?></label>
-                        <input type="checkbox" name="checked[]" value="disciple-tools-bulk-contact-messaging/disciple-tools-bulk-contact-messaging.php" id="checkbox_e7de485bc6f9c11a393a2db09ba1b861">
+                <tr class="inactive">
+                    <th class="check-column"><label class="screen-reader-text"><?php echo esc_html( $prayer_library['name'] ); ?></label>
+                        <input type="checkbox" name="checked[]" value="<?php echo esc_attr( $prayer_library['id'] ); ?>">
                     </th>
                     <td>
                         <strong>
