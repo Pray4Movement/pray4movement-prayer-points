@@ -83,7 +83,6 @@ class Pray4Movement_Prayer_Points_Endpoints
             $wpdb->prepare(
                 "SELECT
                     pp.lib_id,
-                    pp.id,
                     (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'title' AND prayer_id = pp.id) AS 'title',
                     pp.content,
                     (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'reference' AND prayer_id = pp.id) AS 'reference',
@@ -133,7 +132,13 @@ class Pray4Movement_Prayer_Points_Endpoints
         global $wpdb;
         $wpdb->query(
             $wpdb->prepare(
-                "DELETE FROM `{$wpdb->prefix}dt_prayer_points` WHERE id = %s;", $prayer_id
+                "DELETE FROM `{$wpdb->prefix}dt_prayer_points` WHERE id = %d;", $prayer_id
+            )
+        );
+
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE prayer_id = %d;", $prayer_id
             )
         );
         return true;
