@@ -243,9 +243,9 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         </form>
         <script>
             jQuery( '.delete_library' ).on( 'click', function () {
-                var lib_name = jQuery( this ).data('name');
+                var lib_name = jQuery(this).data('name');
                 if(confirm(`Delete the '${lib_name}' Prayer Library?`)) {
-                    var lib_id = jQuery( this ).data('id');
+                    var lib_id = jQuery(this).data('id');
                     jQuery.ajax( {
                         type: 'POST',
                         contentType: 'application/json; charset=utf-8',
@@ -1340,7 +1340,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                         </strong>
                         <div class="row-actions visible">
                             <span>
-                                <a href="#">
+                                <a href="#" class="export_library" data-id="<?php echo esc_attr( $prayer_library['id'] ); ?>">
                                     <?php echo esc_html( 'Export', 'pray4movement_prayer_points' ); ?>
                                 </a>
                             </span>
@@ -1368,6 +1368,33 @@ class Pray4Movement_Prayer_Points_Tab_Export {
             <br>
         </form>
         <br>
+        <div id="csv"></div>
+        <script>
+            // Export Prayer Library as CSV
+            jQuery('.export_library').on('click', function() {
+                let lib_id = jQuery(this).data('id');
+                jQuery.ajax( {
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        url: window.location.origin + '/wp-json/pray4movement-prayer-points/v1/get_prayer_points/' + lib_id,
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
+                        },
+                        success: function(response) {
+                            let output = "data:text/csv;charset=utf-8,";
+                                output += "lib_id,id,title,content,book,verse,tags\r\n";
+                            response.forEach(function(row){
+                                output +=
+                                `"${row['lib_id']}","${row['id']}","${row['title']}","${row['content']}","${row['book']}","${row['verse']}","${row['tags']}","${row['status']}"\r\n`; 
+                            });
+                            
+                            var encodedUri = encodeURI(output);
+                            window.open(encodedUri);
+                        }
+                    } );
+                });
+        </script>
         <?php
     }
 
