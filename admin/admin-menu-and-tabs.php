@@ -75,6 +75,12 @@ class Pray4Movement_Prayer_Points_Menu {
             return;
         }
 
+        if ( isset( $_GET['edit_lib'] ) ) {
+            $object = new Pray4Movement_Prayer_Points_Edit_Lib();
+            $object->content();
+            return;
+        }
+
         if ( isset( $_GET['edit_prayer'] ) ) {
             $object = new Pray4Movement_Prayer_Points_Edit_Prayer();
             $object->content();
@@ -405,8 +411,8 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             <td><?php echo esc_html( $library['description'] ); ?></td>
             <td><?php echo esc_html( self::count_prayer_points( $library['id'] ) ); ?></td>
             <td>
-                <a href="#"><?php esc_html_e( 'Edit', 'pray4movement_prayer_points' ); ?></a> | 
-                <a href="#" style="color:#b32d2e;" class="delete_library" data-id="<?php echo esc_html( $library['id'] ); ?>" data-name="<?php echo esc_html( $library['name'] ); ?>"><?php esc_html_e( 'Delete', 'pray4movement_prayer_points' ); ?></a>
+                <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_lib=<?php echo esc_attr( $library['id'] ); ?>"><?php esc_html_e( 'Edit', 'pray4movement_prayer_points' ); ?></a> | 
+                <a href="#" style="color:#b32d2e;" class="delete_library" data-id="<?php echo esc_attr( $library['id'] ); ?>" data-name="<?php echo esc_html( $library['name'] ); ?>"><?php esc_html_e( 'Delete', 'pray4movement_prayer_points' ); ?></a>
             </td>
         </tr>
         <?php endforeach;
@@ -426,6 +432,137 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
     }
 }
 
+
+/**
+ * Class Pray4Movement_Prayer_Points_Edit_Lib
+ */
+class Pray4Movement_Prayer_Points_Edit_Lib {
+    public function content() {
+        if ( !current_user_can( 'manage_dt' ) ) { // manage dt is a permission that is specific to Disciple.Tools and allows admins, strategists and dispatchers into the wp-admin
+            wp_die( 'You do not have sufficient permissions to access this page.' );
+        }
+        ?>
+        <div class="wrap">
+            <div id="poststuff">
+                <div id="post-body" class="metabox-holder columns-2">
+                    <div id="post-body-content">
+                        <!-- Main Column -->
+
+                        <?php $this->main_column() ?>
+
+                        <!-- End Main Column -->
+                    </div><!-- end post-body-content -->
+                    <div id="postbox-container-1" class="postbox-container">
+                        <!-- Right Column -->
+
+                        <?php $this->right_column() ?>
+
+                        <!-- End Right Column -->
+                    </div><!-- postbox-container 1 -->
+                    <div id="postbox-container-2" class="postbox-container">
+                    </div><!-- postbox-container 2 -->
+                </div><!-- post-body meta box container -->
+            </div><!--poststuff end -->
+        </div><!-- wrap end -->
+        <?php
+    }
+
+    public function main_column() {
+        if ( !isset( $_GET['edit_lib'] ) || is_null( $_GET['edit_lib'] ) ) {
+            return new WP_Error( __METHOD__, 'Invalid Prayer Library ID' );
+        }
+
+        $lib_id = sanitize_key( wp_unslash( $_GET['edit_lib'] ) );
+        $library = Pray4Movement_Prayer_Points_View_Lib::get_prayer_library( $lib_id );
+        if ( isset( $_POST['edit_library_nonce'] ) ) {
+            if ( !isset( $_POST['edit_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['edit_library_nonce'] ), 'edit_library' ) ) {
+                return;
+            }
+            self::process_edit_library();
+        }
+        ?>
+        <form method="POST">
+            <?php wp_nonce_field( 'edit_library', 'edit_library_nonce' ); ?>
+            <table class="widefat striped">
+                <thead>
+                    <tr>
+                        <th colspan="3"><?php esc_html_e( 'Edit Prayer Library', 'pray4movement_prayer_points' ); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                <td>
+                    <?php esc_html_e( 'Name', 'pray4movement_prayer_points' ); ?>
+                </td>
+                <td>
+                    <input type="text" name="new_library_name" size="50" value="<?php echo esc_attr( $library['name'] ); ?>">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php esc_html_e( 'Description', 'pray4movement_prayer_points' ); ?>
+                </td>
+                <td>
+                    <input type="text" name="new_library_desc" size="50" value="<?php echo esc_attr( $library['description'] ); ?>">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php esc_html_e( 'Location', 'pray4movement_prayer_points' ); ?>
+                </td>
+                <td>
+                    <input type="text" name="new_library_location" size="50" value="<?php echo esc_attr( $library['location'] ); ?>">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php esc_html_e( 'People Group', 'pray4movement_prayer_points' ); ?>
+                </td>
+                <td>
+                    <input type="text" name="new_library_people_group" size="50" value="<?php echo esc_attr( $library['people_group'] ); ?>">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php esc_html_e( 'Icon', 'pray4movement_prayer_points' ); ?>
+                </td>
+                <td>
+                    <textarea name="new_library_icon" cols="50" placeholder="data:image/svg+xml;base64,PHN2ZyBpZD0..."><?php echo esc_attr( $library['icon'] ); ?></textarea>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <button class="button" type="post"><?php esc_html_e( 'Update', 'pray4movement_prayer_points' ); ?></button>
+                </td>
+            </tr>
+                </tbody>
+            </table>
+        </form>
+        <?php
+    }
+
+    public function right_column() {
+        ?>
+        <!-- Box -->
+        <table class="widefat striped">
+            <thead>
+                <tr>
+                    <th>Information</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    Content
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <br>
+        <!-- End Box -->
+        <?php
+    }
+}
 
 /**
  * Class Pray4Movement_Prayer_Points_View_Lib
