@@ -740,6 +740,23 @@ class Pray4Movement_Prayer_Points_View_Lib {
         return $prayer_meta;
     }
 
+    public static function get_raw_prayer_meta( $prayer_id, $meta_key ) {
+        $prayer_id = esc_sql( sanitize_text_field( $prayer_id ) );
+        $meta_key = esc_sql( sanitize_text_field( $meta_key ) );
+        global $wpdb;
+        $prayer_meta = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT
+                    meta_value
+                FROM `{$wpdb->prefix}dt_prayer_points_meta`
+                WHERE meta_key = %s
+                AND prayer_id = %d;",
+                $meta_key, $prayer_id
+            )
+        );
+        return $prayer_meta;
+    }
+
     public static function get_prayer_tags( $prayer_id ) {
         $prayer_id = esc_sql( sanitize_text_field( $prayer_id ) );
         global $wpdb;
@@ -1338,9 +1355,9 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         $prayer_id = esc_sql( sanitize_text_field( wp_unslash( $_GET['edit_prayer'] ) ) );
         $prayer_point = Pray4Movement_Prayer_Points_View_Lib::get_prayer_point( $prayer_id );
         $prayer_tags = Pray4Movement_Prayer_Points_View_Lib::get_prayer_tags( $prayer_id );
-        $prayer_title = Pray4Movement_Prayer_Points_View_Lib::get_prayer_meta( $prayer_id, 'title' );
-        $prayer_book = Pray4Movement_Prayer_Points_View_Lib::get_prayer_meta( $prayer_id, 'book' );
-        $prayer_verse = Pray4Movement_Prayer_Points_View_Lib::get_prayer_meta( $prayer_id, 'verse' );
+        $prayer_title = Pray4Movement_Prayer_Points_View_Lib::get_raw_prayer_meta( $prayer_id, 'title' );
+        $prayer_book = Pray4Movement_Prayer_Points_View_Lib::get_raw_prayer_meta( $prayer_id, 'book' );
+        $prayer_verse = Pray4Movement_Prayer_Points_View_Lib::get_raw_prayer_meta( $prayer_id, 'verse' );
         $prayer_library = Pray4Movement_Prayer_Points_View_Lib::get_prayer_library( $prayer_point['lib_id'] );
 
         if ( !$prayer_point ) {
@@ -1914,7 +1931,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
             <tbody>
             <tr>
                 <td>
-                    Content
+                    <?php esc_html_e( 'Export your prayer libraries to a CSV file and distribute it among your contacts.', 'pray4movement_prayer_points' ); ?>
                 </td>
             </tr>
             </tbody>
