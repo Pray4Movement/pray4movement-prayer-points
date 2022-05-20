@@ -175,7 +175,7 @@ class Pray4Movement_Prayer_Points_Endpoints
             return new WP_Error( __METHOD__, 'Missing valid action parameters', [ 'status' => 400 ] );
         }
         global $wpdb;
-        $prayer_ids = $wpdb->get_results(
+        $prayer_ids = $wpdb->get_col(
             $wpdb->prepare(
                 "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $lib_id 
             )
