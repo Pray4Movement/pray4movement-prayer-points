@@ -341,7 +341,18 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             $new_library_people_group = sanitize_text_field( wp_unslash( $_POST['new_library_people_group'] ) );
         }
 
+        $new_library_people_group = 'XXX';
+        $new_library_location = 'YYY';
         $new_library_icon = null;
+
+        if ( isset( $_POST['new_library_people_group'] ) && !empty( $_POST['new_library_people_group'] ) ) {
+            $new_library_people_group = sanitize_text_field( wp_unslash( $_POST['new_library_people_group'] ) );
+        }
+
+        if ( isset( $_POST['new_library_location'] ) && !empty( $_POST['new_library_location'] ) ) {
+            $new_library_location = sanitize_text_field( wp_unslash( $_POST['new_library_location'] ) );
+        }
+
         if ( isset( $_POST['new_library_icon'] ) && !empty( $_POST['new_library_icon'] ) ) {
             $new_library_icon = sanitize_text_field( wp_unslash( $_POST['new_library_icon'] ) );
         }
