@@ -1,50 +1,35 @@
 [![Build Status](https://travis-ci.com/DiscipleTools/pray4movement-prayer-points.svg?branch=master)](https://travis-ci.com/DiscipleTools/pray4movement-prayer-points)
 
-## Dev notes, delete me:
-This is a starter plugin to jumpstart your work with Disciple.Tools.
-Click the "Use this template" button above.
-See instructions for refactoring and getting started in the [wiki](https://github.com/DiscipleTools/pray4movement-prayer-points/wiki)
-See instructions for creating releases and publishing your plugin: [wiki](https://github.com/DiscipleTools/pray4movement-prayer-points/wiki)
-In order to display the banner correctly on the Disciple.Tools Community Plugins Site, don't change the 'Plugin Banner' text on line 12; only the URL.
-
-## readme format:
-
 ![Plugin Banner](https://raw.githubusercontent.com/DiscipleTools/pray4movement-prayer-points/b30402d97895e3f911efcb47fb8f29ccd1eb92e5/documentation/banner.png)
 
-# Disciple.Tools - Pray4Movement Prayer Points
+# Pray4Movement - Prayer Points
 
-Description Description Description Description Description Description Description
-Description Description Description Description Description Description Description
+Import, create, manage, and export your prayer content.
 
 ## Purpose
 
-Purpose purpose purpose purpose purpose purpose purpose purpose purpose purpose purpose
-Purpose purpose purpose purpose purpose purpose purpose purpose purpose purpose purpose
-
-Purpose purpose purpose purpose purpose purpose purpose purpose purpose purpose purpose
-Purpose purpose purpose purpose purpose purpose purpose purpose purpose purpose purpose
+Send your contacts customized Prayer Points with strategic prayer content for locations and people group.
 
 ## Usage
 
 #### Will Do
 
-- Item
-- Item
-- Item
+- Let you create Prayer Libraries
+- Let you create Prayer Points for each Library
+- Let you Import Prayer Points from CSV file upload
+- Let you Export Prayer Points
+- Let you automatically replace Location and People Group variables in Prayer Points for a deeper customization
+- Export CSV file with Prayer Points customized by Location and People Group
 
 #### Will Not Do
 
-- Item
-- Item
+- Import from URL
+- Export to Google Sheets
 
 ## Requirements
 
-- Disciple.Tools Theme installed on a Wordpress Server
-
-## Installing
-
-- Install as a standard Disciple.Tools/Wordpress plugin in the system Admin/Plugins area.
 - Requires the user role of Administrator.
+
 
 ## Contribution
 
