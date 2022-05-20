@@ -341,6 +341,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         $prayer_libraries = $wpdb->get_results(
             "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib`;", ARRAY_A
         );
+        dt_write_log( $prayer_libraries );
         return $prayer_libraries;
     }
 
@@ -1507,7 +1508,12 @@ class Pray4Movement_Prayer_Points_Tab_Export {
 
     public function main_column() {
         $prayer_libraries = Pray4Movement_Prayer_Points_Tab_Explore::get_prayer_libraries();
-        ?>
+        if ( empty( $prayer_libraries ) ) : ?>     
+            <p>
+                <i><?php esc_html_e( 'No Prayer Libraries created yet', 'pray4movement_prayer_points' ); ?></i>
+            </p>
+            <?php return; ?>
+        <?php endif; ?>
         <table class="wp-list-table widefat plugins">
             <thead>
             <tr>
@@ -1520,20 +1526,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
             </tr>
             </thead>
             <tbody>
-            <?php
-            if ( empty( $prayer_libraries ) ) : ?>
-                    <tr>
-                        <td colspan="3">
-                            <i><?php esc_html_e( 'No Prayer Libraries created yet', 'pray4movement_prayer_points' ); ?></i>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <?php endif;
-                return;
-            ?>
-            <?php
-            foreach ( $prayer_libraries as $prayer_library ): ?>
+            <?php foreach ( $prayer_libraries as $prayer_library ): ?>
             <tr class="inactive">
                 <th class="check-column"><label class="screen-reader-text"><?php echo esc_html( $prayer_library['name'] ); ?></label>
                     <input type="checkbox" name="checked[]" value="<?php echo esc_attr( $prayer_library['id'] ); ?>">
@@ -1561,7 +1554,6 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                     </div>
                 </td>
             </tr>
-            <?php endforeach; ?>
             <tr>
                 <td colspan="2">
                     <button class="button" id="export-libraries"><?php echo esc_html( 'Export', 'pray4movement_prayer_points' ); ?></button>
@@ -1569,6 +1561,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
             </tr>
             </tbody>
         </table>
+            <?php endforeach; ?>
         <script>
             // Export Prayer Library as CSV
             function export_csv( lib_id ) {
