@@ -66,7 +66,6 @@ class Pray4Movement_Prayer_Points_Endpoints
         // }
         $lib_id = $params['lib_id'];
         self::delete_prayer_lib( $lib_id );
-        self::delete_prayer_meta_by_lib( $lib_id );
         self::delete_prayer_points_by_lib( $lib_id );
         return true;
     }
@@ -111,23 +110,6 @@ class Pray4Movement_Prayer_Points_Endpoints
         return true;
     }
 
-    public function delete_prayer_meta_by_lib( $lib_id ) {
-        if ( !isset( $lib_id ) ) {
-            return new WP_Error( __METHOD__, 'Missing valid action parameters', [ 'status' => 400 ] );
-        }
-        global $wpdb;
-        // Get prayer ids for Prayer Library
-        $prayer_ids = self::get_prayer_ids_by_lib( $lib_id );
-        
-        // Delete Prayer Meta for those prayer ids
-        foreach ( $prayer_ids as $prayer_id ) {
-            $wpdb->query(
-                $wpdb->prepare( "DELETE FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE id = %d;" , $prayer_id )
-            );
-        }
-        return true;
-    }
-
     public function endpoint_delete_prayer_point( WP_REST_Request $request ) {
         $params = $request->get_params();
         if ( !isset( $params['prayer_id'] ) ) {
@@ -166,16 +148,15 @@ class Pray4Movement_Prayer_Points_Endpoints
         if ( !isset( $lib_id ) ) {
             return new WP_Error( __METHOD__, 'Missing valid action parameters', [ 'status' => 400 ] );
         }
-        global $wpdb;
-        $wpdb->query(
-            $wpdb->prepare(
-                "DELETE FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $lib_id
-            )
-        );
+        
+        $prayer_ids = self::get_prayer_ids_by_lib( $lib_id );
+        foreach ( $prayer_ids as $prayer_id ) {
+            self::delete_prayer_point( $prayer_id );
+        }
         return true;
     }
 
-    private function get_prayer_ids_by_lib( $lib_id ) {
+    public function get_prayer_ids_by_lib( $lib_id ) {
         if ( !isset( $lib_id ) ) {
             return new WP_Error( __METHOD__, 'Missing valid action parameters', [ 'status' => 400 ] );
         }
@@ -183,7 +164,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         $prayer_ids = $wpdb->get_col(
             $wpdb->prepare(
                 "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $lib_id 
-            ), ARRAY_A
+            )
         );
         return $prayer_ids;
     }
