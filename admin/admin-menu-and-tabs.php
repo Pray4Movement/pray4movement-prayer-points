@@ -297,7 +297,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
     public function right_column() {
         ?>
         <!-- Box -->
-        <table class="widefat striped">
+        <table class="widefat">
             <thead>
                 <tr>
                     <th>Information</th>
@@ -306,7 +306,17 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             <tbody>
             <tr>
                 <td>
-                    Content
+                    <?php esc_html_e( 'Manage your Prayer Libraries from this screen.', 'pray4movement_prayer_points' ); ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php esc_html_e( "The 'People Group' and 'Location' fields will be used to replace 'XXX' and 'YYY' Prayer Point variables respectively.", 'pray4movement_prayer_points' ); ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php esc_html_e( 'Prayer Library Icon must be a Base 64 encoded string.', 'pray4movement_prayer_points' ); ?>
                 </td>
             </tr>
             </tbody>
@@ -333,26 +343,24 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             $new_library_desc = sanitize_text_field( wp_unslash( $_POST['new_library_desc'] ) );
         }
 
-        if ( isset( $_POST['new_library_location'] ) && !empty( $_POST['new_library_location'] ) ) {
-            $new_library_location = sanitize_text_field( wp_unslash( $_POST['new_library_location'] ) );
-        }
+
 
         if ( isset( $_POST['new_library_people_group'] ) && !empty( $_POST['new_library_people_group'] ) ) {
             $new_library_people_group = sanitize_text_field( wp_unslash( $_POST['new_library_people_group'] ) );
         }
+
 
         $new_library_people_group = 'XXX';
-        $new_library_location = 'YYY';
-        $new_library_icon = null;
-
         if ( isset( $_POST['new_library_people_group'] ) && !empty( $_POST['new_library_people_group'] ) ) {
             $new_library_people_group = sanitize_text_field( wp_unslash( $_POST['new_library_people_group'] ) );
         }
 
+        $new_library_location = 'YYY';
         if ( isset( $_POST['new_library_location'] ) && !empty( $_POST['new_library_location'] ) ) {
             $new_library_location = sanitize_text_field( wp_unslash( $_POST['new_library_location'] ) );
         }
 
+        $new_library_icon = null;
         if ( isset( $_POST['new_library_icon'] ) && !empty( $_POST['new_library_icon'] ) ) {
             $new_library_icon = sanitize_text_field( wp_unslash( $_POST['new_library_icon'] ) );
         }
@@ -558,7 +566,7 @@ class Pray4Movement_Prayer_Points_Edit_Lib {
     public function right_column() {
         ?>
         <!-- Box -->
-        <table class="widefat striped">
+        <table class="widefat">
             <thead>
                 <tr>
                     <th>Information</th>
@@ -567,7 +575,17 @@ class Pray4Movement_Prayer_Points_Edit_Lib {
             <tbody>
             <tr>
                 <td>
-                    Content
+                    <?php esc_html_e( 'Edit your Prayer Library.', 'pray4movement_prayer_points' ); ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php esc_html_e( 'If you remove the custom Prayer Library Icon, the default icon will be used instead.', 'pray4movement_prayer_points' ); ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php esc_html_e( "Changing the 'Location' and 'People Group' fileds will automatically update your Prayer Point's content.", 'pray4movement_prayer_points' ); ?>
                 </td>
             </tr>
             </tbody>
@@ -595,10 +613,12 @@ class Pray4Movement_Prayer_Points_Edit_Lib {
             $new_library_desc = sanitize_text_field( wp_unslash( $_POST['new_library_desc'] ) );
         }
 
+        $new_library_location = 'YYY';
         if ( isset( $_POST['new_library_location'] ) && !empty( $_POST['new_library_location'] ) ) {
             $new_library_location = sanitize_text_field( wp_unslash( $_POST['new_library_location'] ) );
         }
 
+        $new_library_people_group = 'XXX';
         if ( isset( $_POST['new_library_people_group'] ) && !empty( $_POST['new_library_people_group'] ) ) {
             $new_library_people_group = sanitize_text_field( wp_unslash( $_POST['new_library_people_group'] ) );
         }
@@ -1285,7 +1305,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
     public function right_column() {
         ?>
         <!-- Box -->
-        <table class="widefat striped">
+        <table class="widefat">
             <thead>
                 <tr>
                     <th>Information</th>
@@ -1514,7 +1534,7 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
     public function right_column() {
         ?>
         <!-- Box -->
-        <table class="widefat striped">
+        <table class="widefat">
             <thead>
                 <tr>
                     <th>Information</th>
@@ -1523,7 +1543,17 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
             <tbody>
             <tr>
                 <td>
-                    Content
+                    <?php esc_html_e( 'Edit your Prayer Point.', 'pray4movement_prayer_points' ); ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php esc_html_e( 'XXX will be replaced with the configured People Group name for this Prayer Library.', 'pray4movement_prayer_points' ); ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php esc_html_e( 'YYY will be replaced with the configured Location name for this Prayer Library.', 'pray4movement_prayer_points' ); ?>
                 </td>
             </tr>
             </tbody>
@@ -1931,7 +1961,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
     public function right_column() {
         ?>
         <!-- Box -->
-        <table class="widefat striped">
+        <table class="widefat">
             <thead>
                 <tr>
                     <th>Information</th>
