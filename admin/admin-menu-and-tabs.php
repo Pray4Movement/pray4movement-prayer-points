@@ -227,6 +227,22 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             </tr>
             <tr>
                 <td>
+                    <?php esc_html_e( 'Location', 'pray4movement_prayer_points' ); ?>
+                </td>
+                <td>
+                    <input type="text" name="new_library_location" size="50">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php esc_html_e( 'People Group', 'pray4movement_prayer_points' ); ?>
+                </td>
+                <td>
+                    <input type="text" name="new_library_people_group" size="50">
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <?php esc_html_e( 'Icon', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
@@ -307,12 +323,20 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             $new_library_name = sanitize_text_field( wp_unslash( $_POST['new_library_name'] ) );
         }
 
-        if ( !empty( $_POST['new_library_desc'] ) ) {
+        if ( isset( $_POST['new_library_desc'] ) && !empty( $_POST['new_library_desc'] ) ) {
             $new_library_desc = sanitize_text_field( wp_unslash( $_POST['new_library_desc'] ) );
         }
 
+        if ( isset( $_POST['new_library_location'] ) && !empty( $_POST['new_library_location'] ) ) {
+            $new_library_location = sanitize_text_field( wp_unslash( $_POST['new_library_location'] ) );
+        }
+
+        if ( isset( $_POST['new_library_people_group'] ) && !empty( $_POST['new_library_people_group'] ) ) {
+            $new_library_people_group = sanitize_text_field( wp_unslash( $_POST['new_library_people_group'] ) );
+        }
+
         $new_library_icon = null;
-        if ( !empty( $_POST['new_library_icon'] ) ) {
+        if ( isset( $_POST['new_library_icon'] ) && !empty( $_POST['new_library_icon'] ) ) {
             $new_library_icon = sanitize_text_field( wp_unslash( $_POST['new_library_icon'] ) );
         }
 
@@ -323,12 +347,26 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
 
-        $test = $wpdb->query( $wpdb->prepare(
-            "INSERT INTO `{$wpdb->prefix}dt_prayer_points_lib`
-            ( `key`, `name`, `description`, `icon` )
-            VALUES
-            ( %s, %s, %s, %s );", $new_library_key, $new_library_name, $new_library_desc, $new_library_icon
-        ) );
+        $test = $wpdb->insert(
+            $wpdb->prefix.'dt_prayer_points_lib',
+            [
+                'key' => $new_library_key,
+                'name' => $new_library_name,
+                'description' => $new_library_desc,
+                'location' => $new_library_location,
+                'people_group' => $new_library_people_group,
+                'icon' => $new_library_icon
+            ],
+            [
+                '%s', // key
+                '%s', // name
+                '%s', // description
+                '%s', // location
+                '%s', // people_group
+                '%s', // icon
+            ]
+        );
+
         if ( !$test ) {
             Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Could not add new prayer library to table', 'pray4movement_prayer_points' ), 'error' );
             return;
@@ -341,7 +379,6 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         $prayer_libraries = $wpdb->get_results(
             "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib`;", ARRAY_A
         );
-        dt_write_log( $prayer_libraries );
         return $prayer_libraries;
     }
 
@@ -410,7 +447,23 @@ class Pray4Movement_Prayer_Points_View_Lib {
         global $wpdb;
         $prayer_points = $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT * FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $lib_id
+                //"SELECT * FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $lib_id
+                "SELECT
+                    id,
+                    lib_id, 
+                    hash,
+                    status,
+                    REPLACE(
+                        REPLACE(
+                            content,
+                            'XXX',
+                            (SELECT people_group FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d)
+                            ),
+                            'YYY',
+                            (SELECT location FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d)
+                            ) as content
+                FROM `wp_119_dt_prayer_points`
+                WHERE lib_id = %d;", $lib_id, $lib_id, $lib_id
             ), ARRAY_A
         );
         return $prayer_points;
@@ -429,14 +482,40 @@ class Pray4Movement_Prayer_Points_View_Lib {
         return $prayer_point;
     }
 
+    private static function get_lib_id( $prayer_id ) {
+        if ( !isset( $prayer_id ) ) {
+            return;
+        }
+        global $wpdb;
+        $prayer_point = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT lib_id FROM `{$wpdb->prefix}dt_prayer_points` WHERE id = %d;", $prayer_id
+            )
+        );
+        return $prayer_point;
+    }
+
     public static function get_prayer_meta( $prayer_id, $meta_key ) {
         $prayer_id = esc_sql( sanitize_text_field( $prayer_id ) );
+        $lib_id = self::get_lib_id( $prayer_id );
         $meta_key = esc_sql( sanitize_text_field( $meta_key ) );
         global $wpdb;
         $prayer_meta = $wpdb->get_var(
             $wpdb->prepare(
-                "SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = %s AND prayer_id = %d;",
-                $meta_key, $prayer_id
+                "SELECT
+                    REPLACE(
+                        REPLACE(
+                            meta_value,
+                            'XXX',
+                            (SELECT people_group FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d)
+                            ),
+                            'YYY',
+                            (SELECT location FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d)
+                            ) as meta_value
+                FROM `{$wpdb->prefix}dt_prayer_points_meta`
+                WHERE meta_key = %s
+                AND prayer_id = %d;",
+                $lib_id, $lib_id, $meta_key, $prayer_id
             )
         );
         return $prayer_meta;
@@ -1380,12 +1459,15 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         fgetcsv( $csv_input );
 
         $insert_count = 0;
+        $linecount = 0;
         while ( ( $csv_data = fgetcsv( $csv_input ) ) !== false ) {
             $csv_data = array_map( 'utf8_encode', $csv_data );
 
             // Row column length
             $data_col_count = count( $csv_data );
             if ( $data_col_count !== 6 ) {
+                dt_write_log( "Error: skipping line: " . $linecount . ' - Expected 6 cols, found ' . $data_col_count );
+                $linecount ++;
                 continue;
             }
 
@@ -1466,6 +1548,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
                 }
             }
             $insert_count ++;
+            $linecount ++;
         }
 
         Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( sprintf( __( '%d prayer points added successfully!', 'pray4movement_prayer_points' ), $insert_count ) ), 'success' );
