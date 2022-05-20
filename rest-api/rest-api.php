@@ -94,7 +94,21 @@ class Pray4Movement_Prayer_Points_Endpoints
                 WHERE pp.lib_id IN ( " . implode( ',', array_fill( 0, count( $lib_id ), '%d' ) ) . " )
                 ORDER BY pp.lib_id ASC;", $lib_id )
             , ARRAY_A );
-        return $prayer_points;
+
+            
+        $library = self::get_prayer_library( $lib_id );
+        $library_people_group = $library['people_group'];
+        $library_location = $library['location'];
+        $replaced_prayer_points = [];
+
+        foreach($prayer_points as $prayer_point) {
+            $new_string = null;
+            $new_string = str_replace( 'XXX', $library_people_group, $prayer_point);
+            $new_string = str_replace( 'YYY', $library_location, $new_string);
+            $replaced_prayer_points[] = $new_string;
+        }
+
+        return $replaced_prayer_points;
     }
 
     public function delete_prayer_lib( $lib_id ) {
@@ -161,12 +175,25 @@ class Pray4Movement_Prayer_Points_Endpoints
             return new WP_Error( __METHOD__, 'Missing valid action parameters', [ 'status' => 400 ] );
         }
         global $wpdb;
-        $prayer_ids = $wpdb->get_col(
+        $prayer_ids = $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $lib_id 
             )
         );
         return $prayer_ids;
+    }
+
+    public function get_prayer_library( $lib_id ) {
+        if ( !isset( $lib_id ) ) {
+            return new WP_Error( __METHOD__, 'Missing valid action parameters', [ 'status' => 400 ] );
+        }
+        global $wpdb;
+        $library = $wpdb->get_row(
+            $wpdb->prepare(
+                "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d;", $lib_id 
+            ), ARRAY_A
+        );
+        return $library;
     }
 
     private static $_instance = null;
