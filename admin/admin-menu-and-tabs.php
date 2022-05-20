@@ -285,7 +285,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                 jQuery( '#delete-library-' + lib_id ).remove();
                     let admin_notice = `
                         <div class="notice notice-success is-dismissible">
-                            <p>'${lib_name}' Prayer Library deleted successfully</p>
+                            <p>'${lib_name}' Prayer Library deleted successfully!</p>
                         </div>
                     `;
                     jQuery('.nav-tab-wrapper').before(admin_notice);
@@ -361,7 +361,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                 'description' => $new_library_desc,
                 'location' => $new_library_location,
                 'people_group' => $new_library_people_group,
-                'icon' => $new_library_icon
+                'icon' => $new_library_icon,
             ],
             [
                 '%s', // key
@@ -377,7 +377,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Could not add new prayer library to table', 'pray4movement_prayer_points' ), 'error' );
             return;
         }
-        Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Library created successfully', 'pray4movement_prayer_points' ), 'success' );
+        Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Library created successfully!', 'pray4movement_prayer_points' ), 'success' );
     }
 
     public static function get_prayer_libraries() {
@@ -473,14 +473,17 @@ class Pray4Movement_Prayer_Points_Edit_Lib {
         }
 
         $lib_id = sanitize_key( wp_unslash( $_GET['edit_lib'] ) );
-        $library = Pray4Movement_Prayer_Points_View_Lib::get_prayer_library( $lib_id );
         if ( isset( $_POST['edit_library_nonce'] ) ) {
             if ( !isset( $_POST['edit_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['edit_library_nonce'] ), 'edit_library' ) ) {
                 return;
             }
-            self::process_edit_library();
+            self::process_edit_library( $lib_id );
         }
+        $library = Pray4Movement_Prayer_Points_View_Lib::get_prayer_library( $lib_id );
         ?>
+        <p>
+            <a href="/wp-admin/admin.php?page=pray4movement_prayer_points"><?php esc_html_e( '<< Back to Prayer Libraries', 'pray4movement_prayer_points' ); ?></a>
+        </p>
         <form method="POST">
             <?php wp_nonce_field( 'edit_library', 'edit_library_nonce' ); ?>
             <table class="widefat striped">
@@ -561,6 +564,74 @@ class Pray4Movement_Prayer_Points_Edit_Lib {
         <br>
         <!-- End Box -->
         <?php
+    }
+
+    private function process_edit_library( $lib_id ) {
+        if ( !isset( $_POST['edit_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['edit_library_nonce'] ), 'edit_library' ) ) {
+            return;
+        }
+
+        if ( !isset( $_POST['new_library_name'] ) || empty( $_POST['new_library_name'] ) ) {
+            Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Library not updated: Library name missing', 'pray4movement_prayer_points' ), 'error' );
+            return;
+        }
+
+        if ( !empty( $_POST['new_library_name'] ) ) {
+            $new_library_name = sanitize_text_field( wp_unslash( $_POST['new_library_name'] ) );
+        }
+
+        if ( isset( $_POST['new_library_desc'] ) && !empty( $_POST['new_library_desc'] ) ) {
+            $new_library_desc = sanitize_text_field( wp_unslash( $_POST['new_library_desc'] ) );
+        }
+
+        if ( isset( $_POST['new_library_location'] ) && !empty( $_POST['new_library_location'] ) ) {
+            $new_library_location = sanitize_text_field( wp_unslash( $_POST['new_library_location'] ) );
+        }
+
+        if ( isset( $_POST['new_library_people_group'] ) && !empty( $_POST['new_library_people_group'] ) ) {
+            $new_library_people_group = sanitize_text_field( wp_unslash( $_POST['new_library_people_group'] ) );
+        }
+
+        $new_library_icon = null;
+        if ( isset( $_POST['new_library_icon'] ) && !empty( $_POST['new_library_icon'] ) ) {
+            $new_library_icon = sanitize_text_field( wp_unslash( $_POST['new_library_icon'] ) );
+        }
+
+        $new_library_key = sanitize_key( strtolower( str_replace( ' ', '_', $new_library_name ) ) );
+
+        // Todo: Check that key doesn't already exist in DB
+
+        global $wpdb;
+        $charset_collate = $wpdb->get_charset_collate();
+
+        $test = $wpdb->update(
+            $wpdb->prefix.'dt_prayer_points_lib',
+            [
+                'key' => $new_library_key,
+                'name' => $new_library_name,
+                'description' => $new_library_desc,
+                'location' => $new_library_location,
+                'people_group' => $new_library_people_group,
+                'icon' => $new_library_icon,
+            ],
+            [
+                'id' => $lib_id,
+            ],
+            [
+                '%s', // key
+                '%s', // name
+                '%s', // description
+                '%s', // location
+                '%s', // people_group
+                '%s', // icon
+            ]
+        );
+
+        if ( !$test ) {
+            Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Could not update prayer library', 'pray4movement_prayer_points' ), 'error' );
+            return;
+        }
+        Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Library updated successfully!', 'pray4movement_prayer_points' ), 'success' );
     }
 }
 
@@ -975,7 +1046,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
             }
         }
 
-        Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Point added successfully', 'pray4movement_prayer_points' ), 'success' );
+        Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Point added successfully!', 'pray4movement_prayer_points' ), 'success' );
 
     }
 
@@ -1109,7 +1180,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
             }
         }
 
-        Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Point updated successfully', 'pray4movement_prayer_points' ), 'success' );
+        Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Point updated successfully!', 'pray4movement_prayer_points' ), 'success' );
 
     }
 
@@ -1174,7 +1245,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
                 jQuery( '#delete-prayer-' + prayer_id ).remove();
                     let admin_notice = `
                         <div class="notice notice-success is-dismissible">
-                            <p>'${prayer_title}' Prayer Point deleted successfully</p>
+                            <p>'${prayer_title}' Prayer Point deleted successfully!</p>
                         </div>
                     `;
                     jQuery('#post-body-content').prepend(admin_notice);
