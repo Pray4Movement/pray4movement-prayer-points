@@ -48,7 +48,7 @@ class Pray4Movement_Prayer_Points_Menu {
     public function register_menu() {
         $this->page_title = __( "Pray4Movement Prayer Points", 'pray4movement-prayer-points' );
         $menu_icon = self::get_prayer_library_icon();
-        add_menu_page( 'Prayer Points', 'Prayer Points', 'manage_dt', $this->token, [ $this, 'content' ], $menu_icon );
+        add_menu_page( 'Prayer Points', 'Prayer Points', 'manage_dt', $this->token, [ $this, 'content' ], $menu_icon, 7 );
     }
 
     public static function get_prayer_library_icon() {
