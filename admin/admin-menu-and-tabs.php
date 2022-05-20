@@ -701,7 +701,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
         return $prayer_point;
     }
 
-    private static function get_lib_id( $prayer_id ) {
+    public static function get_lib_id( $prayer_id ) {
         if ( !isset( $prayer_id ) ) {
             return;
         }
@@ -782,6 +782,9 @@ class Pray4Movement_Prayer_Points_View_Lib {
         ?>
         <div class="wrap">
             <div id="poststuff">
+                <p>
+                    <a href="/wp-admin/admin.php?page=pray4movement_prayer_points"><?php esc_html_e( '<< Back to Prayer Libraries', 'pray4movement_prayer_points' ); ?></a>
+                </p>
                 <div id="post-body" class="metabox-holder columns-2">
                     <div id="post-body-content">
                         <!-- Main Column -->
@@ -821,9 +824,6 @@ class Pray4Movement_Prayer_Points_View_Lib {
         }
         ?>
         <!-- Box -->
-        <p>
-            <a href="/wp-admin/admin.php?page=pray4movement_prayer_points"><?php esc_html_e( '<< Back to Prayer Libraries', 'pray4movement_prayer_points' ); ?></a>
-        </p>
         <table class="widefat striped">
             <thead>
                 <tr>
@@ -1294,7 +1294,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
             <tbody>
             <tr>
                 <td>
-                    Content
+                    <?php esc_html_e( 'View, add, edit, and delete your Prayer Points for this Prayer Library.', 'pray4movement_prayer_points' ); ?>
                 </td>
             </tr>
             </tbody>
@@ -1313,9 +1313,23 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         if ( !current_user_can( 'manage_dt' ) ) { // manage dt is a permission that is specific to Disciple.Tools and allows admins, strategists and dispatchers into the wp-admin
             wp_die( 'You do not have sufficient permissions to access this page.' );
         }
+
+        if ( !isset( $_GET['edit_prayer'] ) ) {
+            esc_html_e( 'Error: Invalid Prayer Point ID.', 'pray4movement_prayer_points' );
+            return;
+        }
+
+        $prayer_id = sanitize_text_field( wp_unslash( $_GET['edit_prayer'] ) );
+        $lib_id = Pray4Movement_Prayer_Points_View_Lib::get_lib_id( $prayer_id );
+        $prayer_library = Pray4Movement_Prayer_Points_View_Lib::get_prayer_library( $lib_id );
         ?>
         <div class="wrap">
             <div id="poststuff">
+                <p>
+                    <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&view_lib=<?php echo esc_attr( $lib_id ); ?>">
+                        <?php echo esc_html( sprintf( __( "<< Back to '%s'", 'pray4movement_prayer_points' ), $prayer_library['name'] ) ); ?>
+                    </a>
+                </p>
                 <div id="post-body" class="metabox-holder columns-2">
                     <div id="post-body-content">
                         <!-- Main Column -->
@@ -1368,11 +1382,6 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         <!-- Box -->
         <form method="POST">
         <?php wp_nonce_field( 'edit_prayer_point', 'edit_prayer_point_nonce' ); ?>
-        <p>
-            <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&view_lib=<?php echo esc_attr( $prayer_point['lib_id'] ); ?>">
-                <?php echo esc_html( sprintf( __( "<< Back to '%s'", 'pray4movement_prayer_points' ), $prayer_library['name'] ) ); ?>
-            </a>
-        </p>
         <table class="widefat striped">
             <thead>
                 <tr>
