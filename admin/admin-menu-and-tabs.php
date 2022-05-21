@@ -393,7 +393,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         );
 
         if ( !$test ) {
-            Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Could not add new prayer library to table', 'pray4movement_prayer_points' ), 'error' );
+            Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Could not add new Prayer Library to table', 'pray4movement_prayer_points' ), 'error' );
             return;
         }
         Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Library created successfully!', 'pray4movement_prayer_points' ), 'success' );
@@ -659,7 +659,7 @@ class Pray4Movement_Prayer_Points_Edit_Lib {
         );
 
         if ( !$test ) {
-            Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Could not update prayer library', 'pray4movement_prayer_points' ), 'error' );
+            Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Could not update Prayer Library', 'pray4movement_prayer_points' ), 'error' );
             return;
         }
         Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Library updated successfully!', 'pray4movement_prayer_points' ), 'success' );
@@ -1050,7 +1050,7 @@ class Pray4Movement_Prayer_Points_View_Lib {
         );
 
         if ( !$test ) {
-            Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Could not add new prayer point to library', 'pray4movement_prayer_points' ), 'error' );
+            Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Could not add new Prayer Point to library', 'pray4movement_prayer_points' ), 'error' );
             return;
         }
 
@@ -1619,7 +1619,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
                     <tbody>
                         <tr>
                             <td>
-                                <?php esc_html_e( 'Select CSV file with prayer points', 'pray4movement_prayer_points' ); ?>
+                                <?php esc_html_e( 'Select CSV file with Prayer Points', 'pray4movement_prayer_points' ); ?>
                             </td>
                             <td>
                                 <input type="file" name="import-file">
@@ -1627,14 +1627,14 @@ class Pray4Movement_Prayer_Points_Tab_Import {
                         </tr>
                         <tr>
                             <td>
-                                <?php esc_html_e( 'Please select the Prayer Library you want to insert the prayer points into', 'pray4movement_prayer_points' ); ?>
+                                <?php esc_html_e( 'Please select the Prayer Library you want to insert the Prayer Points into', 'pray4movement_prayer_points' ); ?>
                             </td>
                             <td>
                             <?php $prayer_libraries = Pray4Movement_Prayer_Points_Tab_Explore::get_prayer_libraries(); ?>
                             <select name="prayer-library-id" required>
                                     <option hidden><?php esc_html_e( 'Select a Prayer Library', 'pray4movement_prayer_points' ); ?></option>
                                     <?php if ( empty( $prayer_libraries ) ) : ?>
-                                        <option disabled>No prayer libraries found</option>
+                                        <option disabled><?php esc_html_e( 'No Prayer Libraries found', 'pray4movement_prayer_points' ); ?></option>
                                     <?php else : ?>
                                         <?php foreach ( $prayer_libraries as $library ) : ?>
                                         <option value="<?php echo esc_html( $library['id'] ); ?>"><?php echo esc_html( $library['name'] ); ?></option>
@@ -1826,7 +1826,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
             $linecount ++;
         }
 
-        Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( sprintf( __( '%d prayer points added successfully!', 'pray4movement_prayer_points' ), $insert_count ) ), 'success' );
+        Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( sprintf( __( '%d Prayer Points added successfully!', 'pray4movement_prayer_points' ), $insert_count ) ), 'success' );
     }
 }
 
@@ -1970,7 +1970,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
             <tbody>
             <tr>
                 <td>
-                    <?php esc_html_e( 'Export your prayer libraries to a CSV file and distribute it among your contacts.', 'pray4movement_prayer_points' ); ?>
+                    <?php esc_html_e( 'Export your Prayer Libraries to a CSV file and distribute it among your contacts.', 'pray4movement_prayer_points' ); ?>
                 </td>
             </tr>
             </tbody>
