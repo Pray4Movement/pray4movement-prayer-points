@@ -1,0 +1,519 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Disciple Tools - Pray4Movement Prayer Points\n"
+"POT-Creation-Date: 2022-05-21 10:54-0300\n"
+"PO-Revision-Date: 2022-05-21 17:42-0300\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es_419\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: pray4movement-prayer-points.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+"X-Poedit-SearchPathExcluded-1: */libraries/*\n"
+
+#: admin/admin-menu-and-tabs.php:40 admin/admin-menu-and-tabs.php:49
+#: site-link/custom-site-to-site-links.php:36 tile/custom-tile.php:32
+msgid "Pray4Movement Prayer Points"
+msgstr "Pray4Movement Puntos de Oración"
+
+#: admin/admin-menu-and-tabs.php:191
+msgid "Prayer Libraries"
+msgstr "Librerías de Oración"
+
+#: admin/admin-menu-and-tabs.php:214
+msgid "Add Prayer Library"
+msgstr "Agregar Librería de Oración"
+
+#: admin/admin-menu-and-tabs.php:220 admin/admin-menu-and-tabs.php:517
+msgid "Name"
+msgstr "Nombre"
+
+#: admin/admin-menu-and-tabs.php:228 admin/admin-menu-and-tabs.php:525
+msgid "Description"
+msgstr "Descripción"
+
+#: admin/admin-menu-and-tabs.php:236 admin/admin-menu-and-tabs.php:533
+msgid "Location"
+msgstr "Ubicación"
+
+#: admin/admin-menu-and-tabs.php:244 admin/admin-menu-and-tabs.php:541
+msgid "People Group"
+msgstr "Étnia"
+
+#: admin/admin-menu-and-tabs.php:252 admin/admin-menu-and-tabs.php:549
+msgid "Icon"
+msgstr "Ícono"
+
+#: admin/admin-menu-and-tabs.php:260 admin/admin-menu-and-tabs.php:987
+msgid "Add"
+msgstr "Agregar"
+
+#: admin/admin-menu-and-tabs.php:309
+msgid "Manage your Prayer Libraries from this screen."
+msgstr "Administra tus Librerías de Oración desde esta pantalla."
+
+#: admin/admin-menu-and-tabs.php:314
+msgid ""
+"The 'People Group' and 'Location' fields will be used to replace 'XXX' and "
+"'YYY' Prayer Point variables respectively."
+msgstr ""
+"Los campos de ‘Étnia’ y ‘Ubicación’ serán utilizados para reemplazar las "
+"variables ‘XXX’ e ‘YYY’ respectivamente en los Puntos de Oración."
+
+#: admin/admin-menu-and-tabs.php:319
+msgid "Prayer Library Icon must be a Base 64 encoded string."
+msgstr ""
+"El Ícono de Librería de Oración debe ser una cadena codificada en Base 64."
+
+#: admin/admin-menu-and-tabs.php:396
+msgid "Could not add new prayer library to table"
+msgstr "No se pudo agregar la nueva librería de oración a la tabla"
+
+#: admin/admin-menu-and-tabs.php:399
+msgid "Prayer Library created successfully!"
+msgstr "¡Librería de Oración creada con éxito!"
+
+#: admin/admin-menu-and-tabs.php:433
+msgid "Edit"
+msgstr "Editar"
+
+#: admin/admin-menu-and-tabs.php:434
+msgid "Delete"
+msgstr "Eliminar"
+
+#: admin/admin-menu-and-tabs.php:504 admin/admin-menu-and-tabs.php:806
+msgid "<< Back to Prayer Libraries"
+msgstr "<< Volver a Librerías de Oración"
+
+#: admin/admin-menu-and-tabs.php:511
+msgid "Edit Prayer Library"
+msgstr "Editar Librería de Oración"
+
+#: admin/admin-menu-and-tabs.php:557 admin/admin-menu-and-tabs.php:1519
+msgid "Update"
+msgstr "Actualizar"
+
+#: admin/admin-menu-and-tabs.php:578
+msgid "Edit your Prayer Library."
+msgstr "Edita tu Librería de Oración."
+
+#: admin/admin-menu-and-tabs.php:583
+msgid ""
+"If you remove the custom Prayer Library Icon, the default icon will be used "
+"instead."
+msgstr ""
+"Si eliminas un Ícono de Librería de Oración, el ícono por defecto se "
+"mostrará en su lugar."
+
+#: admin/admin-menu-and-tabs.php:588
+msgid ""
+"Changing the 'Location' and 'People Group' fileds will automatically update "
+"your Prayer Point's content."
+msgstr ""
+"Cambiar los campos ‘Ubicación’ y ‘Étnia’ actualizará automáticamente el "
+"contenido de tus Puntos de Oración."
+
+#: admin/admin-menu-and-tabs.php:604
+msgid "Library not updated: Library name missing"
+msgstr "Librería no actualizada: Falta el nombre de la librería"
+
+#: admin/admin-menu-and-tabs.php:662
+msgid "Could not update Prayer Library"
+msgstr "No se pudo actualizar la Librería de Oración"
+
+#: admin/admin-menu-and-tabs.php:665
+msgid "Prayer Library updated successfully!"
+msgstr "¡Librería de Oración actualizada con éxito!"
+
+#: admin/admin-menu-and-tabs.php:853
+msgid "Error: Prayer Library not found"
+msgstr "Error: Librería de Oración no encontrada"
+
+#: admin/admin-menu-and-tabs.php:876
+msgid "Add Prayer Point"
+msgstr "Agregar Punto de Oración"
+
+#: admin/admin-menu-and-tabs.php:882 admin/admin-menu-and-tabs.php:1414
+msgid "Title"
+msgstr "Título"
+
+#: admin/admin-menu-and-tabs.php:890 admin/admin-menu-and-tabs.php:1422
+msgid "Reference"
+msgstr "Referencia"
+
+#: admin/admin-menu-and-tabs.php:967 admin/admin-menu-and-tabs.php:1499
+msgid "Content"
+msgstr "Contenido"
+
+#: admin/admin-menu-and-tabs.php:975 admin/admin-menu-and-tabs.php:1507
+msgid "Tags"
+msgstr "Etiquetas"
+
+#: admin/admin-menu-and-tabs.php:1053
+msgid "Could not add new prayer point to library"
+msgstr "No se pudo agregar el nuevo Punto de Oración a la librería"
+
+#: admin/admin-menu-and-tabs.php:1097
+msgid "Prayer Point added successfully!"
+msgstr "¡Punto de Oración agregado con éxito!"
+
+#: admin/admin-menu-and-tabs.php:1231
+msgid "Prayer Point updated successfully!"
+msgstr "¡Punto de Oración actualizado con éxito!"
+
+#: admin/admin-menu-and-tabs.php:1240
+msgid "This Prayer Library is currently empty."
+msgstr "Esta Librería de Oración está momentáneamente vacía."
+
+#: admin/admin-menu-and-tabs.php:1317
+msgid "View, add, edit, and delete your Prayer Points for this Prayer Library."
+msgstr ""
+"Ve, agrega, edita y elimina tus Puntos de Oración para esta Librería de "
+"Oración."
+
+#: admin/admin-menu-and-tabs.php:1338 admin/admin-menu-and-tabs.php:1378
+msgid "Error: Invalid Prayer Point ID."
+msgstr "Error: ID de Punto de Oración inválido."
+
+#: admin/admin-menu-and-tabs.php:1350
+#, php-format
+msgid "<< Back to '%s'"
+msgstr "<< Volver a ‘%s’"
+
+#: admin/admin-menu-and-tabs.php:1398
+msgid "Error: Prayer Point does not exist."
+msgstr "Error: Punto de Oración no existe."
+
+#: admin/admin-menu-and-tabs.php:1408
+msgid "Edit Prayer Point"
+msgstr "Editar Punto de Oración"
+
+#: admin/admin-menu-and-tabs.php:1546
+msgid "Edit your Prayer Point."
+msgstr "Edita tu Punto de Oración."
+
+#: admin/admin-menu-and-tabs.php:1551
+msgid ""
+"XXX will be replaced with the configured People Group name for this Prayer "
+"Library."
+msgstr ""
+"XXX será reemplazado con el nombre de la Étnia configurado para esta "
+"Librería de Oración."
+
+#: admin/admin-menu-and-tabs.php:1556
+msgid ""
+"YYY will be replaced with the configured Location name for this Prayer "
+"Library."
+msgstr ""
+"YYY será reemplazado con el nombre de la Ubicación configurado para esta "
+"Librería de Oración."
+
+#: admin/admin-menu-and-tabs.php:1615
+msgid "Import CSV"
+msgstr "Importar CSV"
+
+#: admin/admin-menu-and-tabs.php:1622
+msgid "Select CSV file with prayer points"
+msgstr "Selecciona un archivo CSV con Puntos de Oración"
+
+#: admin/admin-menu-and-tabs.php:1630
+msgid ""
+"Please select the Prayer Library you want to insert the prayer points into"
+msgstr ""
+"Seleccione la Librería de Oración en la cual quiere agregar los Puntos de "
+"Oración"
+
+#: admin/admin-menu-and-tabs.php:1635
+msgid "Select a Prayer Library"
+msgstr "Seleccione una Librería de Oración"
+
+#: admin/admin-menu-and-tabs.php:1648
+msgid "Import"
+msgstr "Importar"
+
+#: admin/admin-menu-and-tabs.php:1663
+msgid "Help"
+msgstr "Ayuda"
+
+#: admin/admin-menu-and-tabs.php:1829
+#, php-format
+msgid "%d prayer points added successfully!"
+msgstr "¡%d Puntos de Oración agregados con éxito!"
+
+#: admin/admin-menu-and-tabs.php:1871
+msgid "No Prayer Libraries created yet"
+msgstr "Ninguna Librería de Oración creada aún"
+
+#: admin/admin-menu-and-tabs.php:1973
+msgid ""
+"Export your prayer libraries to a CSV file and distribute it among your "
+"contacts."
+msgstr ""
+"Exporta tus Librerías de Oración a un archivo CSV y distribúyelas entre tus "
+"contactos."
+
+#: charts/one-page-chart-template.php:68
+msgid "Sample API Call"
+msgstr ""
+
+#: magic-link/magic-link-map.php:99 magic-link/magic-link-non-object.php:117
+#: magic-link/magic-link-user-app.php:167
+#: magic-link/post-type-magic-link/magic-link-post-type.php:102
+msgid "Add Magic"
+msgstr ""
+
+#: magic-link/post-type-magic-link/magic-link-post-type.php:128
+msgid "Magic Url"
+msgstr ""
+
+#: post-type/loader.php:22 post-type/module-base.php:63
+#: post-type/module-base.php:79
+msgid "Starter"
+msgstr ""
+
+#: post-type/loader.php:27
+msgid "Default starter functionality"
+msgstr ""
+
+#: post-type/module-base.php:64 post-type/module-base.php:80
+msgid "Starters"
+msgstr ""
+
+#: post-type/module-base.php:95
+msgid "Multiplier"
+msgstr ""
+
+#: post-type/module-base.php:137
+msgid "Status"
+msgstr ""
+
+#: post-type/module-base.php:138
+msgid "Set the current status."
+msgstr ""
+
+#: post-type/module-base.php:142
+msgid "Inactive"
+msgstr ""
+
+#: post-type/module-base.php:143
+msgid "No longer active."
+msgstr ""
+
+#: post-type/module-base.php:147
+msgid "Active"
+msgstr ""
+
+#: post-type/module-base.php:148
+msgid "Is active."
+msgstr ""
+
+#: post-type/module-base.php:158
+msgid "Assigned To"
+msgstr ""
+
+#: post-type/module-base.php:159
+msgid "Select the main person who is responsible for reporting on this record."
+msgstr ""
+
+#: post-type/module-base.php:173
+msgid "Start Date"
+msgstr ""
+
+#: post-type/module-base.php:181
+msgid "End Date"
+msgstr ""
+
+#: post-type/module-base.php:189
+msgid "Multi-Select"
+msgstr ""
+
+#: post-type/module-base.php:190
+msgid "Multi Select Field"
+msgstr ""
+
+#: post-type/module-base.php:194
+msgid "Item 1"
+msgstr ""
+
+#: post-type/module-base.php:195
+msgid "Item 1."
+msgstr ""
+
+#: post-type/module-base.php:198
+msgid "Item 2"
+msgstr ""
+
+#: post-type/module-base.php:199
+msgid "Item 2."
+msgstr ""
+
+#: post-type/module-base.php:202
+msgid "Item 3"
+msgstr ""
+
+#: post-type/module-base.php:203
+msgid "Item 3."
+msgstr ""
+
+#: post-type/module-base.php:217 post-type/module-base.php:226
+msgid "Locations"
+msgstr ""
+
+#: post-type/module-base.php:218
+msgid "The general location where this contact is located."
+msgstr ""
+
+#: post-type/module-base.php:227
+msgid "The general location where this record is located."
+msgstr ""
+
+#: post-type/module-base.php:235
+msgid "Address"
+msgstr ""
+
+#: post-type/module-base.php:258
+msgid "Parents"
+msgstr ""
+
+#: post-type/module-base.php:269
+msgid "Peers"
+msgstr ""
+
+#: post-type/module-base.php:280
+msgid "Children"
+msgstr ""
+
+#: post-type/module-base.php:297
+msgid "People Groups"
+msgstr ""
+
+#: post-type/module-base.php:298
+msgid "The people groups connected to this record."
+msgstr ""
+
+#: post-type/module-base.php:308
+msgid "Contacts"
+msgstr ""
+
+#: post-type/module-base.php:365
+msgid "Connections"
+msgstr ""
+
+#: post-type/module-base.php:366
+msgid "Other"
+msgstr ""
+
+#: post-type/module-base.php:383
+msgid "Custom Section Contact"
+msgstr ""
+
+#: post-type/module-base.php:539
+msgid "Assigned to me"
+msgstr ""
+
+#: post-type/module-base.php:547 post-type/module-base.php:604
+#: post-type/module-base.php:612
+msgid "All"
+msgstr ""
+
+#: tile/custom-tile.php:62
+msgid "Text"
+msgstr ""
+
+#: tile/custom-tile.php:63
+msgctxt "Optional Documentation"
+msgid "Text"
+msgstr ""
+
+#: tile/custom-tile.php:73
+msgid "Multiselect"
+msgstr ""
+
+#: tile/custom-tile.php:75
+msgid "One"
+msgstr ""
+
+#: tile/custom-tile.php:76
+msgid "Two"
+msgstr ""
+
+#: tile/custom-tile.php:77
+msgid "Three"
+msgstr ""
+
+#: tile/custom-tile.php:78
+msgid "Four"
+msgstr ""
+
+#: tile/custom-tile.php:94
+msgctxt "Key Select Label"
+msgid "First"
+msgstr ""
+
+#: tile/custom-tile.php:95
+msgctxt "Training Status field description"
+msgid "First Key Description"
+msgstr ""
+
+#: tile/custom-tile.php:99
+msgctxt "Key Select Label"
+msgid "Second"
+msgstr ""
+
+#: tile/custom-tile.php:100
+msgctxt "Training Status field description"
+msgid "Second Key Description"
+msgstr ""
+
+#: tile/custom-tile.php:104
+msgctxt "Key Select Label"
+msgid "Third"
+msgstr ""
+
+#: tile/custom-tile.php:105
+msgctxt "Training Status field description"
+msgid "Third Key Description"
+msgstr ""
+
+#: tile/settings-tile.php:43 tile/settings-tile.php:61
+msgid "Custom Settings Section"
+msgstr ""
+
+#: tile/settings-tile.php:77
+msgctxt "Optional Documentation"
+msgid "Custom Settings Section"
+msgstr ""
+
+#: tile/settings-tile.php:78
+msgctxt "Optional Documentation"
+msgid "Add your own help information into this modal."
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Disciple.Tools - Pray4Movement Prayer Points"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://github.com/DiscipleTools/pray4movement-prayer-points"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Disciple.Tools - Pray4Movement Prayer Points is intended to help developers "
+"and integrator jumpstart their extension of the Disciple.Tools system."
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://github.com/DiscipleTools"
+msgstr "https://github.com/DiscipleTools"
