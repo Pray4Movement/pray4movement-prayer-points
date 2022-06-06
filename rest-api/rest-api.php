@@ -59,6 +59,15 @@ class Pray4Movement_Prayer_Points_Endpoints
         }
     }
 
+    public function get_prayer_ids_from_library_id( $library_id ) {
+        if ( isset( $library_id ) ) {
+            global $wpdb;
+            return $wpdb->get_col(
+                $wpdb->prepare( "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $library_id )
+            );
+        }
+    }
+
     private function delete_prayer_point( $prayer_id ) {
         self::delete_prayer_point_content( $prayer_id );
         self::delete_prayer_point_meta( $prayer_id );
@@ -97,6 +106,13 @@ class Pray4Movement_Prayer_Points_Endpoints
                 },
             ]
         );
+    }
+
+    public function endpoint_for_delete_prayer_point( WP_REST_Request $request ) {
+        $params = $request->get_params();
+        if ( isset( $params['prayer_id'] ) ) {
+            self::delete_prayer_point( $params['prayer_id'] );
+        }
     }
 
     private function register_get_prayer_points_endpoint() {
@@ -150,31 +166,6 @@ class Pray4Movement_Prayer_Points_Endpoints
                 ORDER BY pp.lib_id ASC;", $library_id
             ) , ARRAY_A
         );
-    }
-
-    public function endpoint_for_delete_prayer_point( WP_REST_Request $request ) {
-        $params = $request->get_params();
-        if ( isset( $params['prayer_id'] ) ) {
-            self::delete_prayer_point( $params['prayer_id'] );
-        }
-    }
-
-    public function get_prayer_ids_from_library_id( $library_id ) {
-        if ( isset( $library_id ) ) {
-            global $wpdb;
-            return $wpdb->get_col(
-                $wpdb->prepare( "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $library_id )
-            );
-        }
-    }
-
-    public function get_prayer_library( $library_id ) {
-        if ( isset( $library_id ) ) {
-            global $wpdb;
-            return $wpdb->get_row(
-                $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d;", $library_id ), ARRAY_A
-            );
-        }
     }
 
     private static $_instance = null;
