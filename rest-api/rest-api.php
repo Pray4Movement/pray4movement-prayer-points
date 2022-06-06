@@ -111,47 +111,45 @@ class Pray4Movement_Prayer_Points_Endpoints
         );
     }
 
-    
-
     public function endpoint_for_get_prayer_points ( WP_REST_Request $request ) {
         $params = $request->get_params();
-        if ( !isset( $library_id ) ) {
-            new WP_Error ( __METHOD__, 'Missing a valid prayer library id', [ 'status' => 400 ] );
+        if ( isset( $params['library_id'] ) ) {
+            $library_ids = self::validate_library_ids( $params['library_id' ] );
+            $library_ids = self::library_ids_to_array( $library_ids );
+            return self::get_full_prayer_points_from_library_ids( $library_ids );
         }
-        $library_id = sanitize_text_field( wp_unslash( $request['library_id'] ) );
-        $library_id = explode( ',', $library_id );
+    }
+
+    private function validate_library_ids( $library_ids ) {
+        return sanitize_text_field( wp_unslash( $library_ids ) );
+    }
+
+    private function library_ids_to_array( $library_ids ) {
+        return explode( ',', $library_ids );
+    }
+
+    private function get_full_prayer_points_from_library_ids( $library_id ) {
         global $wpdb;
-        
-        // One query to rule them all...
-        $prayer_points = $wpdb->get_results(
+        return $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT
-                    (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'title' AND prayer_id = pp.id) AS 'title',
-                    pp.content,
+                    REPLACE( REPLACE( (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'title' AND prayer_id = pp.id), 'XXX', pl.people_group), 'YYY', pl.location ) AS 'title',
+                    REPLACE( REPLACE( pp.content, 'XXX', pl.people_group), 'YYY', pl.location ) AS 'content',
                     (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'reference' AND prayer_id = pp.id) AS 'reference',
                     (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'book' AND prayer_id = pp.id) AS 'book',
                     (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'verse' AND prayer_id = pp.id) AS 'verse',
                     (SELECT GROUP_CONCAT(meta_value) FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = pp.id) AS 'tags',
-                    pp.status
+                    pp.status,
+                    pl.location,
+                    pl.people_group,
+                    pl.id as 'library_id'
                 FROM `{$wpdb->prefix}dt_prayer_points` pp
-                WHERE pp.library_id IN ( " . implode( ',', array_fill( 0, count( $library_id ), '%d' ) ) . " )
-                ORDER BY pp.library_id ASC;", $library_id )
-            , ARRAY_A );
-
-            
-        $library = self::get_prayer_library( $library_id );
-        $library_people_group = $library['people_group'];
-        $library_location = $library['location'];
-        $replaced_prayer_points = [];
-
-        foreach($prayer_points as $prayer_point) {
-            $new_string = null;
-            $new_string = str_replace( 'XXX', $library_people_group, $prayer_point);
-            $new_string = str_replace( 'YYY', $library_location, $new_string);
-            $replaced_prayer_points[] = $new_string;
-        }
-
-        return $replaced_prayer_points;
+                INNER JOIN `{$wpdb->prefix}dt_prayer_points_lib` pl
+                ON pl.id = pp.lib_id
+                WHERE pp.lib_id IN ( " . implode( ',', array_fill( 0, count( $library_id ), '%d' ) ) . " )
+                ORDER BY pp.lib_id ASC;", $library_id
+            ) , ARRAY_A
+        );
     }
 
     public function endpoint_for_delete_prayer_point( WP_REST_Request $request ) {
@@ -162,29 +160,21 @@ class Pray4Movement_Prayer_Points_Endpoints
     }
 
     public function get_prayer_ids_from_library_id( $library_id ) {
-        if ( !isset( $library_id ) ) {
-            return new WP_Error( __METHOD__, 'Missing valid action parameters', [ 'status' => 400 ] );
+        if ( isset( $library_id ) ) {
+            global $wpdb;
+            return $wpdb->get_col(
+                $wpdb->prepare( "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $library_id )
+            );
         }
-        global $wpdb;
-        $prayer_ids = $wpdb->get_col(
-            $wpdb->prepare(
-                "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $library_id 
-            )
-        );
-        return $prayer_ids;
     }
 
     public function get_prayer_library( $library_id ) {
-        if ( !isset( $library_id ) ) {
-            return new WP_Error( __METHOD__, 'Missing valid action parameters', [ 'status' => 400 ] );
+        if ( isset( $library_id ) ) {
+            global $wpdb;
+            return $wpdb->get_row(
+                $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d;", $library_id ), ARRAY_A
+            );
         }
-        global $wpdb;
-        $library = $wpdb->get_row(
-            $wpdb->prepare(
-                "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d;", $library_id 
-            ), ARRAY_A
-        );
-        return $library;
     }
 
     private static $_instance = null;

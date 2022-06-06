@@ -65,18 +65,16 @@ class Pray4Movement_Prayer_Points_Menu {
      * @since 0.1
      */
     public function content() {
-        if ( !current_user_can( 'manage_dt' ) ) { // manage dt is a permission that is specific to Disciple.Tools and allows admins, strategists and dispatchers into the wp-admin
-            wp_die( 'You do not have sufficient permissions to access this page.' );
-        }
+        self::check_permissions();
 
         if ( isset( $_GET['view_lib'] ) ) {
-            $object = new Pray4Movement_Prayer_Points_View_Lib();
+            $object = new Pray4Movement_Prayer_Points_View_Library();
             $object->content();
             return;
         }
 
         if ( isset( $_GET['edit_lib'] ) ) {
-            $object = new Pray4Movement_Prayer_Points_Edit_Lib();
+            $object = new Pray4Movement_Prayer_Points_Edit_Library();
             $object->content();
             return;
         }
@@ -126,6 +124,12 @@ class Pray4Movement_Prayer_Points_Menu {
         </div><!-- End wrap -->
 
         <?php
+    }
+
+    private function check_permissions() {
+        if ( !current_user_can( 'manage_dt' ) ) { // manage dt is a permission that is specific to Disciple.Tools and allows admins, strategists and dispatchers into the wp-admin
+            wp_die( 'You do not have sufficient permissions to access this page.' );
+        }
     }
 
     /**
@@ -453,9 +457,9 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
 
 
 /**
- * Class Pray4Movement_Prayer_Points_Edit_Lib
+ * Class Pray4Movement_Prayer_Points_Edit_Library
  */
-class Pray4Movement_Prayer_Points_Edit_Lib {
+class Pray4Movement_Prayer_Points_Edit_Library {
     public function content() {
         if ( !current_user_can( 'manage_dt' ) ) { // manage dt is a permission that is specific to Disciple.Tools and allows admins, strategists and dispatchers into the wp-admin
             wp_die( 'You do not have sufficient permissions to access this page.' );
@@ -498,7 +502,7 @@ class Pray4Movement_Prayer_Points_Edit_Lib {
             }
             self::process_edit_library( $lib_id );
         }
-        $library = Pray4Movement_Prayer_Points_View_Lib::get_prayer_library( $lib_id );
+        $library = Pray4Movement_Prayer_Points_View_Library::get_prayer_library( $lib_id );
         ?>
         <p>
             <a href="/wp-admin/admin.php?page=pray4movement_prayer_points"><?php esc_html_e( '<< Back to Prayer Libraries', 'pray4movement_prayer_points' ); ?></a>
@@ -667,9 +671,9 @@ class Pray4Movement_Prayer_Points_Edit_Lib {
 }
 
 /**
- * Class Pray4Movement_Prayer_Points_View_Lib
+ * Class Pray4Movement_Prayer_Points_View_Library
  */
-class Pray4Movement_Prayer_Points_View_Lib {
+class Pray4Movement_Prayer_Points_View_Library {
     public static function get_prayer_library( $lib_id ) {
         $lib_id = esc_sql( $lib_id );
         global $wpdb;
@@ -1340,8 +1344,8 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         }
 
         $prayer_id = sanitize_text_field( wp_unslash( $_GET['edit_prayer'] ) );
-        $lib_id = Pray4Movement_Prayer_Points_View_Lib::get_lib_id( $prayer_id );
-        $prayer_library = Pray4Movement_Prayer_Points_View_Lib::get_prayer_library( $lib_id );
+        $lib_id = Pray4Movement_Prayer_Points_View_Library::get_lib_id( $prayer_id );
+        $prayer_library = Pray4Movement_Prayer_Points_View_Library::get_prayer_library( $lib_id );
         ?>
         <div class="wrap">
             <div id="poststuff">
@@ -1383,16 +1387,16 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
             if ( !isset( $_POST['edit_prayer_point_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['edit_prayer_point_nonce'] ), 'edit_prayer_point' ) ) {
                 return;
             }
-            Pray4Movement_Prayer_Points_View_Lib::process_edit_prayer_point();
+            Pray4Movement_Prayer_Points_View_Library::process_edit_prayer_point();
         }
 
         $prayer_id = esc_sql( sanitize_text_field( wp_unslash( $_GET['edit_prayer'] ) ) );
-        $prayer_point = Pray4Movement_Prayer_Points_View_Lib::get_prayer_point( $prayer_id );
-        $prayer_tags = Pray4Movement_Prayer_Points_View_Lib::get_prayer_tags( $prayer_id );
-        $prayer_title = Pray4Movement_Prayer_Points_View_Lib::get_raw_prayer_meta( $prayer_id, 'title' );
-        $prayer_book = Pray4Movement_Prayer_Points_View_Lib::get_raw_prayer_meta( $prayer_id, 'book' );
-        $prayer_verse = Pray4Movement_Prayer_Points_View_Lib::get_raw_prayer_meta( $prayer_id, 'verse' );
-        $prayer_library = Pray4Movement_Prayer_Points_View_Lib::get_prayer_library( $prayer_point['lib_id'] );
+        $prayer_point = Pray4Movement_Prayer_Points_View_Library::get_prayer_point( $prayer_id );
+        $prayer_tags = Pray4Movement_Prayer_Points_View_Library::get_prayer_tags( $prayer_id );
+        $prayer_title = Pray4Movement_Prayer_Points_View_Library::get_raw_prayer_meta( $prayer_id, 'title' );
+        $prayer_book = Pray4Movement_Prayer_Points_View_Library::get_raw_prayer_meta( $prayer_id, 'book' );
+        $prayer_verse = Pray4Movement_Prayer_Points_View_Library::get_raw_prayer_meta( $prayer_id, 'verse' );
+        $prayer_library = Pray4Movement_Prayer_Points_View_Library::get_prayer_library( $prayer_point['lib_id'] );
 
         if ( !$prayer_point ) {
             esc_html_e( 'Error: Prayer Point does not exist.', 'pray4movement_prayer_points' );
@@ -1933,10 +1937,10 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                         },
                         success: function(response) {
                             let output = "data:text/csv;charset=utf-8,";
-                                output += `"title","content","book","verse","tags","status"\r\n`;
+                                output += `"title","content","reference","book","verse","tags","location","people_group","library_id","status"\r\n`;
                             response.forEach(function(row){
                                 output +=
-                                `"${row['title']}","${row['content']}","${row['book']}","${row['verse']}","${row['tags']}","${row['status']}"\r\n`; 
+                                `"${row['title']}","${row['content']}","${row['reference']}","${row['book']}","${row['verse']}","${row['tags']}","${row['location']}","${row['people_group']}","${row['status']}"\r\n`; 
                             });
                             
                             var encodedUri = encodeURI(output);
