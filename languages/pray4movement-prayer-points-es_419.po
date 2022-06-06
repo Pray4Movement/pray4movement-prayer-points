@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Disciple Tools - Pray4Movement Prayer Points\n"
-"POT-Creation-Date: 2022-05-21 10:54-0300\n"
-"PO-Revision-Date: 2022-05-21 17:42-0300\n"
+"POT-Creation-Date: 2022-05-21 18:16-0300\n"
+"PO-Revision-Date: 2022-05-21 18:16-0300\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: es_419\n"
@@ -23,7 +23,6 @@ msgstr ""
 "X-Poedit-SearchPathExcluded-1: */libraries/*\n"
 
 #: admin/admin-menu-and-tabs.php:40 admin/admin-menu-and-tabs.php:49
-#: site-link/custom-site-to-site-links.php:36 tile/custom-tile.php:32
 msgid "Pray4Movement Prayer Points"
 msgstr "Pray4Movement Puntos de Oración"
 
@@ -77,8 +76,8 @@ msgstr ""
 "El Ícono de Librería de Oración debe ser una cadena codificada en Base 64."
 
 #: admin/admin-menu-and-tabs.php:396
-msgid "Could not add new prayer library to table"
-msgstr "No se pudo agregar la nueva librería de oración a la tabla"
+msgid "Could not add new Prayer Library to table"
+msgstr "No se pudo agregar la nueva Librería de Oración a la tabla"
 
 #: admin/admin-menu-and-tabs.php:399
 msgid "Prayer Library created successfully!"
@@ -161,7 +160,9 @@ msgid "Tags"
 msgstr "Etiquetas"
 
 #: admin/admin-menu-and-tabs.php:1053
-msgid "Could not add new prayer point to library"
+#, fuzzy
+#| msgid "Could not add new prayer point to library"
+msgid "Could not add new Prayer Point to library"
 msgstr "No se pudo agregar el nuevo Punto de Oración a la librería"
 
 #: admin/admin-menu-and-tabs.php:1097
@@ -224,12 +225,17 @@ msgid "Import CSV"
 msgstr "Importar CSV"
 
 #: admin/admin-menu-and-tabs.php:1622
-msgid "Select CSV file with prayer points"
+#, fuzzy
+#| msgid "Select CSV file with prayer points"
+msgid "Select CSV file with Prayer Points"
 msgstr "Selecciona un archivo CSV con Puntos de Oración"
 
 #: admin/admin-menu-and-tabs.php:1630
+#, fuzzy
+#| msgid ""
+#| "Please select the Prayer Library you want to insert the prayer points into"
 msgid ""
-"Please select the Prayer Library you want to insert the prayer points into"
+"Please select the Prayer Library you want to insert the Prayer Points into"
 msgstr ""
 "Seleccione la Librería de Oración en la cual quiere agregar los Puntos de "
 "Oración"
@@ -237,6 +243,12 @@ msgstr ""
 #: admin/admin-menu-and-tabs.php:1635
 msgid "Select a Prayer Library"
 msgstr "Seleccione una Librería de Oración"
+
+#: admin/admin-menu-and-tabs.php:1637
+#, fuzzy
+#| msgid "Prayer Libraries"
+msgid "No Prayer Libraries found"
+msgstr "Librerías de Oración"
 
 #: admin/admin-menu-and-tabs.php:1648
 msgid "Import"
@@ -247,8 +259,9 @@ msgid "Help"
 msgstr "Ayuda"
 
 #: admin/admin-menu-and-tabs.php:1829
-#, php-format
-msgid "%d prayer points added successfully!"
+#, fuzzy, php-format
+#| msgid "%d prayer points added successfully!"
+msgid "%d Prayer Points added successfully!"
 msgstr "¡%d Puntos de Oración agregados con éxito!"
 
 #: admin/admin-menu-and-tabs.php:1871
@@ -256,249 +269,16 @@ msgid "No Prayer Libraries created yet"
 msgstr "Ninguna Librería de Oración creada aún"
 
 #: admin/admin-menu-and-tabs.php:1973
+#, fuzzy
+#| msgid ""
+#| "Export your prayer libraries to a CSV file and distribute it among your "
+#| "contacts."
 msgid ""
-"Export your prayer libraries to a CSV file and distribute it among your "
+"Export your Prayer Libraries to a CSV file and distribute it among your "
 "contacts."
 msgstr ""
 "Exporta tus Librerías de Oración a un archivo CSV y distribúyelas entre tus "
 "contactos."
-
-#: charts/one-page-chart-template.php:68
-msgid "Sample API Call"
-msgstr ""
-
-#: magic-link/magic-link-map.php:99 magic-link/magic-link-non-object.php:117
-#: magic-link/magic-link-user-app.php:167
-#: magic-link/post-type-magic-link/magic-link-post-type.php:102
-msgid "Add Magic"
-msgstr ""
-
-#: magic-link/post-type-magic-link/magic-link-post-type.php:128
-msgid "Magic Url"
-msgstr ""
-
-#: post-type/loader.php:22 post-type/module-base.php:63
-#: post-type/module-base.php:79
-msgid "Starter"
-msgstr ""
-
-#: post-type/loader.php:27
-msgid "Default starter functionality"
-msgstr ""
-
-#: post-type/module-base.php:64 post-type/module-base.php:80
-msgid "Starters"
-msgstr ""
-
-#: post-type/module-base.php:95
-msgid "Multiplier"
-msgstr ""
-
-#: post-type/module-base.php:137
-msgid "Status"
-msgstr ""
-
-#: post-type/module-base.php:138
-msgid "Set the current status."
-msgstr ""
-
-#: post-type/module-base.php:142
-msgid "Inactive"
-msgstr ""
-
-#: post-type/module-base.php:143
-msgid "No longer active."
-msgstr ""
-
-#: post-type/module-base.php:147
-msgid "Active"
-msgstr ""
-
-#: post-type/module-base.php:148
-msgid "Is active."
-msgstr ""
-
-#: post-type/module-base.php:158
-msgid "Assigned To"
-msgstr ""
-
-#: post-type/module-base.php:159
-msgid "Select the main person who is responsible for reporting on this record."
-msgstr ""
-
-#: post-type/module-base.php:173
-msgid "Start Date"
-msgstr ""
-
-#: post-type/module-base.php:181
-msgid "End Date"
-msgstr ""
-
-#: post-type/module-base.php:189
-msgid "Multi-Select"
-msgstr ""
-
-#: post-type/module-base.php:190
-msgid "Multi Select Field"
-msgstr ""
-
-#: post-type/module-base.php:194
-msgid "Item 1"
-msgstr ""
-
-#: post-type/module-base.php:195
-msgid "Item 1."
-msgstr ""
-
-#: post-type/module-base.php:198
-msgid "Item 2"
-msgstr ""
-
-#: post-type/module-base.php:199
-msgid "Item 2."
-msgstr ""
-
-#: post-type/module-base.php:202
-msgid "Item 3"
-msgstr ""
-
-#: post-type/module-base.php:203
-msgid "Item 3."
-msgstr ""
-
-#: post-type/module-base.php:217 post-type/module-base.php:226
-msgid "Locations"
-msgstr ""
-
-#: post-type/module-base.php:218
-msgid "The general location where this contact is located."
-msgstr ""
-
-#: post-type/module-base.php:227
-msgid "The general location where this record is located."
-msgstr ""
-
-#: post-type/module-base.php:235
-msgid "Address"
-msgstr ""
-
-#: post-type/module-base.php:258
-msgid "Parents"
-msgstr ""
-
-#: post-type/module-base.php:269
-msgid "Peers"
-msgstr ""
-
-#: post-type/module-base.php:280
-msgid "Children"
-msgstr ""
-
-#: post-type/module-base.php:297
-msgid "People Groups"
-msgstr ""
-
-#: post-type/module-base.php:298
-msgid "The people groups connected to this record."
-msgstr ""
-
-#: post-type/module-base.php:308
-msgid "Contacts"
-msgstr ""
-
-#: post-type/module-base.php:365
-msgid "Connections"
-msgstr ""
-
-#: post-type/module-base.php:366
-msgid "Other"
-msgstr ""
-
-#: post-type/module-base.php:383
-msgid "Custom Section Contact"
-msgstr ""
-
-#: post-type/module-base.php:539
-msgid "Assigned to me"
-msgstr ""
-
-#: post-type/module-base.php:547 post-type/module-base.php:604
-#: post-type/module-base.php:612
-msgid "All"
-msgstr ""
-
-#: tile/custom-tile.php:62
-msgid "Text"
-msgstr ""
-
-#: tile/custom-tile.php:63
-msgctxt "Optional Documentation"
-msgid "Text"
-msgstr ""
-
-#: tile/custom-tile.php:73
-msgid "Multiselect"
-msgstr ""
-
-#: tile/custom-tile.php:75
-msgid "One"
-msgstr ""
-
-#: tile/custom-tile.php:76
-msgid "Two"
-msgstr ""
-
-#: tile/custom-tile.php:77
-msgid "Three"
-msgstr ""
-
-#: tile/custom-tile.php:78
-msgid "Four"
-msgstr ""
-
-#: tile/custom-tile.php:94
-msgctxt "Key Select Label"
-msgid "First"
-msgstr ""
-
-#: tile/custom-tile.php:95
-msgctxt "Training Status field description"
-msgid "First Key Description"
-msgstr ""
-
-#: tile/custom-tile.php:99
-msgctxt "Key Select Label"
-msgid "Second"
-msgstr ""
-
-#: tile/custom-tile.php:100
-msgctxt "Training Status field description"
-msgid "Second Key Description"
-msgstr ""
-
-#: tile/custom-tile.php:104
-msgctxt "Key Select Label"
-msgid "Third"
-msgstr ""
-
-#: tile/custom-tile.php:105
-msgctxt "Training Status field description"
-msgid "Third Key Description"
-msgstr ""
-
-#: tile/settings-tile.php:43 tile/settings-tile.php:61
-msgid "Custom Settings Section"
-msgstr ""
-
-#: tile/settings-tile.php:77
-msgctxt "Optional Documentation"
-msgid "Custom Settings Section"
-msgstr ""
-
-#: tile/settings-tile.php:78
-msgctxt "Optional Documentation"
-msgid "Add your own help information into this modal."
-msgstr ""
 
 #. Plugin Name of the plugin/theme
 msgid "Disciple.Tools - Pray4Movement Prayer Points"
