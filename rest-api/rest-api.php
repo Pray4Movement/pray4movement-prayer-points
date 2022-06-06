@@ -19,10 +19,18 @@ class Pray4Movement_Prayer_Points_Endpoints
      */
     //See https://github.com/DiscipleTools/disciple-tools-theme/wiki/Site-to-Site-Link for outside of wordpress authentication
     public function add_api_routes() {
-        $namespace = 'pray4movement-prayer-points/v1';
+        self::register_delete_prayer_libary_endpoint();
+        self::register_delete_prayer_point_endpoint();
+        self::register_get_prayer_points_endpoint();    
+    }
 
+    private function get_namespace() {
+        return 'pray4movement-prayer-points/v1';
+    }
+
+    private function register_delete_prayer_library_endpoint() {
         register_rest_route(
-            $namespace, '/delete_prayer_library/(?P<lib_id>\d+)', [
+            $this->get_namespace(), '/delete_prayer_library/(?P<lib_id>\d+)', [
                 'methods'  => 'POST',
                 'callback' => [ $this, 'endpoint_delete_prayer_lib' ],
                 'permission_callback' => function( WP_REST_Request $request ) {
@@ -30,9 +38,11 @@ class Pray4Movement_Prayer_Points_Endpoints
                 },
             ]
         );
+    }
 
+    private function register_delete_prayer_point_endpoint() {
         register_rest_route(
-            $namespace, '/delete_prayer_point/(?P<prayer_id>\d+)', [
+            $this->get_namespace(), '/delete_prayer_point/(?P<prayer_id>\d+)', [
                 'methods'  => 'POST',
                 'callback' => [ $this, 'endpoint_delete_prayer_point' ],
                 'permission_callback' => function( WP_REST_Request $request ) {
@@ -40,9 +50,11 @@ class Pray4Movement_Prayer_Points_Endpoints
                 },
             ]
         );
+    }
 
+    private function register_get_prayer_points_endpoint() {
         register_rest_route(
-            $namespace, '/get_prayer_points/(?P<lib_id>\d*[,\d+]*)', [
+            $this->get_namespace(), '/get_prayer_points/(?P<lib_id>\d*[,\d+]*)', [
                 'methods' => 'POST',
                 'callback' => [ $this , 'endpoint_get_prayer_points' ],
                 'permission_callback' => function( WP_REST_Request $request ) {
@@ -51,7 +63,6 @@ class Pray4Movement_Prayer_Points_Endpoints
             ]
         );
     }
-
 
     public function endpoint_delete_prayer_lib( WP_REST_Request $request ) {
         $params = $request->get_params();
