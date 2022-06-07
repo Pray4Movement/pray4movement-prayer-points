@@ -66,32 +66,11 @@ class Pray4Movement_Prayer_Points_Menu {
      */
     public function content() {
         self::check_permissions();
-
-        if ( isset( $_GET['view_lib'] ) ) {
-            $object = new Pray4Movement_Prayer_Points_View_Library();
-            $object->content();
-            return;
-        }
-
-        if ( isset( $_GET['edit_lib'] ) ) {
-            $object = new Pray4Movement_Prayer_Points_Edit_Library();
-            $object->content();
-            return;
-        }
-
-        if ( isset( $_GET['edit_prayer'] ) ) {
-            $object = new Pray4Movement_Prayer_Points_Edit_Prayer();
-            $object->content();
-            return;
-        }
-
-        if ( isset( $_GET['tab'] ) && !isset( $_GET['view_lib'] ) ) {
-            $tab = sanitize_key( wp_unslash( $_GET['tab'] ) );
-        } else {
-            $tab = 'explore';
-        }
-
-        $link = 'admin.php?page='.$this->token.'&tab=';
+        self::check_view_library_tab();
+        self::check_edit_library_tab();
+        self::check_edit_prayer_tab();
+        $tab = self::sanitize_tab_if_present();
+        $link = self::get_url_path_with_tab();
         ?>
         <div class="wrap">
             <h2><?php echo esc_html( $this->page_title ) ?></h2>
@@ -124,6 +103,40 @@ class Pray4Movement_Prayer_Points_Menu {
         </div><!-- End wrap -->
 
         <?php
+    }
+
+    private function check_view_library_tab() {
+        if ( isset( $_GET['view_library'] ) ) {
+            $object = new Pray4Movement_Prayer_Points_View_Library();
+            $object->content();
+        }
+    }
+
+    private function check_edit_library_tab() {
+        if ( isset( $_GET['edit_library'] ) ) {
+            $object = new Pray4Movement_Prayer_Points_Edit_Library();
+            $object->content();
+        }
+    }
+
+    private function check_edit_prayer_tab() {
+        if ( isset( $_GET['edit_prayer'] ) ) {
+            $object = new Pray4Movement_Prayer_Points_Edit_Prayer();
+            $object->content();
+        }
+    }
+
+    private function sanitize_tab_if_present() {
+        if ( isset( $_GET['tab'] ) && !isset( $_GET['view_library'] ) ) {
+            $tab = sanitize_key( wp_unslash( $_GET['tab'] ) );
+        } else {
+            $tab = 'explore';
+        }
+        return $tab;
+    }
+
+    private function get_url_path_with_tab() {
+        return 'admin.php?page='.$this->token.'&tab=';
     }
 
     private function check_permissions() {
@@ -430,11 +443,11 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             ?>
         <tr id="delete-library-<?php echo esc_html( $library['id'] ); ?>">
             <td><img src="<?php echo esc_html( $prayer_icon ); ?>" width="50px"></td>
-            <td><a href="/wp-admin/admin.php?page=pray4movement_prayer_points&view_lib=<?php echo esc_html( $library['id'] ); ?>"><?php echo esc_html( $library['name'] ); ?></a></td>
+            <td><a href="/wp-admin/admin.php?page=pray4movement_prayer_points&view_library=<?php echo esc_html( $library['id'] ); ?>"><?php echo esc_html( $library['name'] ); ?></a></td>
             <td><?php echo esc_html( $library['description'] ); ?></td>
             <td><?php echo esc_html( self::count_prayer_points( $library['id'] ) ); ?></td>
             <td>
-                <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_lib=<?php echo esc_attr( $library['id'] ); ?>"><?php esc_html_e( 'Edit', 'pray4movement_prayer_points' ); ?></a> | 
+                <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_library=<?php echo esc_attr( $library['id'] ); ?>"><?php esc_html_e( 'Edit', 'pray4movement_prayer_points' ); ?></a> | 
                 <a href="#" style="color:#b32d2e;" class="delete_library" data-id="<?php echo esc_attr( $library['id'] ); ?>" data-name="<?php echo esc_html( $library['name'] ); ?>"><?php esc_html_e( 'Delete', 'pray4movement_prayer_points' ); ?></a>
             </td>
         </tr>
@@ -491,11 +504,11 @@ class Pray4Movement_Prayer_Points_Edit_Library {
     }
 
     public function main_column() {
-        if ( !isset( $_GET['edit_lib'] ) || is_null( $_GET['edit_lib'] ) ) {
+        if ( !isset( $_GET['edit_library'] ) || is_null( $_GET['edit_library'] ) ) {
             return new WP_Error( __METHOD__, 'Invalid Prayer Library ID' );
         }
 
-        $lib_id = sanitize_key( wp_unslash( $_GET['edit_lib'] ) );
+        $lib_id = sanitize_key( wp_unslash( $_GET['edit_library'] ) );
         if ( isset( $_POST['edit_library_nonce'] ) ) {
             if ( !isset( $_POST['edit_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['edit_library_nonce'] ), 'edit_library' ) ) {
                 return;
@@ -832,11 +845,11 @@ class Pray4Movement_Prayer_Points_View_Library {
     }
 
     public function main_column() {
-        // todo: fix validate view_lib param is present and is_numeric
-        if ( !isset( $_GET['view_lib'] ) || is_null( $_GET['view_lib'] ) ) {
+        // todo: fix validate view_library param is present and is_numeric
+        if ( !isset( $_GET['view_library'] ) || is_null( $_GET['view_library'] ) ) {
             return new WP_Error( __METHOD__, 'Invalid Prayer Library ID' );
         }
-        $lib_id = sanitize_key( wp_unslash( $_GET['view_lib'] ) );
+        $lib_id = sanitize_key( wp_unslash( $_GET['view_library'] ) );
         $prayer_library = self::get_prayer_library( $lib_id );
 
 
@@ -1350,7 +1363,7 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         <div class="wrap">
             <div id="poststuff">
                 <p>
-                    <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&view_lib=<?php echo esc_attr( $lib_id ); ?>">
+                    <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&view_library=<?php echo esc_attr( $lib_id ); ?>">
                         <?php echo esc_html( sprintf( __( "<< Back to '%s'", 'pray4movement_prayer_points' ), $prayer_library['name'] ) ); ?>
                     </a>
                 </p>
