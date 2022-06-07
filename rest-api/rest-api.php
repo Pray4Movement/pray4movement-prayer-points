@@ -8,7 +8,7 @@ class Pray4Movement_Prayer_Points_Endpoints
     public function add_api_routes() {
         self::register_delete_prayer_library_endpoint();
         self::register_delete_prayer_point_endpoint();
-        self::register_get_prayer_points_endpoint();    
+        self::register_get_prayer_points_endpoint();
     }
 
     private function get_namespace() {
@@ -112,10 +112,10 @@ class Pray4Movement_Prayer_Points_Endpoints
         );
     }
 
-    public function endpoint_for_get_prayer_points ( WP_REST_Request $request ) {
+    public function endpoint_for_get_prayer_points( WP_REST_Request $request ) {
         $params = $request->get_params();
         if ( isset( $params['library_id'] ) ) {
-            $library_ids = self::validate_library_ids_string( $params['library_id' ] );
+            $library_ids = self::validate_library_ids_string( $params['library_id'] );
             $library_ids = explode( ',', $library_ids );
             return self::get_full_prayer_points_from_library_id( $library_ids );
         }
@@ -146,7 +146,7 @@ class Pray4Movement_Prayer_Points_Endpoints
                 ON pl.id = pp.lib_id
                 WHERE pp.lib_id IN ( " . implode( ',', array_fill( 0, count( $library_id ), '%d' ) ) . " )
                 ORDER BY pp.lib_id ASC;", $library_id
-            ) , ARRAY_A
+            ), ARRAY_A
         );
     }
 
