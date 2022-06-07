@@ -34,9 +34,7 @@ class Pray4Movement_Prayer_Points_Menu {
      * @since   0.1.0
      */
     public function __construct() {
-
         add_action( "admin_menu", array( $this, "register_menu" ) );
-
         $this->page_title = __( "Pray4Movement Prayer Points", 'pray4movement-prayer-points' );
     } // End __construct()
 
@@ -70,7 +68,7 @@ class Pray4Movement_Prayer_Points_Menu {
         self::check_edit_library_tab();
         self::check_edit_prayer_tab();
         $tab = self::check_and_sanitize_tab();
-        self::display_html_for_tab( $tab);
+        self::display_html_for_tab( $tab );
     }
 
     private function check_view_library_tab() {
@@ -156,6 +154,7 @@ class Pray4Movement_Prayer_Points_Menu {
         <?php
     }
 }
+
 Pray4Movement_Prayer_Points_Menu::instance();
 
 class Pray4Movement_Prayer_Points_Utilities {
@@ -177,18 +176,10 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             <div id="poststuff">
                 <div id="post-body" class="metabox-holder columns-2">
                     <div id="post-body-content">
-                        
-
-                        <?php $this->main_column() ?>
-
-                        
+                        <?php $this->main_explore_column() ?>
                     </div>
                     <div id="postbox-container-1" class="postbox-container">
-                        
-
-                        <?php $this->right_column() ?>
-
-                        
+                        <?php $this->right_explore_column() ?>
                     </div>
                     <div id="postbox-container-2" class="postbox-container">
                     </div>
@@ -198,7 +189,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         <?php
     }
 
-    public function main_column() {
+    public function main_explore_column() {
         if ( isset( $_POST['add_library_nonce'] ) ) {
             if ( !isset( $_POST['add_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['add_library_nonce'] ), 'add_library' ) ) {
                 return;
@@ -315,9 +306,8 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         <?php
     }
 
-    public function right_column() {
+    public function right_explore_column() {
         ?>
-        
         <table class="widefat">
             <thead>
                 <tr>
@@ -343,7 +333,6 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             </tbody>
         </table>
         <br>
-        
         <?php
     }
 
@@ -386,7 +375,6 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         $new_library_key = sanitize_key( strtolower( str_replace( ' ', '_', $new_library_name ) ) );
 
         // Todo: Check that key doesn't already exist in DB
-
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
 
@@ -483,14 +471,14 @@ class Pray4Movement_Prayer_Points_Edit_Library {
                     <div id="post-body-content">
                         
 
-                        <?php $this->main_column() ?>
+                        <?php $this->main_edit_library_column() ?>
 
                         
                     </div>
                     <div id="postbox-container-1" class="postbox-container">
                         
 
-                        <?php $this->right_column() ?>
+                        <?php $this->right_edit_library_column() ?>
 
                         
                     </div>
@@ -502,7 +490,7 @@ class Pray4Movement_Prayer_Points_Edit_Library {
         <?php
     }
 
-    public function main_column() {
+    public function main_edit_library_column() {
         if ( !isset( $_GET['edit_library'] ) || is_null( $_GET['edit_library'] ) ) {
             return new WP_Error( __METHOD__, 'Invalid Prayer Library ID' );
         }
@@ -579,9 +567,8 @@ class Pray4Movement_Prayer_Points_Edit_Library {
         <?php
     }
 
-    public function right_column() {
+    public function right_edit_library_column() {
         ?>
-        
         <table class="widefat">
             <thead>
                 <tr>
@@ -607,7 +594,6 @@ class Pray4Movement_Prayer_Points_Edit_Library {
             </tbody>
         </table>
         <br>
-        
         <?php
     }
 
@@ -816,10 +802,10 @@ class Pray4Movement_Prayer_Points_View_Library {
                 </p>
                 <div id="post-body" class="metabox-holder columns-2">
                     <div id="post-body-content">
-                        <?php $this->main_column(); ?>
+                        <?php $this->main_view_library_column(); ?>
                     </div>
                     <div id="postbox-container-1" class="postbox-container">
-                        <?php $this->right_column() ?>
+                        <?php $this->right_view_library_column() ?>
                     </div>
                     <div id="postbox-container-2" class="postbox-container">
                     </div>
@@ -829,7 +815,7 @@ class Pray4Movement_Prayer_Points_View_Library {
         <?php
     }
 
-    public function main_column() {
+    public function main_view_library_column() {
         // todo: fix validate view_library param is present and is_numeric
         if ( !isset( $_GET['view_library'] ) || is_null( $_GET['view_library'] ) ) {
             return new WP_Error( __METHOD__, 'Invalid Prayer Library ID' );
@@ -1299,7 +1285,7 @@ class Pray4Movement_Prayer_Points_View_Library {
         <?php
     }
 
-    public function right_column() {
+    public function right_view_library_column() {
         ?>
         
         <table class="widefat">
@@ -1347,10 +1333,10 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
                 </p>
                 <div id="post-body" class="metabox-holder columns-2">
                     <div id="post-body-content">
-                        <?php $this->main_column() ?>
+                        <?php $this->main_edit_prayer_column() ?>
                     </div>
                     <div id="postbox-container-1" class="postbox-container">
-                        <?php $this->right_column() ?>
+                        <?php $this->right_edit_prayer_column() ?>
                     </div>
                     <div id="postbox-container-2" class="postbox-container">
                     </div>
@@ -1360,7 +1346,7 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         <?php
     }
 
-    public function main_column() {
+    public function main_edit_prayer_column() {
         if ( !isset( $_GET['edit_prayer'] ) ) {
             esc_html_e( 'Error: Invalid Prayer Point ID.', 'pray4movement_prayer_points' );
             return;
@@ -1517,7 +1503,7 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         <?php
     }
 
-    public function right_column() {
+    public function right_edit_prayer_column() {
         ?>
         <table class="widefat">
             <thead>
@@ -1572,7 +1558,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         <?php
     }
 
-    public function main_column() {
+    public function main_prayer_points_column() {
         if ( isset( $_POST['import_prayer_points_nonce'] ) ) {
             if ( !isset( $_POST['import_prayer_points_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['import_prayer_points_nonce'] ), 'import_prayer_points' ) ) {
                 return;
@@ -1628,7 +1614,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         <?php
     }
 
-    public function right_column() {
+    public function right_prayer_points_column() {
         ?>
         <table class="widefat">
             <thead>
@@ -1813,10 +1799,10 @@ class Pray4Movement_Prayer_Points_Tab_Export {
             <div id="poststuff">
                 <div id="post-body" class="metabox-holder columns-2">
                     <div id="post-body-content">
-                        <?php $this->main_column() ?>
+                        <?php $this->main_prayer_points_column() ?>
                     </div>
                     <div id="postbox-container-1" class="postbox-container">
-                        <?php $this->right_column() ?>
+                        <?php $this->right_prayer_points_column() ?>
                     </div>
                     <div id="postbox-container-2" class="postbox-container">
                     </div>
@@ -1826,7 +1812,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
         <?php
     }
 
-    public function main_column() {
+    public function main_prayer_points_column() {
         $prayer_libraries = Pray4Movement_Prayer_Points_Tab_Explore::get_prayer_libraries();
         if ( empty( $prayer_libraries ) ) : ?>     
             <p>
@@ -1924,7 +1910,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
         <?php
     }
 
-    public function right_column() {
+    public function right_prayer_points_column() {
         ?>
         <table class="widefat">
             <thead>
