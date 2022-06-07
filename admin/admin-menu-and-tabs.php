@@ -65,44 +65,12 @@ class Pray4Movement_Prayer_Points_Menu {
      * @since 0.1
      */
     public function content() {
-        self::check_permissions();
+        Pray4Movement_Prayer_Points_Utilities::check_permissions();
         self::check_view_library_tab();
         self::check_edit_library_tab();
         self::check_edit_prayer_tab();
         $tab = self::sanitize_tab_if_present();
-        $link = self::get_url_path_with_tab();
-        ?>
-        <div class="wrap">
-            <h2><?php echo esc_html( $this->page_title ) ?></h2>
-            <h2 class="nav-tab-wrapper">
-                <a href="<?php echo esc_attr( $link ) . 'explore' ?>"
-                   class="nav-tab <?php echo esc_html( ( $tab == 'explore' || !isset( $tab ) ) ? 'nav-tab-active' : '' ); ?>"><?php echo esc_html( 'Explore', 'pray4movement_prayer_points' ); ?></a>
-                <a href="<?php echo esc_attr( $link ) . 'import' ?>" class="nav-tab <?php echo esc_html( ( $tab == 'import' ) ? 'nav-tab-active' : '' ); ?>"><?php echo esc_html( 'Import', 'pray4movement_prayer_points' ); ?></a>
-                <a href="<?php echo esc_attr( $link ) . 'export' ?>" class="nav-tab <?php echo esc_html( ( $tab == 'export' ) ? 'nav-tab-active' : '' ); ?>"><?php echo esc_html( 'Export', 'pray4movement_prayer_points' ); ?></a>
-            </h2>
-
-            <?php
-            switch ( $tab ) {
-                case 'explore':
-                    $object = new Pray4Movement_Prayer_Points_Tab_Explore();
-                    $object->content();
-                    break;
-                case 'import':
-                    $object = new Pray4Movement_Prayer_Points_Tab_Import();
-                    $object->content();
-                    break;
-                case 'export':
-                    $object = new Pray4Movement_Prayer_Points_Tab_Export();
-                    $object->content();
-                    break;
-                default:
-                    break;
-            }
-            ?>
-
-        </div><!-- End wrap -->
-
-        <?php
+        self::display_html_for_tab( $tab);
     }
 
     private function check_view_library_tab() {
@@ -135,13 +103,42 @@ class Pray4Movement_Prayer_Points_Menu {
         return $tab;
     }
 
+    private function display_html_for_tab( $tab ) {
+        $link = self::get_url_path_with_tab();
+        ?>
+        <div class="wrap">
+            <h2><?php echo esc_html( $this->page_title ) ?></h2>
+            <h2 class="nav-tab-wrapper">
+                <a href="<?php echo esc_attr( $link ) . 'explore' ?>"
+                class="nav-tab <?php echo esc_html( ( $tab == 'explore' || !isset( $tab ) ) ? 'nav-tab-active' : '' ); ?>"><?php echo esc_html( 'Explore', 'pray4movement_prayer_points' ); ?></a>
+                <a href="<?php echo esc_attr( $link ) . 'import' ?>" class="nav-tab <?php echo esc_html( ( $tab == 'import' ) ? 'nav-tab-active' : '' ); ?>"><?php echo esc_html( 'Import', 'pray4movement_prayer_points' ); ?></a>
+                <a href="<?php echo esc_attr( $link ) . 'export' ?>" class="nav-tab <?php echo esc_html( ( $tab == 'export' ) ? 'nav-tab-active' : '' ); ?>"><?php echo esc_html( 'Export', 'pray4movement_prayer_points' ); ?></a>
+            </h2>
+            <?php self::show_content_for_tab( $tab ); ?>
+        </div>
+        <?php
+    }
+
     private function get_url_path_with_tab() {
         return 'admin.php?page='.$this->token.'&tab=';
     }
 
-    private function check_permissions() {
-        if ( !current_user_can( 'manage_dt' ) ) { // manage dt is a permission that is specific to Disciple.Tools and allows admins, strategists and dispatchers into the wp-admin
-            wp_die( 'You do not have sufficient permissions to access this page.' );
+    private function show_content_for_tab( $tab ) {
+        switch ( $tab ) {
+            case 'explore':
+                $object = new Pray4Movement_Prayer_Points_Tab_Explore();
+                $object->content();
+                break;
+            case 'import':
+                $object = new Pray4Movement_Prayer_Points_Tab_Import();
+                $object->content();
+                break;
+            case 'export':
+                $object = new Pray4Movement_Prayer_Points_Tab_Export();
+                $object->content();
+                break;
+            default:
+                break;
         }
     }
 
@@ -160,14 +157,20 @@ class Pray4Movement_Prayer_Points_Menu {
 }
 Pray4Movement_Prayer_Points_Menu::instance();
 
+class Pray4Movement_Prayer_Points_Utilities {
+    public static function check_permissions() {
+        if ( !current_user_can( 'manage_dt' ) ) {
+            wp_die( 'You do not have sufficient permissions to access this page.' );
+        }
+    }
+}
+
 /**
  * Class Pray4Movement_Prayer_Points_Tab_Explore
  */
 class Pray4Movement_Prayer_Points_Tab_Explore {
     public function content() {
-        if ( !current_user_can( 'manage_dt' ) ) { // manage dt is a permission that is specific to Disciple.Tools and allows admins, strategists and dispatchers into the wp-admin
-            wp_die( 'You do not have sufficient permissions to access this page.' );
-        }
+        Pray4Movement_Prayer_Points_Utilities::check_permissions();
         ?>
         <div class="wrap">
             <div id="poststuff">
@@ -474,9 +477,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
  */
 class Pray4Movement_Prayer_Points_Edit_Library {
     public function content() {
-        if ( !current_user_can( 'manage_dt' ) ) { // manage dt is a permission that is specific to Disciple.Tools and allows admins, strategists and dispatchers into the wp-admin
-            wp_die( 'You do not have sufficient permissions to access this page.' );
-        }
+        Pray4Movement_Prayer_Points_Utilities::check_permissions();
         ?>
         <div class="wrap">
             <div id="poststuff">
@@ -813,9 +814,7 @@ class Pray4Movement_Prayer_Points_View_Library {
     }
 
     public function content() {
-        if ( !current_user_can( 'manage_dt' ) ) { // manage dt is a permission that is specific to Disciple.Tools and allows admins, strategists and dispatchers into the wp-admin
-            wp_die( 'You do not have sufficient permissions to access this page.' );
-        }
+        Pray4Movement_Prayer_Points_Utilities::check_permissions();
         ?>
         <div class="wrap">
             <div id="poststuff">
@@ -1347,9 +1346,7 @@ class Pray4Movement_Prayer_Points_View_Library {
  */
 class Pray4Movement_Prayer_Points_Edit_Prayer {
     public function content() {
-        if ( !current_user_can( 'manage_dt' ) ) { // manage dt is a permission that is specific to Disciple.Tools and allows admins, strategists and dispatchers into the wp-admin
-            wp_die( 'You do not have sufficient permissions to access this page.' );
-        }
+        Pray4Movement_Prayer_Points_Utilities::check_permissions();
 
         if ( !isset( $_GET['edit_prayer'] ) ) {
             esc_html_e( 'Error: Invalid Prayer Point ID.', 'pray4movement_prayer_points' );
@@ -1586,9 +1583,7 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
  */
 class Pray4Movement_Prayer_Points_Tab_Import {
     public function content() {
-        if ( !current_user_can( 'manage_dt' ) ) { // manage dt is a permission that is specific to Disciple.Tools and allows admins, strategists and dispatchers into the wp-admin
-            wp_die( 'You do not have sufficient permissions to access this page.' );
-        }
+        Pray4Movement_Prayer_Points_Utilities::check_permissions();
         ?>
         <div class="wrap">
             <div id="poststuff">
@@ -1852,9 +1847,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
  */
 class Pray4Movement_Prayer_Points_Tab_Export {
     public function content() {
-        if ( !current_user_can( 'manage_dt' ) ) { // manage dt is a permission that is specific to Disciple.Tools and allows admins, strategists and dispatchers into the wp-admin
-            wp_die( 'You do not have sufficient permissions to access this page.' );
-        }
+        Pray4Movement_Prayer_Points_Utilities::check_permissions();
         ?>
         <div class="wrap">
             <div id="poststuff">
@@ -1929,6 +1922,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                     </div>
                 </td>
             </tr>
+            <?php endforeach; ?>
             <tr>
                 <td colspan="2">
                     <button class="button" id="export-libraries"><?php echo esc_html( 'Export', 'pray4movement_prayer_points' ); ?></button>
@@ -1936,26 +1930,29 @@ class Pray4Movement_Prayer_Points_Tab_Export {
             </tr>
             </tbody>
         </table>
-            <?php endforeach; ?>
         <script>
-            // Export Prayer Library as CSV
-            function export_csv( lib_id ) {
+            function export_csv( library_id ) {
                 jQuery.ajax( {
                         type: 'POST',
                         contentType: 'application/json; charset=utf-8',
                         dataType: 'json',
-                        url: window.location.origin + '/wp-json/pray4movement-prayer-points/v1/get_prayer_points/' + lib_id,
+                        url: window.location.origin + '/wp-json/pray4movement-prayer-points/v1/get_prayer_points/' + library_id,
                         beforeSend: function(xhr) {
                             xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
                         },
                         success: function(response) {
                             let output = "data:text/csv;charset=utf-8,";
-                                output += `"title","content","reference","book","verse","tags","location","people_group","library_id","status"\r\n`;
-                            response.forEach(function(row){
-                                output +=
-                                `"${row['title']}","${row['content']}","${row['reference']}","${row['book']}","${row['verse']}","${row['tags']}","${row['location']}","${row['people_group']}","${row['status']}"\r\n`; 
-                            });
-                            
+                                var columnNames = _.keys(response[0])
+                                columnNames.forEach( function(column) {
+                                    output += `"` + column + `",`;
+                                } )
+                                output += `\r\n`;
+                                response.forEach( function(row){
+                                    columnNames.forEach( function( columnName ) {
+                                        output += `"${row[columnName]}",`;
+                                    } )
+                                output += `\r\n`;
+                            } );
                             var encodedUri = encodeURI(output);
                             window.open(encodedUri);
                         }

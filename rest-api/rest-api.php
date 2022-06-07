@@ -117,7 +117,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         if ( isset( $params['library_id'] ) ) {
             $library_ids = self::validate_library_ids_string( $params['library_id' ] );
             $library_ids = explode( ',', $library_ids );
-            return self::get_full_prayer_points_from_library_ids( $library_ids );
+            return self::get_full_prayer_points_from_library_id( $library_ids );
         }
     }
 
@@ -125,7 +125,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         return sanitize_text_field( wp_unslash( $library_ids ) );
     }
 
-    private function get_full_prayer_points_from_library_ids( $library_id ) {
+    private function get_full_prayer_points_from_library_id( $library_id ) {
         global $wpdb;
         return $wpdb->get_results(
             $wpdb->prepare(
@@ -139,7 +139,8 @@ class Pray4Movement_Prayer_Points_Endpoints
                     pp.status,
                     pl.location,
                     pl.people_group,
-                    pl.id as 'library_id'
+                    pl.id AS 'library_id',
+                    pl.name AS 'library_name'
                 FROM `{$wpdb->prefix}dt_prayer_points` pp
                 INNER JOIN `{$wpdb->prefix}dt_prayer_points_lib` pl
                 ON pl.id = pp.lib_id
