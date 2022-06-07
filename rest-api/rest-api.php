@@ -3,21 +3,8 @@ if ( !defined( 'ABSPATH' ) ) { exit; } // Exit if accessed directly.
 
 class Pray4Movement_Prayer_Points_Endpoints
 {
-    /**
-     * @todo Set the permissions your endpoint needs
-     * @link https://github.com/DiscipleTools/Documentation/blob/master/theme-core/capabilities.md
-     * @var string[]
-     */
     public $permissions = [ 'access_contacts', 'dt_all_access_contacts', 'view_project_metrics' ];
 
-
-    /**
-     * @todo define the name of the $namespace
-     * @todo define the name of the rest route
-     * @todo defne method (CREATABLE, READABLE)
-     * @todo apply permission strategy. '__return_true' essentially skips the permission check.
-     */
-    //See https://github.com/DiscipleTools/disciple-tools-theme/wiki/Site-to-Site-Link for outside of wordpress authentication
     public function add_api_routes() {
         self::register_delete_prayer_library_endpoint();
         self::register_delete_prayer_point_endpoint();
@@ -45,7 +32,6 @@ class Pray4Movement_Prayer_Points_Endpoints
         if ( isset( $params['library_id'] ) ) {
             self::delete_prayer_points_in_library( $params['library_id'] );
             self::delete_prayer_library( $params['library_id'] );
-            return true;
         }
     }
 
@@ -55,7 +41,6 @@ class Pray4Movement_Prayer_Points_Endpoints
             foreach ( $prayer_ids as $prayer_id ) {
                 self::delete_prayer_point( $prayer_id );
             }
-            return true;
         }
     }
 
@@ -130,18 +115,14 @@ class Pray4Movement_Prayer_Points_Endpoints
     public function endpoint_for_get_prayer_points ( WP_REST_Request $request ) {
         $params = $request->get_params();
         if ( isset( $params['library_id'] ) ) {
-            $library_ids = self::validate_library_ids( $params['library_id' ] );
-            $library_ids = self::library_ids_to_array( $library_ids );
+            $library_ids = self::validate_library_ids_string( $params['library_id' ] );
+            $library_ids = explode( ',', $library_ids );
             return self::get_full_prayer_points_from_library_ids( $library_ids );
         }
     }
 
-    private function validate_library_ids( $library_ids ) {
+    private function validate_library_ids_string( $library_ids ) {
         return sanitize_text_field( wp_unslash( $library_ids ) );
-    }
-
-    private function library_ids_to_array( $library_ids ) {
-        return explode( ',', $library_ids );
     }
 
     private function get_full_prayer_points_from_library_ids( $library_id ) {
