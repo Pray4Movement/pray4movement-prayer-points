@@ -1658,18 +1658,14 @@ class Pray4Movement_Prayer_Points_Tab_Import {
                         if ( self::verify_is_csv_extension() ) {
                             if ( self::csv_tmp_name_is_set() ) {
                                 $csv_data = self::prepare_prayer_data_from_csv_file();
-                                dt_write_log( $csv_data );return;
+                                dt_write_log( $csv_data );
                                 self::add_prayer_points_from_csv_data( $csv_data );
-                                //Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( sprintf( __( '%d Prayer Points added successfully!', 'pray4movement_prayer_points' ), $insert_count ) ), 'success' );
-                                Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( sprintf( __( '%d Prayer Points added successfully!', 'pray4movement_prayer_points' ), 'Some' ) ), 'success' ); //todo remove this
                             }
                         }
                     }
                 }
             } 
         }
-        
-
     }
 
     private function import_prayer_nonce_verified() {
@@ -1725,18 +1721,19 @@ class Pray4Movement_Prayer_Points_Tab_Import {
     private function add_prayer_points_from_csv_data( $csv_data ) {
         $insert_count = 0;
         $linecount = 0;
-            $prayer = self::get_prayer_data_from_prepared_csv_data( $csv_data );
-            if ( self::check_hash_validity( $prayer['hash'] ) )  {
-                $destination_prayer_lib = sanitize_text_field( wp_unslash( $_POST['prayer-library-id'] ) );
+        foreach ( $csv_data as $csv_prayer ) {
+            $prayer = self::get_prayer_data_from_prepared_csv_data( $csv_prayer );
+            $destination_prayer_lib = sanitize_text_field( wp_unslash( $_POST['prayer-library-id'] ) );
+                
             global $wpdb;
             dt_write_log('inserting prayer point');
             $wpdb->insert(
                 $wpdb->prefix . 'dt_prayer_points',
                 [
                     'lib_id' => $destination_prayer_lib,
-                    'content' => $prayer_content,
-                    'hash' => $prayer_hash,
-                    'status' => $prayer_status,
+                    'content' => $prayer['content'],
+                    'hash' => $prayer['hash'],
+                    'status' => $prayer['status'],
                 ],
                 [
                     '%d', //lib_id
@@ -1747,25 +1744,25 @@ class Pray4Movement_Prayer_Points_Tab_Import {
             );
 
             $meta_args = [];
-            $meta_args['title'] = $prayer_title;
+            $meta_args['title'] = $prayer['title'];
             $meta_args['reference'] = null;
-            if ( !empty( $prayer_book ) ) {
-                $meta_args['book'] = $prayer_book;
-                $meta_args['reference'] = $prayer_book;
-                if ( !empty( $prayer_verse ) ) {
-                    $meta_args['verse'] = $prayer_verse;
-                    $meta_args['reference'] = "$prayer_book $prayer_verse";
+            if ( !empty( $prayer['book'] ) ) {
+                $meta_args['book'] = $prayer['book'];
+                $meta_args['reference'] = $prayer['book'];
+                if ( !empty( $prayer['verse'] ) ) {
+                    $meta_args['verse'] = $prayer['verse'];
+                    $meta_args['reference'] = $prayer['book'] . ' ' . $prayer['verse'];
                 }
             }
 
             // Insert Prayer Point Metas
-            $prayer_id = $wpdb->insert_id;
+            $prayer['id'] = $wpdb->insert_id;
 
             foreach ( $meta_args as $arg_key => $arg_value ) {
                 $wpdb->insert(
                     $wpdb->prefix.'dt_prayer_points_meta',
                     [
-                        'prayer_id' => $prayer_id,
+                        'prayer_id' => $prayer['id'],
                         'meta_key' => $arg_key,
                         'meta_value' => $arg_value
                     ],
@@ -1786,7 +1783,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
                     $wpdb->insert(
                         $wpdb->prefix.'dt_prayer_points_meta',
                         [
-                            'prayer_id' => $prayer_id,
+                            'prayer_id' => $prayer['id'],
                             'meta_key' => 'tags',
                             'meta_value' => $tag,
                         ],
@@ -1799,36 +1796,20 @@ class Pray4Movement_Prayer_Points_Tab_Import {
             $insert_count ++;
             $linecount ++;
         }
-    }
-
-    //todo: needs debugging
-    private function check_hash_validity( $hash ) {
-        if ( self::hash_is_not_already_used( $prayer['hash'] ) ) {
-            return true;
-        }
-        Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( 'This prayer point already exists; not added.', 'pray4movement_prayer_points' ), 'error' );
-        return false;
-    }
-
-    private function hash_is_not_already_used( $hash ) {
-        global $wpdb;
-        return $wpdb->get_val(
-            $wpdb->prepare(
-                "SELECT 'hash' FROM `{$wpdb->prefix}dt_prayer_points` WHERE 'hash' = %s", $hash
-            )
-        );
+        Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( sprintf( __( '%d Prayer Points added successfully!', 'pray4movement_prayer_points' ), $insert_count ) ), 'success' );
     }
 
     private function prepare_prayer_data_from_csv_file() {
         $file_tmp_name = sanitize_text_field( wp_unslash( $_FILES['import-file']['tmp_name'] ) );
-        dt_write_log( "file_tmp_name: $file_tmp_name" );
         $csv_input = fopen( $file_tmp_name, 'r' );
         fgetcsv( $csv_input );
+        $output = [];
         while ( $csv_data = fgetcsv( $csv_input ) ) {
             $csv_data = array_map( 'utf8_encode', $csv_data );
             $csv_data = self::remove_corrupted_csv_lines( $csv_data );
+            $output[] = $csv_data;
         }
-        return $csv_data;
+        return $output;
     }
 
     private function remove_corrupted_csv_lines( $csv_data ) {
