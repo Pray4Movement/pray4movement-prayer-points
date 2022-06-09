@@ -1113,7 +1113,7 @@ class Pray4Movement_Prayer_Points_View_Library {
             $reference_args['book'] = sanitize_text_field( wp_unslash( $_POST['prayer_reference_book'] ) );
             $reference_args['verse'] = sanitize_text_field( wp_unslash( $_POST['prayer_reference_verse'] ) );
             $reference_args['reference'] = $reference_args['book'] . ' ' . $reference_args['verse'];
-            
+
             if ( $book === 'no_reference' ) {
                 self::remove_prayer_reference_meta( $prayer['id'] );
             }
@@ -1661,7 +1661,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
                         }
                     }
                 }
-            } 
+            }
         }
     }
 
@@ -1715,109 +1715,6 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         return false;
     }
 
-    private function add_prayer_points_from_csv_data( $csv_data ) {
-        $insert_count = 0;
-        $linecount = 0;
-        foreach ( $csv_data as $csv_prayer ) {
-            $prayer = self::get_prayer_data_from_prepared_csv_data( $csv_prayer );
-            $prayer['library_id'] = sanitize_text_field( wp_unslash( $_POST['prayer-library-id'] ) );
-            self::insert_prayer_point( $prayer);
-            $prayer['id'] = self::get_last_prayer_point_id();
-            self::insert_all_prayer_metas( $prayer );
-            $tags = self::prepare_prayer_tags( $prayer['tags'] );
-            dt_write_log( $tags );
-            self::insert_prayer_tags( $prayer['id'], $tags );
-            $insert_count ++;
-            $linecount ++;
-        }
-        Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( sprintf( __( '%d Prayer Points added successfully!', 'pray4movement_prayer_points' ), $insert_count ) ), 'success' );
-    }
-
-    private function insert_prayer_point( $prayer ) {
-        global $wpdb;
-        $wpdb->insert(
-            $wpdb->prefix . 'dt_prayer_points',
-            [
-                'lib_id' => $prayer['library_id'],
-                'content' => $prayer['content'],
-                'hash' => $prayer['hash'],
-                'status' => $prayer['status'],
-            ],
-            [ '%d', '%s', '%s', '%s' ]
-        );
-    }
-
-    private function get_last_prayer_point_id() {
-        global $wpdb;
-        return $wpdb->get_var(
-            "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` ORDER BY id DESC LIMIT 1;"
-        );
-    }
-
-    private function insert_all_prayer_metas( $prayer ) {
-        $prayer_metas = self::prepare_prayer_metas( $prayer );
-        foreach ( $prayer_metas as $key => $value ) {
-            self::insert_prayer_meta( $prayer['id'], $key, $value );
-        }
-        return;
-    }
-
-    private function prepare_prayer_metas( $prayer ) {
-        $prayer_metas = [
-            'title' => $prayer['title'],
-            'book' => $prayer['book'],
-            'verse' => $prayer['verse'],
-            'reference' => self::get_prayer_reference( $prayer['book'], $prayer['verse'] ),
-        ];
-        return array_filter( $prayer_metas );
-    }
-    
-    private function insert_prayer_meta( $prayer_id, $meta_key, $meta_value ) {
-        global $wpdb;
-        $wpdb->insert(
-            $wpdb->prefix.'dt_prayer_points_meta',
-            [
-                'prayer_id' => $prayer_id,
-                'meta_key' => $meta_key,
-                'meta_value' => $meta_value
-            ],
-            [ '%s', '%s', '%s' ]
-        );
-        return;
-    }
-
-    private function get_prayer_reference( $book, $verse ) {
-        if ( !empty( $book ) ) {
-            $prayer_reference = $book;
-            if ( !empty( $verse ) ) {
-                $prayer_reference .= " $verse";
-            }
-            return $prayer_reference;
-        }
-    }
-
-    private function prepare_prayer_tags( $tags ) {
-        $tags_text = sanitize_text_field( wp_unslash( strtolower( $tags ) ) );
-        $tags = explode( ',', $tags_text );
-        $tags = array_map( 'trim', $tags );
-        return $tags;
-    }
-    
-    private function insert_prayer_tags( $prayer_id, $tags ) {
-        foreach ( $tags as $tag ) {
-            global $wpdb;
-            $wpdb->insert(
-                $wpdb->prefix.'dt_prayer_points_meta',
-                [
-                    'prayer_id' => $prayer_id,
-                    'meta_key' => 'tags',
-                    'meta_value' => $tag,
-                ],
-                [ '%s' ]
-            );
-        }
-    }
-
     private function prepare_prayer_data_from_csv_file() {
         $file_tmp_name = sanitize_text_field( wp_unslash( $_FILES['import-file']['tmp_name'] ) );
         $csv_input = fopen( $file_tmp_name, 'r' );
@@ -1836,22 +1733,128 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         $required_columns = [ 'title', 'content', 'book', 'verse', 'tags', 'status' ];
         $required_columns_count = count( $required_columns );
         if ( $data_col_count !== $required_columns_count ) {
-            dt_write_log( `Error: skipping line: Expected $required_column_count cols, found $data_col_count` );
             return;
         }
         return $csv_data;
     }
 
+    private function add_prayer_points_from_csv_data( $csv_data ) {
+        $insert_count = 0;
+        $linecount = 0;
+        foreach ( $csv_data as $csv_prayer ) {
+            $prayer = self::get_prayer_data_from_prepared_csv_data( $csv_prayer );
+            self::insert_prayer_point( $prayer );
+            self::insert_all_prayer_metas( $prayer );
+            self::insert_all_prayer_tags( $prayer['id'], $prayer['tags'] );
+            $insert_count ++;
+            $linecount ++;
+        }
+        Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( sprintf( __( '%d Prayer Points added successfully!', 'pray4movement_prayer_points' ), $insert_count ) ), 'success' );
+    }
+
     private function get_prayer_data_from_prepared_csv_data( $csv_data ) {
         $prayer = [];
+        $prayer['library_id'] = sanitize_text_field( wp_unslash( $_POST['prayer-library-id'] ) );
         $prayer['title'] = sanitize_text_field( wp_unslash( $csv_data[0] ) );
         $prayer['content'] = sanitize_text_field( wp_unslash( $csv_data[1] ) );
-        $prayer['book'] = sanitize_text_field( wp_unslash( $csv_data[2] ) ); 
-        $prayer['verse'] = sanitize_text_field( wp_unslash( $csv_data[3] ) ); 
-        $prayer['tags'] = sanitize_text_field( wp_unslash( $csv_data[4] ) ); 
-        $prayer['status'] = sanitize_text_field( wp_unslash( $csv_data[5] ) ); 
+        $prayer['book'] = sanitize_text_field( wp_unslash( $csv_data[2] ) );
+        $prayer['verse'] = sanitize_text_field( wp_unslash( $csv_data[3] ) );
+        $prayer['tags'] = sanitize_text_field( wp_unslash( $csv_data[4] ) );
+        $prayer['status'] = sanitize_text_field( wp_unslash( $csv_data[5] ) );
         $prayer['hash'] = md5( $prayer['content'] );
         return $prayer;
+    }
+
+    private function insert_prayer_point( $prayer ) {
+        global $wpdb;
+        $wpdb->insert(
+            $wpdb->prefix . 'dt_prayer_points',
+            [
+                'lib_id' => $prayer['library_id'],
+                'content' => $prayer['content'],
+                'hash' => $prayer['hash'],
+                'status' => $prayer['status'],
+            ],
+            [ '%d', '%s', '%s', '%s' ]
+        );
+    }
+
+    private function insert_all_prayer_metas( $prayer ) {
+        $prayer['id'] = self::get_last_prayer_point_id();
+        $prayer_metas = self::prepare_prayer_metas( $prayer );
+        foreach ( $prayer_metas as $key => $value ) {
+            self::insert_prayer_meta( $prayer['id'], $key, $value );
+        }
+        return;
+    }
+
+    private function get_last_prayer_point_id() {
+        global $wpdb;
+        return $wpdb->get_var(
+            "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` ORDER BY id DESC LIMIT 1;"
+        );
+    }
+
+    private function prepare_prayer_metas( $prayer ) {
+        $prayer_metas = [
+            'title' => $prayer['title'],
+            'book' => $prayer['book'],
+            'verse' => $prayer['verse'],
+            'reference' => self::get_prayer_reference( $prayer['book'], $prayer['verse'] ),
+        ];
+        return array_filter( $prayer_metas );
+    }
+
+    private function get_prayer_reference( $book, $verse ) {
+        if ( !empty( $book ) ) {
+            $prayer_reference = $book;
+            if ( !empty( $verse ) ) {
+                $prayer_reference .= " $verse";
+            }
+            return $prayer_reference;
+        }
+    }
+
+    private function insert_prayer_meta( $prayer_id, $meta_key, $meta_value ) {
+        global $wpdb;
+        $wpdb->insert(
+            $wpdb->prefix.'dt_prayer_points_meta',
+            [
+                'prayer_id' => $prayer_id,
+                'meta_key' => $meta_key,
+                'meta_value' => $meta_value
+            ],
+            [ '%s', '%s', '%s' ]
+        );
+        return;
+    }
+
+    private function insert_all_prayer_tags( $prayer_id, $tags ) {
+        $tags = self::prepare_prayer_tags( $tags );
+        foreach ( $tags as $tag ) {
+            self::insert_prayer_tag( $prayer_id, $tag );
+        }
+    }
+
+    private function prepare_prayer_tags( $tags ) {
+        $tags_text = sanitize_text_field( wp_unslash( strtolower( $tags ) ) );
+        $tags = explode( ',', $tags_text );
+        $tags = array_map( 'trim', $tags );
+        return $tags;
+    }
+
+    private function insert_prayer_tag( $prayer_id, $tag ) {
+        global $wpdb;
+        $wpdb->insert(
+            $wpdb->prefix.'dt_prayer_points_meta',
+            [
+                'prayer_id' => $prayer_id,
+                'meta_key' => 'tags',
+                'meta_value' => $tag,
+            ],
+            [ '%s' ]
+        );
+        return;
     }
 }
 
