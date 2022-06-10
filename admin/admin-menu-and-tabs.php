@@ -1654,19 +1654,16 @@ class Pray4Movement_Prayer_Points_Tab_Import {
     }
 
     public function process_import_prayer_points() {
-        if ( self::import_prayer_nonce_verified() ) {
-            if ( self::import_file_is_valid() ) {
-                if ( self::prayer_library_is_selected() ) {
-                    if ( self::prayer_library_id_exists() ) {
-                        if ( self::verify_is_csv_extension() ) {
-                            if ( self::csv_tmp_name_is_set() ) {
-                                $csv_data = self::prepare_prayer_data_from_csv_file();
-                                self::add_prayer_points_from_csv_data( $csv_data );
-                            }
-                        }
-                    }
-                }
-            }
+        if ( self::import_prayer_nonce_verified() &&
+             self::import_file_is_valid() &&
+             self::prayer_library_is_selected() &&
+             self::prayer_library_id_exists() &&
+             self::verify_is_csv_extension() &&
+             self::csv_tmp_name_is_set() )
+        {
+            $file_tmp_name = sanitize_text_field( wp_unslash( $_FILES['import-file']['tmp_name'] ) );
+            $csv_data = self::prepare_prayer_data_from_csv_file( $file_tmp_name );
+            self::add_prayer_points_from_csv_data( $csv_data );
         }
     }
 
@@ -1720,10 +1717,8 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         return false;
     }
 
-    private function prepare_prayer_data_from_csv_file() {
-        $file_tmp_name = sanitize_text_field( wp_unslash( $_FILES['import-file']['tmp_name'] ) );
+    private function prepare_prayer_data_from_csv_file( $file_tmp_name ) {
         $csv_input = fopen( $file_tmp_name, 'r' );
-        dt_write_log( fgetcsv( $csv_input ) );
         $output = [];
         while ( $csv_data = fgetcsv( $csv_input ) ) {
             $csv_data = array_map( 'utf8_encode', $csv_data );
