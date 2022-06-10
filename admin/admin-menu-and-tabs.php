@@ -789,18 +789,11 @@ class Pray4Movement_Prayer_Points_View_Library {
 
     public static function get_prayer_tags( $prayer_id ) {
         global $wpdb;
-        $prayer_tags = $wpdb->get_col(
+        return $wpdb->get_col(
             $wpdb->prepare(
                 "SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = %d;", $prayer_id
             )
         );
-        $tags = [];
-        if ( $prayer_tags ) {
-            foreach ( $prayer_tags as $prayer_tag ) {
-                $tags[] = $prayer_tag;
-            }
-        }
-        return $tags;
     }
 
     public function content() {
