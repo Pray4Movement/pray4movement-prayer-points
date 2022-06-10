@@ -169,6 +169,29 @@ class Pray4Movement_Prayer_Points_Utilities {
             "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` ORDER BY id DESC LIMIT 1;"
         );
     }
+
+    public static function sanitize_tags( $raw_tags ) {
+        $tags = sanitize_text_field( wp_unslash( strtolower( $raw_tags ) ) );
+        $tags = explode( ',', $tags );
+        $tags = array_map( 'trim', $tags);
+        return array_filter( $tags );
+    }
+
+    public static function insert_all_tags( $prayer_id, $tags ) {
+        global $wpdb;
+        foreach ( $tags as $tag ) {
+            $wpdb->insert(
+                $wpdb->prefix.'dt_prayer_points_meta',
+                [
+                    'prayer_id' => $prayer_id,
+                    'meta_key' => 'tags',
+                    'meta_value' => $tag
+                ],
+                [ '%d', '%s', '%s' ]
+            );
+        }
+        return;
+    }
 }
 
 /**
@@ -771,7 +794,6 @@ class Pray4Movement_Prayer_Points_View_Library {
                 "SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = %d;", $prayer_id
             )
         );
-
         $tags = [];
         if ( $prayer_tags ) {
             foreach ( $prayer_tags as $prayer_tag ) {
@@ -950,7 +972,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                             <?php esc_html_e( 'Tags', 'pray4movement_prayer_points' ); ?>
                         </td>
                         <td>
-                            <input type="text" name="new_prayer_tags" size="50">
+                            <input type="text" name="prayer_tags" size="50">
                         </td>
                     </tr>
                     <tr style="display:none;">
@@ -1022,25 +1044,10 @@ class Pray4Movement_Prayer_Points_View_Library {
 
     private static function insert_prayer_tags() {
         $prayer['id'] = Pray4Movement_Prayer_Points_Utilities::get_last_prayer_point_id();
-        // if ( !empty( $_POST['new_prayer_tags'] ) ) {
-        //     $tags_text = sanitize_text_field( wp_unslash( $_POST['new_prayer_tags'] ) );
-        //     $tags = explode( ',', $tags_text );
-
-        //     foreach ( $tags as $tag ) {
-        //         $tag = strtolower( trim( $tag ) );
-        //         $wpdb->insert(
-        //             $wpdb->prefix.'dt_prayer_points_meta',
-        //             [
-        //                 'prayer_id' => $prayer_id,
-        //                 'meta_key' => 'tags',
-        //                 'meta_value' => $tag,
-        //             ],
-        //             [
-        //                 '%s', // meta_value
-        //             ]
-        //         );
-        //     }
-        // }
+        if ( !empty( $_POST['prayer_tags'] ) ) {
+            $prayer['tags'] = Pray4Movement_Prayer_Points_Utilities::sanitize_tags( $_POST['prayer_tags'] );
+            Pray4Movement_Prayer_Points_Utilities::insert_all_tags( $prayer['id'], $prayer['tags'] );
+        }
         return;
     }
 
@@ -1155,7 +1162,7 @@ class Pray4Movement_Prayer_Points_View_Library {
     }
 
     private static function update_all_prayer_tags( $prayer_id, $tags ) {
-        $tags = Pray4Movement_Prayer_Points_Tab_Import::prepare_prayer_tags( $tags );
+        $tags = Pray4Movement_Prayer_Points_Utilities::sanitize_tags( $tags );
         if ( self::tags_have_been_unset() ) {
             self::unset_tags( $prayer_id );
             return;
@@ -1226,9 +1233,9 @@ class Pray4Movement_Prayer_Points_View_Library {
             endif;
 
         foreach ( $prayer_points as $prayer ) :
-            //$prayer_tags = self::get_prayer_tags( $prayer_point['id'] );
+            $prayer['tags'] = Pray4Movement_Prayer_Points_View_Library::get_prayer_tags( $prayer['id'] );
             ?>
-                <tr id="delete-prayer-<?php echo esc_html( $prayer_point['id'] ); ?>">
+                <tr id="delete-prayer-<?php echo esc_html( $prayer['id'] ); ?>">
                     <td>
                         <?php echo esc_html( $prayer['id'] ); ?>
                     </td>
@@ -1242,7 +1249,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                         <?php echo esc_html( $prayer['content'] ); ?>
                     </td>
                     <td>
-                        <?php //echo esc_html( implode( ', ', $prayer_tags ) ); ?>
+                        <?php echo esc_html( implode( ', ', $prayer['tags'] ) ); ?>
                     </td>
                     <td>
                         <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_prayer=<?php echo esc_html( $prayer['id'] ); ?>"" >Edit</a> | 
@@ -1359,6 +1366,7 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
 
         $prayer_id = sanitize_text_field( wp_unslash( $_GET['edit_prayer'] ) );
         $prayer = Pray4Movement_Prayer_Points_View_Library::get_prayer_point( $prayer_id );
+        $prayer['tags'] = Pray4Movement_Prayer_Points_View_Library::get_prayer_tags( $prayer_id );
         
 
         if ( !$prayer ) {
@@ -1473,7 +1481,7 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
                     <?php esc_html_e( 'Tags', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
-                    <input type="text" name="prayer_tags" size="50" value="<?php // echo esc_html( implode( ', ', $prayer_tags ) ); ?>">
+                    <input type="text" name="prayer_tags" size="50" value="<?php echo esc_html( implode( ', ', $prayer['tags'] ) ); ?>">
                 </td>
             </tr>
             <tr style="display:none;">
@@ -1490,7 +1498,6 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         </form>
         <br>
         <script>
-            // Auto select Bible book from select
             jQuery('#prayer_reference_book option[value="<?php echo esc_html( $prayer['book'] ); ?>"]').attr("selected", "selected");
         </script>
         
@@ -1705,7 +1712,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
             self::insert_prayer_point( $prayer );
             $prayer['id'] = Pray4Movement_Prayer_Points_Utilities::get_last_prayer_point_id();
             self::insert_all_prayer_metas( $prayer );
-            self::insert_all_prayer_tags( $prayer['id'], $prayer['tags'] );
+            Pray4Movement_Prayer_Points_Utilities::insert_all_tags( $prayer['id'], $prayer['tags'] );
             $insert_count ++;
             $linecount ++;
         }
@@ -1739,14 +1746,6 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         );
     }
 
-    private function insert_all_prayer_metas( $prayer ) {
-        $prayer_metas = self::prepare_prayer_metas( $prayer );
-        foreach ( $prayer_metas as $key => $value ) {
-            self::insert_prayer_meta( $prayer['id'], $key, $value );
-        }
-        return;
-    }
-
     public static function prepare_prayer_metas( $prayer ) {
         $prayer_metas = [
             'title' => $prayer['title'],
@@ -1777,34 +1776,6 @@ class Pray4Movement_Prayer_Points_Tab_Import {
                 'meta_value' => $meta_value
             ],
             [ '%s', '%s', '%s' ]
-        );
-        return;
-    }
-
-    private function insert_all_prayer_tags( $prayer_id, $tags ) {
-        $tags = self::prepare_prayer_tags( $tags );
-        foreach ( $tags as $tag ) {
-            self::insert_prayer_tag( $prayer_id, $tag );
-        }
-    }
-
-    private function prepare_prayer_tags( $tags ) {
-        $tags_text = sanitize_text_field( wp_unslash( strtolower( $tags ) ) );
-        $tags = explode( ',', $tags_text );
-        $tags = array_map( 'trim', $tags );
-        return array_filter( $tags );
-    }
-
-    private function insert_prayer_tag( $prayer_id, $tag ) {
-        global $wpdb;
-        $wpdb->insert(
-            $wpdb->prefix.'dt_prayer_points_meta',
-            [
-                'prayer_id' => $prayer_id,
-                'meta_key' => 'tags',
-                'meta_value' => $tag,
-            ],
-            [ '%s' ]
         );
         return;
     }
