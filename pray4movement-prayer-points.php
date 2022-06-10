@@ -136,13 +136,12 @@ class Pray4Movement_Prayer_Points {
      * @return void
      */
     public static function activation() {
-        // If tables don't exist, create them
-        self::create_prayer_points_table();
-        self::create_prayer_points_lib_table();
-        self::create_prayer_points_meta_table();
+        self::create_prayer_points_table_if_not_exist();
+        self::create_prayer_points_library_table_if_not_exist();
+        self::create_prayer_points_meta_table_if_not_exist();
     }
 
-    private static function create_prayer_points_table() {
+    private static function create_prayer_points_table_if_not_exist() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         $test = $wpdb->query(
@@ -164,7 +163,7 @@ class Pray4Movement_Prayer_Points {
         }
     }
 
-    private static function create_prayer_points_lib_table() {
+    private static function create_prayer_points_library_table_if_not_exist() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         $test = $wpdb->query(
@@ -174,8 +173,6 @@ class Pray4Movement_Prayer_Points {
                 `name` VARCHAR(191) NOT NULL,
                 `description` LONGTEXT DEFAULT NULL,
                 `icon` LONGTEXT COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
-                `location` VARCHAR(191) DEFAULT NULL,
-                `people_group` VARCHAR(191) DEFAULT NULL,
                 `status` VARCHAR(20) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'unpublished',
                 `last_updated` TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
                 PRIMARY KEY (`id`)
@@ -186,7 +183,7 @@ class Pray4Movement_Prayer_Points {
         }
     }
 
-    private static function create_prayer_points_meta_table() {
+    private static function create_prayer_points_meta_table_if_not_exist() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         $test = $wpdb->query(
