@@ -249,22 +249,6 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             </tr>
             <tr>
                 <td>
-                    <?php esc_html_e( 'Location', 'pray4movement_prayer_points' ); ?>
-                </td>
-                <td>
-                    <input type="text" name="new_library_location" size="50">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <?php esc_html_e( 'People Group', 'pray4movement_prayer_points' ); ?>
-                </td>
-                <td>
-                    <input type="text" name="new_library_people_group" size="50">
-                </td>
-            </tr>
-            <tr>
-                <td>
                     <?php esc_html_e( 'Icon', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
@@ -341,60 +325,55 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
     }
 
     public function process_add_library() {
-        
-        if ( !isset( $_POST['add_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['add_library_nonce'] ), 'add_library' ) ) {
-            return;
+        dt_write_log( $_POST );
+        if ( self::add_library_nonce_verified() ) {
+            dt_write_log( 'foo' );
+            if ( self::add_library_post_variables_are_set() ) {
+                $library = self::sanitize_add_library_post_variables();
+                self::insert_prayer_library( $library );
+            }
         }
+    }
 
-        if ( !isset( $_POST['new_library_name'] ) || !isset( $_POST['new_library_desc'] ) || !isset( $_POST['new_library_icon'] ) ) {
-            return;
+    private function add_library_nonce_verified() {
+        $result = false;
+        if ( isset( $_POST['add_library_nonce'] ) || wp_verify_nonce( sanitize_key( $_POST['add_library_nonce'] ), 'add_library' ) ) {
+            $result = true;
         }
+        return $result;
+    }
 
-        if ( !empty( $_POST['new_library_name'] ) ) {
-            $new_library_name = sanitize_text_field( wp_unslash( $_POST['new_library_name'] ) );
+    private function add_library_post_variables_are_set() {
+        $result = false;
+        if ( isset( $_POST['new_library_name'] ) && isset( $_POST['new_library_desc'] ) && isset( $_POST['new_library_icon'] ) ) {
+            $result = true;
         }
+        return $result;
+    }
 
-        if ( isset( $_POST['new_library_desc'] ) && !empty( $_POST['new_library_desc'] ) ) {
-            $new_library_desc = sanitize_text_field( wp_unslash( $_POST['new_library_desc'] ) );
-        }
+    private function sanitize_add_library_post_variables() {
+        $library = [
+            'name' => sanitize_text_field( wp_unslash( $_POST['new_library_name'] ) ),
+            'desc' => sanitize_text_field( wp_unslash( $_POST['new_library_desc'] ) ),
+            'icon' => sanitize_text_field( wp_unslash( $_POST['new_library_icon'] ) ),
+        ];
+        $library['key'] = strtolower( str_replace( ' ', '_', $_POST['new_library_name'] ) );
+        return $library;
+    }
 
-        if ( isset( $_POST['new_library_people_group'] ) && !empty( $_POST['new_library_people_group'] ) ) {
-            $new_library_people_group = sanitize_text_field( wp_unslash( $_POST['new_library_people_group'] ) );
-        }
-
-        $new_library_people_group = 'XXX';
-        if ( isset( $_POST['new_library_people_group'] ) && !empty( $_POST['new_library_people_group'] ) ) {
-            $new_library_people_group = sanitize_text_field( wp_unslash( $_POST['new_library_people_group'] ) );
-        }
-
-        $new_library_location = 'YYY';
-        if ( isset( $_POST['new_library_location'] ) && !empty( $_POST['new_library_location'] ) ) {
-            $new_library_location = sanitize_text_field( wp_unslash( $_POST['new_library_location'] ) );
-        }
-
-        $new_library_icon = null;
-        if ( isset( $_POST['new_library_icon'] ) && !empty( $_POST['new_library_icon'] ) ) {
-            $new_library_icon = sanitize_text_field( wp_unslash( $_POST['new_library_icon'] ) );
-        }
-
-        $new_library_key = sanitize_key( strtolower( str_replace( ' ', '_', $new_library_name ) ) );
-
-        // Todo: Check that key doesn't already exist in DB
+    private function insert_prayer_library( $library ) {
         global $wpdb;
-        $charset_collate = $wpdb->get_charset_collate();
+        $charset_collate = $wpdb->get_charset_collate(); // todo: deletable?
         $test = $wpdb->insert(
             $wpdb->prefix.'dt_prayer_points_lib',
             [
-                'key' => $new_library_key,
-                'name' => $new_library_name,
-                'description' => $new_library_desc,
-                'location' => $new_library_location,
-                'people_group' => $new_library_people_group,
-                'icon' => $new_library_icon,
+                'key' => $library['key'],
+                'name' => $library['name'],
+                'description' => $library['desc'],
+                'icon' => $library['icon'],
             ],
             [ '%s', '%s', '%s', '%s', '%s', '%s' ]
         );
-
         if ( !$test ) {
             Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Could not add new Prayer Library to table', 'pray4movement_prayer_points' ), 'error' );
             return;
