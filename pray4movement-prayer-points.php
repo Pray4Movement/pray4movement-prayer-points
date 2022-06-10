@@ -142,14 +142,18 @@ class Pray4Movement_Prayer_Points {
         self::create_prayer_points_meta_table();
     }
 
-    public static function create_prayer_points_table() {
+    private static function create_prayer_points_table() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         $test = $wpdb->query(
             "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points` (
                 `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `lib_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
+                `title` LONGTEXT COLLATE utf8mb4_unicode_520_ci NOT NULL,
                 `content` LONGTEXT COLLATE utf8mb4_unicode_520_ci NOT NULL,
+                `reference` VARCHAR(100) COLLATE utf8mb4_unicode_520_ci NULL,
+                `book` VARCHAR(50) COLLATE utf8mb4_unicode_520_ci NULL,
+                `verse` VARCHAR(50) COLLATE utf8mb4_unicode_520_ci NULL,
                 `hash` VARCHAR(65) DEFAULT NULL,
                 `status` VARCHAR(20) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'unpublished',
                 PRIMARY KEY (`id`)
@@ -160,7 +164,7 @@ class Pray4Movement_Prayer_Points {
         }
     }
 
-    public static function create_prayer_points_lib_table() {
+    private static function create_prayer_points_lib_table() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         $test = $wpdb->query(
@@ -182,7 +186,7 @@ class Pray4Movement_Prayer_Points {
         }
     }
 
-    public static function create_prayer_points_meta_table() {
+    private static function create_prayer_points_meta_table() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         $test = $wpdb->query(
