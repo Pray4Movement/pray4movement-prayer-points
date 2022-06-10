@@ -5,10 +5,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; } // Exit if accessed directly
  * Class Pray4Movement_Prayer_Points_Menu
  */
 class Pray4Movement_Prayer_Points_Menu {
-
     public $token = 'pray4movement_prayer_points';
     public $page_title = 'Pray4Movement Prayer Points';
-
     private static $_instance = null;
 
     /**
@@ -67,7 +65,7 @@ class Pray4Movement_Prayer_Points_Menu {
         self::check_view_library_tab();
         self::check_edit_library_tab();
         self::check_edit_prayer_tab();
-        $tab = self::check_and_sanitize_tab();
+        $tab = self::get_sanitized_tab();
         self::display_html_for_tab( $tab );
     }
 
@@ -94,7 +92,7 @@ class Pray4Movement_Prayer_Points_Menu {
         }
     }
 
-    private function check_and_sanitize_tab() {
+    private function get_sanitized_tab() {
         $tab = 'explore';
         if ( isset( $_GET['tab'] ) ) {
             $tab = sanitize_key( wp_unslash( $_GET['tab'] ) );
@@ -140,19 +138,6 @@ class Pray4Movement_Prayer_Points_Menu {
                 break;
         }
     }
-
-    /**
-     * Display admin notice
-     * @param $notice string
-     * @param $type string error|success|warning
-     */
-    public static function admin_notice( string $notice, string $type ) {
-        ?>
-        <div class="notice notice-<?php echo esc_attr( $type ) ?> is-dismissible">
-            <p><?php echo esc_html( $notice ) ?></p>
-        </div>
-        <?php
-    }
 }
 
 Pray4Movement_Prayer_Points_Menu::instance();
@@ -165,7 +150,17 @@ class Pray4Movement_Prayer_Points_Utilities {
     }
 
     public static function sanitize_variable( $variable ) {
-        return sanitize_text_field( wp_unslash( $variable ) );
+        if ( isset( $variable ) ) {
+            return sanitize_text_field( wp_unslash( $variable ) );
+        }
+    }
+
+    public static function admin_notice( string $notice, string $type ) {
+        ?>
+        <div class="notice notice-<?php echo esc_attr( $type ) ?> is-dismissible">
+            <p><?php echo esc_html( $notice ) ?></p>
+        </div>
+        <?php
     }
 }
 
@@ -403,10 +398,10 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         );
 
         if ( !$test ) {
-            Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Could not add new Prayer Library to table', 'pray4movement_prayer_points' ), 'error' );
+            Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Could not add new Prayer Library to table', 'pray4movement_prayer_points' ), 'error' );
             return;
         }
-        Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Library created successfully!', 'pray4movement_prayer_points' ), 'success' );
+        Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Prayer Library created successfully!', 'pray4movement_prayer_points' ), 'success' );
     }
 
     public static function get_prayer_libraries() {
@@ -607,7 +602,7 @@ class Pray4Movement_Prayer_Points_Edit_Library {
         }
 
         if ( !isset( $_POST['new_library_name'] ) || empty( $_POST['new_library_name'] ) ) {
-            Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Library not updated: Library name missing', 'pray4movement_prayer_points' ), 'error' );
+            Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Library not updated: Library name missing', 'pray4movement_prayer_points' ), 'error' );
             return;
         }
 
@@ -665,10 +660,10 @@ class Pray4Movement_Prayer_Points_Edit_Library {
         );
 
         if ( !$test ) {
-            Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Could not update Prayer Library', 'pray4movement_prayer_points' ), 'error' );
+            Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Could not update Prayer Library', 'pray4movement_prayer_points' ), 'error' );
             return;
         }
-        Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Library updated successfully!', 'pray4movement_prayer_points' ), 'success' );
+        Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Prayer Library updated successfully!', 'pray4movement_prayer_points' ), 'success' );
     }
 }
 
@@ -1038,7 +1033,7 @@ class Pray4Movement_Prayer_Points_View_Library {
         );
 
         if ( !$test ) {
-            Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Could not add new Prayer Point to library', 'pray4movement_prayer_points' ), 'error' );
+            Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Could not add new Prayer Point to library', 'pray4movement_prayer_points' ), 'error' );
             return;
         }
 
@@ -1081,134 +1076,170 @@ class Pray4Movement_Prayer_Points_View_Library {
                 );
             }
         }
-        Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Point added successfully!', 'pray4movement_prayer_points' ), 'success' );
+        Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Prayer Point added successfully!', 'pray4movement_prayer_points' ), 'success' );
     }
 
     public static function process_edit_prayer_point() {
+        if ( self::edit_prayer_nonce_verified() ) {
+            if ( self::check_relevant_fields_are_set() ) {
+                $prayer = self::get_edited_prayer_point_data();
+                self::update_prayer_point( $prayer );
+                self::update_all_prayer_metas( $prayer );
+                //self::update_all_prayer_tags( $prayer['id'], $prayer['tags'] );
+            }
+        }
+        Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Prayer Point updated successfully!', 'pray4movement_prayer_points' ), 'success' );
+    }
+
+    private static function edit_prayer_nonce_verified() {
         if ( !isset( $_POST['edit_prayer_point_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['edit_prayer_point_nonce'] ), 'edit_prayer_point' ) ) {
-            return;
+            return false;
         }
+        return true;
+    }
 
+    private static function check_relevant_fields_are_set() {
         if ( !isset( $_POST['prayer_id'] ) || !isset( $_POST['prayer_title'] ) || !isset( $_POST['prayer_content'] ) ) {
-            return;
+            return false;
         }
+        return true;
+    }
 
-        if ( !empty( $_POST['prayer_title'] ) ) {
-            $prayer_title = sanitize_text_field( wp_unslash( $_POST['prayer_title'] ) );
-        }
+    private static function get_edited_prayer_point_data() {
+        $prayer = [
+            'id' => Pray4Movement_Prayer_Points_Utilities::sanitize_variable( $_POST['prayer_id'] ),
+            'title' => Pray4Movement_Prayer_Points_Utilities::sanitize_variable( $_POST['prayer_title'] ),
+            'content' => Pray4Movement_Prayer_Points_Utilities::sanitize_variable( $_POST['prayer_content'] ),
+            'book' => Pray4Movement_Prayer_Points_Utilities::sanitize_variable( $_POST['prayer_reference_book'] ),
+            'verse' => Pray4Movement_Prayer_Points_Utilities::sanitize_variable( $_POST['prayer_reference_verse'] ),
+            'hash' => md5( Pray4Movement_Prayer_Points_Utilities::sanitize_variable( $_POST['prayer_content'] ) ),
+            'status' => 'unpublished',
+        ];
+        return $prayer;
+    }
 
-        if ( !empty( $_POST['prayer_content'] ) ) {
-            $prayer_content = sanitize_text_field( wp_unslash( $_POST['prayer_content'] ) );
-            $new_prayer_content_hash = md5( $prayer_content );
-        }
-
+    private static function update_prayer_point( $prayer ) {
         global $wpdb;
-        $prayer_id = sanitize_key( wp_unslash( $_POST['prayer_id'] ) );
-        $new_prayer_status = 'unpublished'; //todo delete this test line
-
-        $meta_args = [];
-        $meta_args['title'] = $prayer_title;
-
-        if ( isset( $_POST['prayer_reference_book'] ) && isset( $_POST['prayer_reference_verse'] ) ) {
-            $reference_args['book'] = sanitize_text_field( wp_unslash( $_POST['prayer_reference_book'] ) );
-            $reference_args['verse'] = sanitize_text_field( wp_unslash( $_POST['prayer_reference_verse'] ) );
-            $reference_args['reference'] = $reference_args['book'] . ' ' . $reference_args['verse'];
-
-            if ( $book === 'no_reference' ) {
-                self::remove_prayer_reference_meta( $prayer['id'] );
-            }
-
-            if ( isset( $reference_args ) ) {
-                foreach ( $reference_args as $ref_key => $ref_val ) {
-                    $wpdb->insert(
-                        $wpdb->prefix.'dt_prayer_points_meta',
-                        [
-                            'prayer_id' => $prayer_id,
-                            'meta_key' => $ref_key,
-                            'meta_value' => $ref_val,
-                        ],
-                        [
-                            '%d', // prayer_id
-                            '%s', // meta_key
-                            '%s', // meta_value
-                        ]
-                    );
-                }
-            }
-        }
-
         $wpdb->update(
             $wpdb->prefix.'dt_prayer_points',
             [
-                'content' => $prayer_content,
-                'hash' => $new_prayer_content_hash,
-                'status' => $new_prayer_status,
+                'content' => $prayer['content'],
+                'hash' => $prayer['hash'],
+                'status' => $prayer['status'],
             ],
-            [
-                'id' => $prayer_id
-            ],
-            [
-                '%s', // content
-                '%s', // hash
-                '%s', // status
-            ]
+            [ 'id' => $prayer['id'] ],
+            [ '%s', '%s', '%s' ]
         );
-
-        // Update Prayer Point Metas
-        foreach ( $meta_args as $arg_key => $arg_value ) {
-            $wpdb->update(
-                $wpdb->prefix.'dt_prayer_points_meta',
-                [
-                    'meta_value' => $arg_value,
-                ],
-                [
-                    'prayer_id' => $prayer_id,
-                    'meta_key' => $arg_key,
-                ],
-                [
-                    '%s', // meta_value
-                ]
-            );
-
-        }
-        if ( !empty( $_POST['prayer_tags'] ) ) {
-            $tags_text = sanitize_text_field( wp_unslash( $_POST['prayer_tags'] ) );
-            $tags = explode( ',', $tags_text );
-
-            $delete_tags = $wpdb->query(
-                $wpdb->prepare(
-                    "DELETE FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = %d;", $prayer_id
-                )
-            );
-
-            foreach ( $tags as $tag ) {
-                $tag = trim( $tag );
-                $wpdb->insert(
-                    $wpdb->prefix.'dt_prayer_points_meta',
-                    [
-                        'prayer_id' => $prayer_id,
-                        'meta_key' => 'tags',
-                        'meta_value' => $tag,
-                    ],
-                    [
-                        '%s', // meta_value
-                    ]
-                );
-            }
-        }
-
-        Pray4Movement_Prayer_Points_Menu::admin_notice( __( 'Prayer Point updated successfully!', 'pray4movement_prayer_points' ), 'success' );
-
+        return;
     }
 
-    private function remove_prayer_reference_meta( $prayer_id ) {
+    private static function update_all_prayer_metas( $prayer ) {
+        $prayer_metas = self::get_prayer_metas( $prayer );
+        foreach ( $prayer_metas as $key => $value ) {
+            self::delete_prayer_meta( $prayer['id'], $key );
+            self::insert_prayer_meta( $prayer['id'], $key, $value );
+        }
+        return;
+    }
+
+    private static function get_prayer_metas( $prayer ) {
+        $prayer_metas = [
+            'title' => $prayer['title'],
+            'book' => $prayer['book'],
+            'verse' => $prayer['verse'],
+            'reference' => trim( $prayer['book'] . ' ' . $prayer['verse'] ),
+        ];
+        return $prayer_metas;
+    }
+
+    private static function get_row_count_for_prayer_id_meta( $prayer_id, $meta_key ) {
+        global $wpdb;
+        $row_count = $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT COUNT( prayer_id ) FROM {$wpdb->prefix}dt_prayer_points_meta WHERE meta_key = %s AND prayer_id = %d;",
+                $meta_key, $prayer_id
+            )
+        );
+        return $row_count;
+    }
+
+    private static function delete_prayer_meta( $prayer_id, $meta_key ) {
+        global $wpdb;
+        $wpdb->delete(
+            $wpdb->prefix.'dt_prayer_points_meta',
+            [
+                'prayer_id' => $prayer_id,
+                'meta_key' => $meta_key
+            ],
+            [ '%d', '%s' ]
+        );
+        return;
+    }
+    private static function insert_prayer_meta( $prayer_id, $key, $value ) {
+        global $wpdb;
+        $wpdb->insert(
+            $wpdb->prefix.'dt_prayer_points_meta',
+            [
+                'prayer_id' => $prayer_id,
+                'meta_key' => $key,
+                'meta_value' => $value,
+            ],
+            [ '%s', '%s', '%s' ]
+        );
+        return;
+    }
+
+    private static function update_all_prayer_tags( $prayer_id, $tags ) {
+        $tags = Pray4Movement_Prayer_Points_Tab_Import::prepare_prayer_tags( $tags );
+        if ( self::tags_have_been_unset() ) {
+            self::unset_tags( $prayer_id );
+            return;
+        }
+        foreach ( $tags as $tag ) {
+            self::update_prayer_tag( $prayer_id, $tag );
+        }
+    }
+
+    private static function tags_have_been_unset() {
+        if ( !isset( $_POST['prayer_tags'] ) || empty( $_POST['prayer_tags'] ) ) {
+            return true;
+        }
+        return false;
+    }
+
+    private static function unset_tags( $prayer_id) {
+        global $wpdb;
+        $delete_tags = $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = %d;", $prayer_id
+            )
+        );
+        return;
+    }
+
+    private static function update_prayer_tag( $prayer_id, $tag ) {
+        global $wpdb;
+        $wpdb->update(
+            $wpdb->prefix.'dt_prayer_points_meta',
+            [
+                'prayer_id' => $prayer_id,
+                'meta_key' => 'tags',
+                'meta_value' => $tag,
+            ],
+            [ 'id' => $prayer_id ],
+            [ '%s' ]
+        );
+        return;
+    }
+
+    private static function remove_prayer_reference_meta( $prayer_id ) {
         self::delete_prayer_point_meta( $prayer_id, 'reference' );
         self::delete_prayer_point_meta( $prayer_id, 'book' );
         self::delete_prayer_point_meta( $prayer_id, 'verse' );
         return;
     }
 
-    private function delete_prayer_point_meta( $prayer_id, $meta_name ) {
+    private static function delete_prayer_point_meta( $prayer_id, $meta_name ) {
         global $wpdb;
         $wpdb->query(
             $wpdb->prepare(
@@ -1563,12 +1594,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
     }
 
     public function main_prayer_points_import_column() {
-        if ( isset( $_POST['import_prayer_points_nonce'] ) ) {
-            if ( !isset( $_POST['import_prayer_points_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['import_prayer_points_nonce'] ), 'import_prayer_points' ) ) {
-                return;
-            }
-            self::process_import_prayer_points();
-        }
+        self::check_for_import_prayer_nonce();
         ?>
         <form method="POST" enctype="multipart/form-data">
             <?php wp_nonce_field( 'import_prayer_points', 'import_prayer_points_nonce' ); ?>
@@ -1618,34 +1644,13 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         <?php
     }
 
-    public function right_prayer_points_import_column() {
-        ?>
-        <table class="widefat">
-            <thead>
-                <tr>
-                    <th><?php esc_html_e( 'Help', 'pray4movement_prayer_points' ); ?></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <?php echo esc_html( 'Upload your Pray4Movement Prayer Library .CSV file and import your Prayer Points into a Prayer Library.', 'pray4movement_prayer_points' ); ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <?php echo esc_html( 'Make sure the document has the following columns in this exact order:', 'pray4movement_prayer_points' ); ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <pre>title,content,book,verse,tags,status</pre>    
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <br>
-        <?php
+    private function check_for_import_prayer_nonce() {
+        if ( isset( $_POST['import_prayer_points_nonce'] ) ) {
+            if ( !isset( $_POST['import_prayer_points_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['import_prayer_points_nonce'] ), 'import_prayer_points' ) ) {
+                return;
+            }
+            self::process_import_prayer_points();
+        }
     }
 
     public function process_import_prayer_points() {
@@ -1669,7 +1674,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         if ( isset( $_POST['import_prayer_points_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['import_prayer_points_nonce'] ), 'import_prayer_points' ) ) {
             return true;
         }
-        Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( 'Invalid nonce error', 'pray4movement_prayer_points' ), 'error' );
+        Pray4Movement_Prayer_Points_Utilities::admin_notice( esc_html( 'Invalid nonce error', 'pray4movement_prayer_points' ), 'error' );
         return false;
     }
 
@@ -1677,7 +1682,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         if ( isset( $_FILES['import-file']['name'] ) ) {
             return true;
         }
-        Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( 'Invalid file error', 'pray4movement_prayer_points' ), 'error' );
+        Pray4Movement_Prayer_Points_Utilities::admin_notice( esc_html( 'Invalid file error', 'pray4movement_prayer_points' ), 'error' );
         return false;
     }
 
@@ -1685,7 +1690,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         if ( isset( $_POST['prayer-library-id'] ) && !empty( $_POST['prayer-library-id'] ) ) {
             return true;
         }
-        Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( 'Destination Prayer Library not set or empty', 'pray4movement_prayer_points' ), 'error' );
+        Pray4Movement_Prayer_Points_Utilities::admin_notice( esc_html( 'Destination Prayer Library not set or empty', 'pray4movement_prayer_points' ), 'error' );
         return false;
     }
 
@@ -1694,7 +1699,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         if ( in_array( $_POST['prayer-library-id'], $existing_prayer_lib_ids ) ) {
             return true;
         }
-        Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( 'Selected Prayer Library does not exist', 'pray4movement_prayer_points' ), 'error' );
+        Pray4Movement_Prayer_Points_Utilities::admin_notice( esc_html( 'Selected Prayer Library does not exist', 'pray4movement_prayer_points' ), 'error' );
         return false;
     }
 
@@ -1703,7 +1708,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         if ( $file_extension === 'csv' ) {
             return true;
         }
-        Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( "Error: file extension is not 'csv'", 'pray4movement_prayer_points' ), 'error' );
+        Pray4Movement_Prayer_Points_Utilities::admin_notice( esc_html( "Error: file extension is not 'csv'", 'pray4movement_prayer_points' ), 'error' );
         return false;
     }
 
@@ -1711,14 +1716,14 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         if ( isset( $_FILES['import-file']['tmp_name'] ) ) {
             return true;
         }
-        Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( 'Error: file name error', 'pray4movement_prayer_points' ), 'error' );
+        Pray4Movement_Prayer_Points_Utilities::admin_notice( esc_html( 'Error: file name error', 'pray4movement_prayer_points' ), 'error' );
         return false;
     }
 
     private function prepare_prayer_data_from_csv_file() {
         $file_tmp_name = sanitize_text_field( wp_unslash( $_FILES['import-file']['tmp_name'] ) );
         $csv_input = fopen( $file_tmp_name, 'r' );
-        fgetcsv( $csv_input );
+        dt_write_log( fgetcsv( $csv_input ) );
         $output = [];
         while ( $csv_data = fgetcsv( $csv_input ) ) {
             $csv_data = array_map( 'utf8_encode', $csv_data );
@@ -1744,12 +1749,13 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         foreach ( $csv_data as $csv_prayer ) {
             $prayer = self::get_prayer_data_from_prepared_csv_data( $csv_prayer );
             self::insert_prayer_point( $prayer );
+            $prayer['id'] = self::get_last_prayer_point_id();
             self::insert_all_prayer_metas( $prayer );
             self::insert_all_prayer_tags( $prayer['id'], $prayer['tags'] );
             $insert_count ++;
             $linecount ++;
         }
-        Pray4Movement_Prayer_Points_Menu::admin_notice( esc_html( sprintf( __( '%d Prayer Points added successfully!', 'pray4movement_prayer_points' ), $insert_count ) ), 'success' );
+        Pray4Movement_Prayer_Points_Utilities::admin_notice( esc_html( sprintf( __( '%d Prayer Points added successfully!', 'pray4movement_prayer_points' ), $insert_count ) ), 'success' );
     }
 
     private function get_prayer_data_from_prepared_csv_data( $csv_data ) {
@@ -1780,7 +1786,6 @@ class Pray4Movement_Prayer_Points_Tab_Import {
     }
 
     private function insert_all_prayer_metas( $prayer ) {
-        $prayer['id'] = self::get_last_prayer_point_id();
         $prayer_metas = self::prepare_prayer_metas( $prayer );
         foreach ( $prayer_metas as $key => $value ) {
             self::insert_prayer_meta( $prayer['id'], $key, $value );
@@ -1795,7 +1800,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         );
     }
 
-    private function prepare_prayer_metas( $prayer ) {
+    public static function prepare_prayer_metas( $prayer ) {
         $prayer_metas = [
             'title' => $prayer['title'],
             'book' => $prayer['book'],
@@ -1805,7 +1810,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         return array_filter( $prayer_metas );
     }
 
-    private function get_prayer_reference( $book, $verse ) {
+    private static function get_prayer_reference( $book, $verse ) {
         if ( !empty( $book ) ) {
             $prayer_reference = $book;
             if ( !empty( $verse ) ) {
@@ -1840,7 +1845,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         $tags_text = sanitize_text_field( wp_unslash( strtolower( $tags ) ) );
         $tags = explode( ',', $tags_text );
         $tags = array_map( 'trim', $tags );
-        return $tags;
+        return array_filter( $tags );
     }
 
     private function insert_prayer_tag( $prayer_id, $tag ) {
@@ -1855,6 +1860,36 @@ class Pray4Movement_Prayer_Points_Tab_Import {
             [ '%s' ]
         );
         return;
+    }
+
+    public function right_prayer_points_import_column() {
+        ?>
+        <table class="widefat">
+            <thead>
+                <tr>
+                    <th><?php esc_html_e( 'Help', 'pray4movement_prayer_points' ); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <?php echo esc_html( 'Upload your Pray4Movement Prayer Library .CSV file and import your Prayer Points into a Prayer Library.', 'pray4movement_prayer_points' ); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <?php echo esc_html( 'Make sure the document has the following columns in this exact order:', 'pray4movement_prayer_points' ); ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <pre>title,content,book,verse,tags,status</pre>    
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <?php
     }
 }
 
