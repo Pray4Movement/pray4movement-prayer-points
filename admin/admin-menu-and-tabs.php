@@ -167,6 +167,26 @@ class Pray4Movement_Prayer_Points_Utilities {
         }
         return;
     }
+
+    public static function get_prayer_reference( $book, $verse ) {
+        if ( !empty( $book ) ) {
+            $prayer_reference = $book;
+            if ( !empty( $verse ) ) {
+                $prayer_reference .= " $verse";
+            }
+            return $prayer_reference;
+        }
+    }
+
+    public static function delete_prayer_tags( $prayer_id ) {
+        global $wpdb;
+        $delete_tags = $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = %d;", $prayer_id
+            )
+        );
+        return;
+    }
 }
 
 /**
@@ -986,8 +1006,7 @@ class Pray4Movement_Prayer_Points_View_Library {
             if ( self::check_relevant_fields_are_set() ) {
                 $prayer = self::get_edited_prayer_point_data();
                 self::update_prayer_point( $prayer );
-                self::update_all_prayer_metas( $prayer );
-                //self::update_all_prayer_tags( $prayer['id'], $prayer['tags'] );
+                self::update_prayer_tags( $prayer['id'], $prayer['tags'] );
             }
         }
         Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Prayer Point updated successfully!', 'pray4movement_prayer_points' ), 'success' );
@@ -1017,7 +1036,8 @@ class Pray4Movement_Prayer_Points_View_Library {
             'hash' => md5( Pray4Movement_Prayer_Points_Utilities::sanitize_variable( $_POST['prayer_content'] ) ),
             'status' => 'unpublished',
         ];
-        $prayer['reference'] = $prayer['book'] . ' ' . $prayer['verse'];
+        $prayer['reference'] = Pray4Movement_Prayer_Points_Utilities::get_prayer_reference( $prayer['book'], $prayer['verse'] );
+        $prayer['tags'] = Pray4Movement_Prayer_Points_Utilities::sanitize_tags( $_POST['prayer_tags'] );
         return $prayer;
     }
 
@@ -1040,24 +1060,13 @@ class Pray4Movement_Prayer_Points_View_Library {
         return;
     }
 
-    private static function update_all_prayer_metas( $prayer ) {
-        $prayer_metas = self::get_prayer_metas( $prayer );
-        foreach ( $prayer_metas as $key => $value ) {
-            self::delete_prayer_meta( $prayer['id'], $key );
-            self::insert_prayer_meta( $prayer['id'], $key, $value );
-        }
+    private static function update_prayer_tags( $prayer_id, $tags ) {
+        Pray4Movement_Prayer_Points_Utilities::delete_prayer_tags( $prayer_id );
+        Pray4Movement_Prayer_Points_Utilities::insert_all_tags( $prayer_id, $tags );
         return;
     }
 
-    private static function get_prayer_metas( $prayer ) {
-        $prayer_metas = [
-            'title' => $prayer['title'],
-            'book' => $prayer['book'],
-            'verse' => $prayer['verse'],
-            'reference' => trim( $prayer['book'] . ' ' . $prayer['verse'] ),
-        ];
-        return $prayer_metas;
-    }
+
 
     private static function get_row_count_for_prayer_id_meta( $prayer_id, $meta_key ) {
         global $wpdb;
@@ -1099,7 +1108,7 @@ class Pray4Movement_Prayer_Points_View_Library {
     private static function update_all_prayer_tags( $prayer_id, $tags ) {
         $tags = Pray4Movement_Prayer_Points_Utilities::sanitize_tags( $tags );
         if ( self::tags_have_been_unset() ) {
-            self::unset_tags( $prayer_id );
+            Pray4Movement_Prayer_Points_Utilities::delete_prayer_tags( $prayer_id );
             return;
         }
         foreach ( $tags as $tag ) {
@@ -1112,16 +1121,6 @@ class Pray4Movement_Prayer_Points_View_Library {
             return true;
         }
         return false;
-    }
-
-    private static function unset_tags( $prayer_id ) {
-        global $wpdb;
-        $delete_tags = $wpdb->query(
-            $wpdb->prepare(
-                "DELETE FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = %d;", $prayer_id
-            )
-        );
-        return;
     }
 
     private static function update_prayer_tag( $prayer_id, $tag ) {
@@ -1684,19 +1683,9 @@ class Pray4Movement_Prayer_Points_Tab_Import {
             'title' => $prayer['title'],
             'book' => $prayer['book'],
             'verse' => $prayer['verse'],
-            'reference' => self::get_prayer_reference( $prayer['book'], $prayer['verse'] ),
+            'reference' => Pray4Movement_Prayer_Points_Utilities::get_prayer_reference( $prayer['book'], $prayer['verse'] ),
         ];
         return array_filter( $prayer_metas );
-    }
-
-    private static function get_prayer_reference( $book, $verse ) {
-        if ( !empty( $book ) ) {
-            $prayer_reference = $book;
-            if ( !empty( $verse ) ) {
-                $prayer_reference .= " $verse";
-            }
-            return $prayer_reference;
-        }
     }
 
     private function insert_prayer_meta( $prayer_id, $meta_key, $meta_value ) {
