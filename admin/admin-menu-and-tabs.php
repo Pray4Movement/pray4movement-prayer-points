@@ -397,7 +397,6 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
 
     private function insert_prayer_library( $library ) {
         global $wpdb;
-        $charset_collate = $wpdb->get_charset_collate(); // todo: deletable?
         $test = $wpdb->insert(
             $wpdb->prefix.'dt_prayer_points_lib',
             [
@@ -597,7 +596,6 @@ class Pray4Movement_Prayer_Points_Edit_Library {
 
     private function update_prayer_library( $library ) {
         global $wpdb;
-        $charset_collate = $wpdb->get_charset_collate();
         $test = $wpdb->update(
             $wpdb->prefix.'dt_prayer_points_lib',
             [
