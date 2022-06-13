@@ -1065,18 +1065,7 @@ class Pray4Movement_Prayer_Points_View_Library {
         return;
     }
 
-    private static function update_all_prayer_tags( $prayer_id, $tags ) {
-        $tags = Pray4Movement_Prayer_Points_Utilities::sanitize_tags( $tags );
-        if ( self::tags_have_been_unset() ) {
-            Pray4Movement_Prayer_Points_Utilities::delete_prayer_tags( $prayer_id );
-            return;
-        }
-        foreach ( $tags as $tag ) {
-            self::update_prayer_tag( $prayer_id, $tag );
-        }
-    }
-
-    private static function tags_have_been_unset() {
+    private static function tags_unset_by_user() {
         if ( !isset( $_POST['prayer_tags'] ) || empty( $_POST['prayer_tags'] ) ) {
             return true;
         }
@@ -1095,13 +1084,6 @@ class Pray4Movement_Prayer_Points_View_Library {
             [ 'id' => $prayer_id ],
             [ '%s' ]
         );
-        return;
-    }
-
-    private static function remove_prayer_reference_meta( $prayer_id ) {
-        self::delete_prayer_point_meta( $prayer_id, 'reference' );
-        self::delete_prayer_point_meta( $prayer_id, 'book' );
-        self::delete_prayer_point_meta( $prayer_id, 'verse' );
         return;
     }
 
