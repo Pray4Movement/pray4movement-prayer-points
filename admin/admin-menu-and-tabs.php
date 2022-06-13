@@ -208,7 +208,11 @@ class Pray4Movement_Prayer_Points_Utilities {
             }
         }
         return true;
-       }
+    }
+
+    public static function generate_key_from_string( $string ) {
+        return strtolower( str_replace( ' ', '_', $string ) );
+    }
 }
 
 /**
@@ -370,6 +374,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         if ( self::add_library_nonce_verified() ) {
             if ( self::add_library_post_variables_are_set() ) {
                 $library = Pray4Movement_Prayer_Points_Utilities::sanitize_library_post_variables();
+                $library['key'] = Pray4Movement_Prayer_Points_Utilities::generate_key_from_string( $library['name'] );
                 self::insert_prayer_library( $library );
             }
         }
