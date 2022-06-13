@@ -56,6 +56,7 @@ class Pray4Movement_Prayer_Points_Menu {
         if ( isset( $_GET['edit_library'] ) ) {
             $object = new Pray4Movement_Prayer_Points_Edit_Library();
             $object->content();
+            die();
         }
     }
 
@@ -375,7 +376,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             'desc' => sanitize_text_field( wp_unslash( $_POST['new_library_desc'] ) ),
             'icon' => sanitize_text_field( wp_unslash( $_POST['new_library_icon'] ) ),
         ];
-        $library['key'] = strtolower( str_replace( ' ', '_', $_POST['new_library_name'] ) );
+        $library['key'] = strtolower( str_replace( ' ', '_', $library['name'] ) );
         return $library;
     }
 
@@ -520,22 +521,6 @@ class Pray4Movement_Prayer_Points_Edit_Library {
             </tr>
             <tr>
                 <td>
-                    <?php esc_html_e( 'Location', 'pray4movement_prayer_points' ); ?>
-                </td>
-                <td>
-                    <input type="text" name="new_library_location" size="50" value="<?php echo esc_attr( $library['location'] ); ?>">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <?php esc_html_e( 'People Group', 'pray4movement_prayer_points' ); ?>
-                </td>
-                <td>
-                    <input type="text" name="new_library_people_group" size="50" value="<?php echo esc_attr( $library['people_group'] ); ?>">
-                </td>
-            </tr>
-            <tr>
-                <td>
                     <?php esc_html_e( 'Icon', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
@@ -572,11 +557,6 @@ class Pray4Movement_Prayer_Points_Edit_Library {
                     <?php esc_html_e( 'If you remove the custom Prayer Library Icon, the default icon will be used instead.', 'pray4movement_prayer_points' ); ?>
                 </td>
             </tr>
-            <tr>
-                <td>
-                    <?php esc_html_e( "Changing the 'Location' and 'People Group' fileds will automatically update your Prayer Point's content.", 'pray4movement_prayer_points' ); ?>
-                </td>
-            </tr>
             </tbody>
         </table>
         <br>
@@ -601,16 +581,6 @@ class Pray4Movement_Prayer_Points_Edit_Library {
             $new_library_desc = sanitize_text_field( wp_unslash( $_POST['new_library_desc'] ) );
         }
 
-        $new_library_location = 'YYY';
-        if ( isset( $_POST['new_library_location'] ) && !empty( $_POST['new_library_location'] ) ) {
-            $new_library_location = sanitize_text_field( wp_unslash( $_POST['new_library_location'] ) );
-        }
-
-        $new_library_people_group = 'XXX';
-        if ( isset( $_POST['new_library_people_group'] ) && !empty( $_POST['new_library_people_group'] ) ) {
-            $new_library_people_group = sanitize_text_field( wp_unslash( $_POST['new_library_people_group'] ) );
-        }
-
         $new_library_icon = null;
         if ( isset( $_POST['new_library_icon'] ) && !empty( $_POST['new_library_icon'] ) ) {
             $new_library_icon = sanitize_text_field( wp_unslash( $_POST['new_library_icon'] ) );
@@ -619,31 +589,18 @@ class Pray4Movement_Prayer_Points_Edit_Library {
         $new_library_key = sanitize_key( strtolower( str_replace( ' ', '_', $new_library_name ) ) );
 
         // Todo: Check that key doesn't already exist in DB
-
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
-
         $test = $wpdb->update(
             $wpdb->prefix.'dt_prayer_points_lib',
             [
                 'key' => $new_library_key,
                 'name' => $new_library_name,
                 'description' => $new_library_desc,
-                'location' => $new_library_location,
-                'people_group' => $new_library_people_group,
                 'icon' => $new_library_icon,
             ],
-            [
-                'id' => $lib_id,
-            ],
-            [
-                '%s', // key
-                '%s', // name
-                '%s', // description
-                '%s', // location
-                '%s', // people_group
-                '%s', // icon
-            ]
+            [ 'id' => $lib_id ],
+            [ '%s', '%s', '%s', '%s' ]
         );
 
         if ( !$test ) {
@@ -1066,7 +1023,7 @@ class Pray4Movement_Prayer_Points_View_Library {
         return;
     }
 
-
+    
 
     private static function get_row_count_for_prayer_id_meta( $prayer_id, $meta_key ) {
         global $wpdb;
