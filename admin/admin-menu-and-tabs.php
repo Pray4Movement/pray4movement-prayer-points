@@ -188,6 +188,27 @@ class Pray4Movement_Prayer_Points_Utilities {
         );
         return;
     }
+
+    public static function sanitize_library_post_variables() {
+        $library = [
+            'name' => sanitize_text_field( wp_unslash( $_POST['library_name'] ) ),
+            'desc' => sanitize_text_field( wp_unslash( $_POST['library_desc'] ) ),
+            'icon' => sanitize_text_field( wp_unslash( $_POST['library_icon'] ) ),
+        ];
+        if ( isset( $_POST['library_id'] ) ) {
+            $library['id'] = sanitize_text_field( wp_unslash( $_POST['library_id'] ) );
+        }
+        return $library;
+    }
+
+    public static function check_post_variables_have_been_set( $post_vars ) {
+        foreach( $post_vars as $var ) {
+            if ( !isset( $_POST[$var]) || empty( $_POST[$var] )) {
+                return false;
+            }
+        }
+        return true;
+       }
 }
 
 /**
@@ -257,7 +278,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                     <?php esc_html_e( 'Name', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
-                    <input type="text" name="new_library_name">
+                    <input type="text" name="library_name">
                 </td>
             </tr>
             <tr>
@@ -265,7 +286,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                     <?php esc_html_e( 'Description', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
-                    <input type="text" name="new_library_desc" size="50">
+                    <input type="text" name="library_desc" size="50">
                 </td>
             </tr>
             <tr>
@@ -273,7 +294,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                     <?php esc_html_e( 'Icon', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
-                    <textarea name="new_library_icon" cols="50" placeholder="data:image/svg+xml;base64,PHN2ZyBpZD0..."></textarea>
+                    <textarea name="library_icon" cols="50" placeholder="data:image/svg+xml;base64,PHN2ZyBpZD0..."></textarea>
                 </td>
             </tr>
             <tr>
@@ -348,36 +369,25 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
     public function process_add_library() {
         if ( self::add_library_nonce_verified() ) {
             if ( self::add_library_post_variables_are_set() ) {
-                $library = self::sanitize_add_library_post_variables();
+                $library = Pray4Movement_Prayer_Points_Utilities::sanitize_library_post_variables();
                 self::insert_prayer_library( $library );
             }
         }
     }
 
     private function add_library_nonce_verified() {
-        $result = false;
         if ( isset( $_POST['add_library_nonce'] ) || wp_verify_nonce( sanitize_key( $_POST['add_library_nonce'] ), 'add_library' ) ) {
-            $result = true;
+            return true;
         }
-        return $result;
+        return false;
     }
 
     private function add_library_post_variables_are_set() {
         $result = false;
-        if ( isset( $_POST['new_library_name'] ) && isset( $_POST['new_library_desc'] ) && isset( $_POST['new_library_icon'] ) ) {
+        if ( isset( $_POST['library_name'] ) && isset( $_POST['library_desc'] ) && isset( $_POST['library_icon'] ) ) {
             $result = true;
         }
         return $result;
-    }
-
-    private function sanitize_add_library_post_variables() {
-        $library = [
-            'name' => sanitize_text_field( wp_unslash( $_POST['new_library_name'] ) ),
-            'desc' => sanitize_text_field( wp_unslash( $_POST['new_library_desc'] ) ),
-            'icon' => sanitize_text_field( wp_unslash( $_POST['new_library_icon'] ) ),
-        ];
-        $library['key'] = strtolower( str_replace( ' ', '_', $library['name'] ) );
-        return $library;
     }
 
     private function insert_prayer_library( $library ) {
@@ -508,7 +518,7 @@ class Pray4Movement_Prayer_Points_Edit_Library {
                     <?php esc_html_e( 'Name', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
-                    <input type="text" name="new_library_name" size="50" value="<?php echo esc_attr( $library['name'] ); ?>">
+                    <input type="text" name="library_name" size="50" value="<?php echo esc_attr( $library['name'] ); ?>">
                 </td>
             </tr>
             <tr>
@@ -516,7 +526,7 @@ class Pray4Movement_Prayer_Points_Edit_Library {
                     <?php esc_html_e( 'Description', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
-                    <input type="text" name="new_library_desc" size="50" value="<?php echo esc_attr( $library['description'] ); ?>">
+                    <input type="text" name="library_desc" size="50" value="<?php echo esc_attr( $library['description'] ); ?>">
                 </td>
             </tr>
             <tr>
@@ -524,7 +534,8 @@ class Pray4Movement_Prayer_Points_Edit_Library {
                     <?php esc_html_e( 'Icon', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
-                    <textarea name="new_library_icon" cols="50" placeholder="data:image/svg+xml;base64,PHN2ZyBpZD0..."><?php echo esc_attr( $library['icon'] ); ?></textarea>
+                    <textarea name="library_icon" cols="50" placeholder="data:image/svg+xml;base64,PHN2ZyBpZD0..."><?php echo esc_attr( $library['icon'] ); ?></textarea>
+                    <input type="hidden" name="library_id" size="50" value="<?php echo esc_attr( $library['id'] ); ?>">
                 </td>
             </tr>
             <tr>
@@ -564,50 +575,39 @@ class Pray4Movement_Prayer_Points_Edit_Library {
     }
 
     private function process_edit_library( $lib_id ) {
-        if ( !isset( $_POST['edit_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['edit_library_nonce'] ), 'edit_library' ) ) {
-            return;
+        if ( self::edit_library_nonce_verified() &&
+             Pray4Movement_Prayer_Points_Utilities::check_post_variables_have_been_set( [ 'library_name', 'library_desc' ] )
+        ) {
+            $library = Pray4Movement_Prayer_Points_Utilities::sanitize_library_post_variables();
+            self::update_prayer_library( $library );
         }
+    }
 
-        if ( !isset( $_POST['new_library_name'] ) || empty( $_POST['new_library_name'] ) ) {
-            Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Library not updated: Library name missing', 'pray4movement_prayer_points' ), 'error' );
-            return;
+    private function edit_library_nonce_verified() {
+        if ( isset( $_POST['edit_library_nonce'] ) || wp_verify_nonce( sanitize_key( $_POST['edit_library_nonce'] ), 'edit_library' ) ) {
+            return true;
         }
+        return false;
+    }
 
-        if ( !empty( $_POST['new_library_name'] ) ) {
-            $new_library_name = sanitize_text_field( wp_unslash( $_POST['new_library_name'] ) );
-        }
-
-        if ( isset( $_POST['new_library_desc'] ) && !empty( $_POST['new_library_desc'] ) ) {
-            $new_library_desc = sanitize_text_field( wp_unslash( $_POST['new_library_desc'] ) );
-        }
-
-        $new_library_icon = null;
-        if ( isset( $_POST['new_library_icon'] ) && !empty( $_POST['new_library_icon'] ) ) {
-            $new_library_icon = sanitize_text_field( wp_unslash( $_POST['new_library_icon'] ) );
-        }
-
-        $new_library_key = sanitize_key( strtolower( str_replace( ' ', '_', $new_library_name ) ) );
-
-        // Todo: Check that key doesn't already exist in DB
+    private function update_prayer_library( $library ) {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         $test = $wpdb->update(
             $wpdb->prefix.'dt_prayer_points_lib',
             [
-                'key' => $new_library_key,
-                'name' => $new_library_name,
-                'description' => $new_library_desc,
-                'icon' => $new_library_icon,
+                'name' => $library['name'],
+                'description' => $library['desc'],
+                'icon' => $library['icon'],
             ],
-            [ 'id' => $lib_id ],
-            [ '%s', '%s', '%s', '%s' ]
-        );
-
+            [ 'id' => $library['id'] ],
+            [ '%s', '%s', '%s' ]
+        ); 
         if ( !$test ) {
             Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Could not update Prayer Library', 'pray4movement_prayer_points' ), 'error' );
             return;
         }
-        Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Prayer Library updated successfully!', 'pray4movement_prayer_points' ), 'success' );
+        Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Prayer Library updated successfully!', 'pray4movement_prayer_points' ), 'success' ); 
     }
 }
 
@@ -970,10 +970,10 @@ class Pray4Movement_Prayer_Points_View_Library {
     }
 
     private static function edit_prayer_nonce_verified() {
-        if ( !isset( $_POST['edit_prayer_point_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['edit_prayer_point_nonce'] ), 'edit_prayer_point' ) ) {
-            return false;
+        if ( isset( $_POST['edit_prayer_point_nonce'] ) || wp_verify_nonce( sanitize_key( $_POST['edit_prayer_point_nonce'] ), 'edit_prayer_point' ) ) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     private static function check_relevant_fields_are_set() {
