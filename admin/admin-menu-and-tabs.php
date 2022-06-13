@@ -148,7 +148,7 @@ class Pray4Movement_Prayer_Points_Utilities {
     public static function sanitize_tags( $raw_tags ) {
         $tags = sanitize_text_field( wp_unslash( strtolower( $raw_tags ) ) );
         $tags = explode( ',', $tags );
-        $tags = array_map( 'trim', $tags);
+        $tags = array_map( 'trim', $tags );
         return array_filter( $tags );
     }
 
@@ -325,9 +325,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
     }
 
     public function process_add_library() {
-        dt_write_log( $_POST );
         if ( self::add_library_nonce_verified() ) {
-            dt_write_log( 'foo' );
             if ( self::add_library_post_variables_are_set() ) {
                 $library = self::sanitize_add_library_post_variables();
                 self::insert_prayer_library( $library );
@@ -1019,6 +1017,7 @@ class Pray4Movement_Prayer_Points_View_Library {
             'hash' => md5( Pray4Movement_Prayer_Points_Utilities::sanitize_variable( $_POST['prayer_content'] ) ),
             'status' => 'unpublished',
         ];
+        $prayer['reference'] = $prayer['book'] . ' ' . $prayer['verse'];
         return $prayer;
     }
 
@@ -1027,12 +1026,16 @@ class Pray4Movement_Prayer_Points_View_Library {
         $wpdb->update(
             $wpdb->prefix.'dt_prayer_points',
             [
+                'title' => $prayer['title'],
                 'content' => $prayer['content'],
-                'hash' => $prayer['hash'],
+                'reference' => $prayer['reference'],
+                'book' => $prayer['book'],
+                'verse' => $prayer['verse'],
                 'status' => $prayer['status'],
+                'hash' => $prayer['hash'],
             ],
             [ 'id' => $prayer['id'] ],
-            [ '%s', '%s', '%s' ]
+            [ '%s', '%s', '%s', '%s', '%s', '%s', '%s' ]
         );
         return;
     }
@@ -1111,7 +1114,7 @@ class Pray4Movement_Prayer_Points_View_Library {
         return false;
     }
 
-    private static function unset_tags( $prayer_id) {
+    private static function unset_tags( $prayer_id ) {
         global $wpdb;
         $delete_tags = $wpdb->query(
             $wpdb->prepare(
@@ -1165,7 +1168,7 @@ class Pray4Movement_Prayer_Points_View_Library {
             endif;
 
         foreach ( $prayer_points as $prayer ) :
-            $prayer['tags'] = Pray4Movement_Prayer_Points_View_Library::get_prayer_tags( $prayer['id'] );
+            $prayer['tags'] = self::get_prayer_tags( $prayer['id'] );
             ?>
                 <tr id="delete-prayer-<?php echo esc_html( $prayer['id'] ); ?>">
                     <td>
@@ -1222,7 +1225,6 @@ class Pray4Movement_Prayer_Points_View_Library {
 
     public function right_view_library_column() {
         ?>
-        
         <table class="widefat">
             <thead>
                 <tr>
@@ -1238,7 +1240,6 @@ class Pray4Movement_Prayer_Points_View_Library {
             </tbody>
         </table>
         <br>
-        
         <?php
     }
 }
@@ -1299,7 +1300,7 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         $prayer_id = sanitize_text_field( wp_unslash( $_GET['edit_prayer'] ) );
         $prayer = Pray4Movement_Prayer_Points_View_Library::get_prayer_point( $prayer_id );
         $prayer['tags'] = Pray4Movement_Prayer_Points_View_Library::get_prayer_tags( $prayer_id );
-        
+
 
         if ( !$prayer ) {
             esc_html_e( 'Error: Prayer Point does not exist.', 'pray4movement_prayer_points' );
