@@ -553,19 +553,20 @@ class Pray4Movement_Prayer_Points_Edit_Library {
     }
 
     private function process_edit_library( $lib_id ) {
-        if ( self::edit_library_nonce_verified() &&
-             Pray4Movement_Prayer_Points_Utilities::check_post_variables_have_been_set( [ 'library_name', 'library_desc' ] )
-        ) {
-            $library = Pray4Movement_Prayer_Points_Utilities::sanitize_library_post_variables();
-            self::update_prayer_library( $library );
+        if ( !isset( $_POST['edit_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['edit_library_nonce'] ), 'edit_library' ) ) {
+            return;
         }
-    }
 
-    private function edit_library_nonce_verified() {
-        if ( isset( $_POST['edit_library_nonce'] ) || wp_verify_nonce( sanitize_key( $_POST['edit_library_nonce'] ), 'edit_library' ) ) {
-            return true;
+        if ( !isset( $_POST['library_name'] ) || !isset( $_POST['library_desc'] ) || !isset( $_POST['library_icon'] ) ) {
+            return;
         }
-        return false;
+        $library = [
+            'id' => sanitize_text_field( wp_unslash( $_POST['library_id'] ) ),
+            'name' => sanitize_text_field( wp_unslash( $_POST['library_name'] ) ),
+            'desc' => sanitize_text_field( wp_unslash( $_POST['library_desc'] ) ),
+            'icon' => sanitize_text_field( wp_unslash( $_POST['library_icon'] ) ),
+        ];
+        $this->update_prayer_library( $library );
     }
 
     private function update_prayer_library( $library ) {
