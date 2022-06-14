@@ -122,12 +122,6 @@ class Pray4Movement_Prayer_Points_Utilities {
         }
     }
 
-    public static function sanitize_variable( $variable ) {
-        if ( isset( $variable ) ) {
-            return sanitize_text_field( wp_unslash( $variable ) );
-        }
-    }
-
     public static function admin_notice( string $notice, string $type ) {
         ?>
         <div class="notice notice-<?php echo esc_attr( $type ) ?> is-dismissible">
@@ -907,42 +901,37 @@ class Pray4Movement_Prayer_Points_View_Library {
     }
 
     public static function process_edit_prayer_point() {
-        if ( self::edit_prayer_nonce_verified() ) {
-            if ( self::check_relevant_fields_are_set() ) {
-                $prayer = self::get_edited_prayer_point_data();
-                self::update_prayer_point( $prayer );
-                self::update_prayer_tags( $prayer['id'], $prayer['tags'] );
-            }
-        }
+        $prayer = self::get_edited_prayer_post_data();
+        self::update_prayer_point( $prayer );
+        self::update_prayer_tags( $prayer['id'], $prayer['tags'] );
         Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Prayer Point updated successfully!', 'pray4movement_prayer_points' ), 'success' );
     }
 
-    private static function edit_prayer_nonce_verified() {
-        if ( isset( $_POST['edit_prayer_point_nonce'] ) || wp_verify_nonce( sanitize_key( $_POST['edit_prayer_point_nonce'] ), 'edit_prayer_point' ) ) {
-            return true;
+    private static function get_edited_prayer_post_data() {
+        if ( !isset( $_POST['edit_prayer_point_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['edit_prayer_point_nonce'] ), 'edit_prayer_point' ) ) {
+            return;
         }
-        return false;
-    }
-
-    private static function check_relevant_fields_are_set() {
-        if ( !isset( $_POST['prayer_id'] ) || !isset( $_POST['prayer_title'] ) || !isset( $_POST['prayer_content'] ) ) {
-            return false;
+        if (
+            !isset( $_POST['prayer_id'] ) ||
+            !isset( $_POST['prayer_title'] ) ||
+            !isset( $_POST['prayer_content'] ) ||
+            !isset( $_POST['prayer_reference_book'] ) ||
+            !isset( $_POST['prayer_reference_verse'] ) ||
+            !isset( $_POST['prayer_tags'] )
+        ) {
+            return;
         }
-        return true;
-    }
-
-    private static function get_edited_prayer_point_data() {
         $prayer = [
-            'id' => Pray4Movement_Prayer_Points_Utilities::sanitize_variable( $_POST['prayer_id'] ),
-            'title' => Pray4Movement_Prayer_Points_Utilities::sanitize_variable( $_POST['prayer_title'] ),
-            'content' => Pray4Movement_Prayer_Points_Utilities::sanitize_variable( $_POST['prayer_content'] ),
-            'book' => Pray4Movement_Prayer_Points_Utilities::sanitize_variable( $_POST['prayer_reference_book'] ),
-            'verse' => Pray4Movement_Prayer_Points_Utilities::sanitize_variable( $_POST['prayer_reference_verse'] ),
-            'hash' => md5( Pray4Movement_Prayer_Points_Utilities::sanitize_variable( $_POST['prayer_content'] ) ),
+            'id' => sanitize_text_field( wp_unslash( $_POST['prayer_id'] ) ),
+            'title' => sanitize_text_field( wp_unslash( $_POST['prayer_title'] ) ),
+            'content' => sanitize_text_field( wp_unslash( $_POST['prayer_content'] ) ),
+            'book' => sanitize_text_field( wp_unslash( $_POST['prayer_reference_book'] ) ),
+            'verse' => sanitize_text_field( wp_unslash( $_POST['prayer_reference_verse'] ) ),
             'status' => 'unpublished',
         ];
-        $prayer['reference'] = Pray4Movement_Prayer_Points_Utilities::get_prayer_reference( $prayer['book'], $prayer['verse'] );
-        $prayer['tags'] = Pray4Movement_Prayer_Points_Utilities::sanitize_tags( $_POST['prayer_tags'] );
+        $prayer['reference'] = trim( $prayer['book'] . ' ' . $prayer['verse'] );
+        $prayer['tags'] = Pray4Movement_Prayer_Points_Utilities::sanitize_tags( sanitize_text_field( wp_unslash( $_POST['prayer_tags'] ) ) );
+        $prayer['hash'] = md5( $prayer['content'] );
         return $prayer;
     }
 
@@ -1135,7 +1124,7 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         Pray4Movement_Prayer_Points_Utilities::check_permissions();
         self::check_edit_prayer_id();
 
-        $prayer_id = Pray4Movement_Prayer_Points_Utilities::sanitize_variable( $_GET['edit_prayer'] );
+        $prayer_id = sanitize_text_field( wp_unslash( $_GET['edit_prayer'] ) );
         $library_id = Pray4Movement_Prayer_Points_View_Library::get_lib_id( $prayer_id );
         $prayer_library = Pray4Movement_Prayer_Points_View_Library::get_prayer_library( $library_id );
         ?>
