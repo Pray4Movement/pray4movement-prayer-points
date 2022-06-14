@@ -968,50 +968,6 @@ class Pray4Movement_Prayer_Points_View_Library {
         );
         return;
     }
-    private static function insert_prayer_meta( $prayer_id, $key, $value ) {
-        global $wpdb;
-        $wpdb->insert(
-            $wpdb->prefix.'dt_prayer_points_meta',
-            [
-                'prayer_id' => $prayer_id,
-                'meta_key' => $key,
-                'meta_value' => $value,
-            ],
-            [ '%s', '%s', '%s' ]
-        );
-        return;
-    }
-
-    private static function tags_unset_by_user() {
-        if ( !isset( $_POST['prayer_tags'] ) || empty( $_POST['prayer_tags'] ) ) {
-            return true;
-        }
-        return false;
-    }
-
-    private static function update_prayer_tag( $prayer_id, $tag ) {
-        global $wpdb;
-        $wpdb->update(
-            $wpdb->prefix.'dt_prayer_points_meta',
-            [
-                'prayer_id' => $prayer_id,
-                'meta_key' => 'tags',
-                'meta_value' => $tag,
-            ],
-            [ 'id' => $prayer_id ],
-            [ '%s' ]
-        );
-        return;
-    }
-
-    private static function delete_prayer_point_meta( $prayer_id, $meta_name ) {
-        global $wpdb;
-        $wpdb->query(
-            $wpdb->prepare(
-            "DELETE FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = %s AND prayer_id = %d;", $meta_name, $prayer_id )
-        );
-        return;
-    }
 
     private function display_prayer_points( $lib_id ) {
         $prayer_points = self::get_lib_prayer_points( $lib_id );
@@ -1532,20 +1488,6 @@ class Pray4Movement_Prayer_Points_Tab_Import {
             'reference' => Pray4Movement_Prayer_Points_Utilities::get_prayer_reference( $prayer['book'], $prayer['verse'] ),
         ];
         return array_filter( $prayer_metas );
-    }
-
-    private function insert_prayer_meta( $prayer_id, $meta_key, $meta_value ) {
-        global $wpdb;
-        $wpdb->insert(
-            $wpdb->prefix.'dt_prayer_points_meta',
-            [
-                'prayer_id' => $prayer_id,
-                'meta_key' => $meta_key,
-                'meta_value' => $meta_value
-            ],
-            [ '%s', '%s', '%s' ]
-        );
-        return;
     }
 
     public function right_prayer_points_import_column() {
