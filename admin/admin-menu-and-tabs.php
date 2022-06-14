@@ -198,15 +198,6 @@ class Pray4Movement_Prayer_Points_Utilities {
         return $library;
     }
 
-    public static function check_post_variables_have_been_set( $post_vars ) {
-        foreach ( $post_vars as $var ) {
-            if ( !isset( $_POST[$var] ) || empty( $_POST[$var] ) ) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public static function generate_key_from_string( $string ) {
         return strtolower( str_replace( ' ', '_', $string ) );
     }
@@ -557,7 +548,7 @@ class Pray4Movement_Prayer_Points_Edit_Library {
             return;
         }
 
-        if ( !isset( $_POST['library_name'] ) || !isset( $_POST['library_desc'] ) || !isset( $_POST['library_icon'] ) ) {
+        if ( !isset( $_POST['library_id'] ) || !isset( $_POST['library_name'] ) || !isset( $_POST['library_desc'] ) || !isset( $_POST['library_icon'] ) ) {
             return;
         }
         $library = [
@@ -841,19 +832,16 @@ class Pray4Movement_Prayer_Points_View_Library {
         if ( !isset( $_POST['add_prayer_point_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['add_prayer_point_nonce'] ), 'add_prayer_point' ) ) {
             return;
         }
-
-        if ( !isset( $_POST['prayer_library_id'] ) || !isset( $_POST['prayer_title'] ) || !isset( $_POST['prayer_content'] ) ) {
+        if (
+            !isset( $_POST['prayer_library_id'] ) ||
+            !isset( $_POST['prayer_title'] ) ||
+            !isset( $_POST['prayer_content'] ) ||
+            !isset( $_POST['prayer_reference_book'] ) ||
+            !isset( $_POST['prayer_reference_verse'] ) ||
+            !isset( $_POST['prayer_tags'] )
+        ) {
             return;
         }
-
-        $prayer = self::get_prayer_point_post_data();
-        self::insert_prayer_point( $prayer );
-        self::insert_prayer_tags();
-
-        Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Prayer Point added successfully!', 'pray4movement_prayer_points' ), 'success' );
-    }
-
-    private static function get_prayer_point_post_data() {
         $prayer = [
             'library_id' => sanitize_text_field( wp_unslash( $_POST['prayer_library_id'] ) ),
             'title' => sanitize_text_field( wp_unslash( $_POST['prayer_title'] ) ),
@@ -862,9 +850,15 @@ class Pray4Movement_Prayer_Points_View_Library {
             'book' => sanitize_text_field( wp_unslash( $_POST['prayer_reference_book'] ) ),
             'verse' => sanitize_text_field( wp_unslash( $_POST['prayer_reference_verse'] ) ),
             'reference' => sanitize_text_field( wp_unslash( $_POST['prayer_reference_book'] . ' ' . $_POST['prayer_reference_verse'] ) ),
+            'tags' => sanitize_text_field( wp_unslash( $_POST['prayer_tags'] ) ),
             'status' => 'unpublished',
         ];
-        return $prayer;
+
+        self::insert_prayer_point( $prayer );
+        $prayer['id'] = Pray4Movement_Prayer_Points_Utilities::get_last_prayer_point_id();
+        $tags = Pray4Movement_Prayer_Points_Utilities::sanitize_tags( $prayer['tags'] );
+        Pray4Movement_Prayer_Points_Utilities::insert_all_tags( $prayer['id'], $tags );
+        Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Prayer Point added successfully!', 'pray4movement_prayer_points' ), 'success' );
     }
 
     private static function insert_prayer_point( $prayer ) {
@@ -885,15 +879,6 @@ class Pray4Movement_Prayer_Points_View_Library {
         );
         if ( !$test ) {
             Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Could not add new Prayer Point to library', 'pray4movement_prayer_points' ), 'error' );
-        }
-        return;
-    }
-
-    private static function insert_prayer_tags() {
-        $prayer['id'] = Pray4Movement_Prayer_Points_Utilities::get_last_prayer_point_id();
-        if ( !empty( $_POST['prayer_tags'] ) ) {
-            $prayer['tags'] = Pray4Movement_Prayer_Points_Utilities::sanitize_tags( $_POST['prayer_tags'] );
-            Pray4Movement_Prayer_Points_Utilities::insert_all_tags( $prayer['id'], $prayer['tags'] );
         }
         return;
     }
