@@ -181,6 +181,9 @@ class Pray4Movement_Prayer_Points_Utilities {
     }
 
     public static function sanitize_library_post_variables() {
+        if ( !isset( $_POST['add_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['add_library_nonce'] ), 'add_library' ) ) {
+            return;
+        }
         if ( !isset( $_POST['library_name'] ) || isset( $_POST['library_desc'] ) || isset( $_POST['library_icon'] ) ) {
             return;
         }
@@ -231,7 +234,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
     }
 
     public function main_explore_column() {
-        $this->check_add_library_nonce();
+        $this->process_add_library();
         ?>
         <table class="widefat striped">
             <thead>
@@ -326,28 +329,22 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         <?php
     }
 
-    private function check_add_library_nonce() {
+    private function process_add_library() {
         if ( isset( $_POST['add_library_nonce'] ) ) {
             if ( !isset( $_POST['add_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['add_library_nonce'] ), 'add_library' ) ) {
                 return;
             }
-            self::process_add_library();
-        }
-    }
-
-    public function process_add_library() {
-        if ( self::add_library_nonce_verified() ) {
-            $library = Pray4Movement_Prayer_Points_Utilities::sanitize_library_post_variables();
+            if ( !isset( $_POST['library_name'] ) || !isset( $_POST['library_desc'] ) || !isset( $_POST['library_icon'] ) ) {
+                return;
+            }
+            $library = [
+                'name' => sanitize_text_field( wp_unslash( $_POST['library_name'] ) ),
+                'desc' => sanitize_text_field( wp_unslash( $_POST['library_desc'] ) ),
+                'icon' => sanitize_text_field( wp_unslash( $_POST['library_icon'] ) ),
+            ];
             $library['key'] = Pray4Movement_Prayer_Points_Utilities::generate_key_from_string( $library['name'] );
-            self::insert_prayer_library( $library );
+            $this->insert_prayer_library( $library );
         }
-    }
-
-    private function add_library_nonce_verified() {
-        if ( isset( $_POST['add_library_nonce'] ) || wp_verify_nonce( sanitize_key( $_POST['add_library_nonce'] ), 'add_library' ) ) {
-            return true;
-        }
-        return false;
     }
 
     private function insert_prayer_library( $library ) {
@@ -360,7 +357,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                 'description' => $library['desc'],
                 'icon' => $library['icon'],
             ],
-            [ '%s', '%s', '%s', '%s', '%s', '%s' ]
+            [ '%s', '%s', '%s', '%s' ]
         );
         if ( !$test ) {
             Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Could not add new Prayer Library to table', 'pray4movement_prayer_points' ), 'error' );
