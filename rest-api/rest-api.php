@@ -130,15 +130,13 @@ class Pray4Movement_Prayer_Points_Endpoints
         return $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT
-                    REPLACE( REPLACE( (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'title' AND prayer_id = pp.id), 'XXX', pl.people_group), 'YYY', pl.location ) AS 'title',
-                    REPLACE( REPLACE( pp.content, 'XXX', pl.people_group), 'YYY', pl.location ) AS 'content',
-                    (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'reference' AND prayer_id = pp.id) AS 'reference',
-                    (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'book' AND prayer_id = pp.id) AS 'book',
-                    (SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'verse' AND prayer_id = pp.id) AS 'verse',
-                    (SELECT GROUP_CONCAT(meta_value) FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = pp.id) AS 'tags',
-                    pp.status,
-                    pl.location,
-                    pl.people_group,
+                    pp.title AS 'title',
+	                pp.content AS 'content',
+                    (SELECT IFNULL( GROUP_CONCAT(meta_value), '' ) FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = pp.id) AS 'tags',
+                    IFNULL( pp.reference, '' ) AS 'reference',
+                    IFNULL( pp.book, '' ) AS 'book',
+                    IFNULL( pp.verse, '' ) AS 'verse',
+                    pp.status AS 'status',
                     pl.id AS 'library_id',
                     pl.name AS 'library_name'
                 FROM `{$wpdb->prefix}dt_prayer_points` pp

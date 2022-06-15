@@ -726,7 +726,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                         </td>
                         <td>
                             <select name="prayer_reference_book" id="">
-                                <option value="no_reference">(No Reference)</option>
+                                <option value="">(No Reference)</option>
                                 <option value="Genesis">Genesis</option>
                                 <option value="Exodus">Exodus</option>
                                 <option value="Leviticus">Leviticus</option>
@@ -1126,7 +1126,7 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
                 </td>
                 <td>
                     <select name="prayer_reference_book" id="prayer_reference_book">
-                        <option value="no_reference">(No Reference)</option>
+                        <option value="">(No Reference)</option>
                         <option value="Genesis">Genesis</option>
                         <option value="Exodus">Exodus</option>
                         <option value="Leviticus">Leviticus</option>
@@ -1550,12 +1550,15 @@ class Pray4Movement_Prayer_Points_Tab_Export {
 
     public function main_prayer_points_column() {
         $prayer_libraries = Pray4Movement_Prayer_Points_Tab_Explore::get_prayer_libraries();
-        if ( empty( $prayer_libraries ) ) : ?>     
+        if ( empty( $prayer_libraries ) ) {
+            ?>
             <p>
                 <i><?php esc_html_e( 'No Prayer Libraries created yet', 'pray4movement_prayer_points' ); ?></i>
             </p>
-            <?php return; ?>
-        <?php endif; ?>
+            <?php
+            return;
+        }
+        ?>
         <table class="wp-list-table widefat plugins">
             <thead>
             <tr>
@@ -1563,8 +1566,8 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                     <label class="screen-reader-text">Select All</label>
                     <input type="checkbox">
                 </td>
-                <th id="name" class="manage-column column-name column-primary"><?php echo esc_html( 'Prayer Library', 'pray4movement_prayer_points' ); ?></th>
-                <th id="description" class="manage-column column-description"><?php echo esc_html( 'Description', 'pray4movement_prayer_points' ); ?></th>
+                <th id="name" class="manage-column column-name column-primary"><?php esc_html_e( 'Prayer Library', 'pray4movement_prayer_points' ); ?></th>
+                <th id="description" class="manage-column column-description"><?php esc_html_e( 'Description', 'pray4movement_prayer_points' ); ?></th>
             </tr>
             </thead>
             <tbody>
@@ -1580,7 +1583,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                     <div class="row-actions visible">
                         <span>
                             <a href="javascript:void(0);" class="export_library" onclick="export_csv(<?php echo esc_attr( $prayer_library['id'] ); ?>)">
-                                <?php echo esc_html( 'Export', 'pray4movement_prayer_points' ); ?>
+                                <?php esc_html_e( 'Export', 'pray4movement_prayer_points' ); ?>
                             </a>
                         </span>
                     </div>
@@ -1591,7 +1594,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                     </div>
                     <div>
                         <i>
-                            <?php echo esc_html( 'Last updated:', 'pray4movement_prayer_points' ); ?> <?php echo esc_html( substr( $prayer_library['last_updated'], 0, 16 ) ); ?>
+                            <?php esc_html_e( 'Last updated:', 'pray4movement_prayer_points' ); ?> <?php echo esc_html( substr( $prayer_library['last_updated'], 0, 16 ) ); ?>
                         </i>
                     </div>
                 </td>
@@ -1599,7 +1602,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
             <?php endforeach; ?>
             <tr>
                 <td colspan="2">
-                    <button class="button" id="export-libraries"><?php echo esc_html( 'Export', 'pray4movement_prayer_points' ); ?></button>
+                    <button class="button" id="export-libraries"><?php esc_html_e( 'Export', 'pray4movement_prayer_points' ); ?></button>
                 </td>
             </tr>
             </tbody>
