@@ -48,7 +48,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         if ( isset( $library_id ) ) {
             global $wpdb;
             return $wpdb->get_col(
-                $wpdb->prepare( "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` WHERE lib_id = %d;", $library_id )
+                $wpdb->prepare( "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` WHERE library_id = %d;", $library_id )
             );
         }
     }
@@ -141,9 +141,9 @@ class Pray4Movement_Prayer_Points_Endpoints
                     pl.name AS 'library_name'
                 FROM `{$wpdb->prefix}dt_prayer_points` pp
                 INNER JOIN `{$wpdb->prefix}dt_prayer_points_lib` pl
-                ON pl.id = pp.lib_id
-                WHERE pp.lib_id IN ( " . implode( ',', array_fill( 0, count( $library_id ), '%d' ) ) . " )
-                ORDER BY pp.lib_id ASC;", $library_id
+                ON pl.id = pp.library_id
+                WHERE pp.library_id IN ( " . implode( ',', array_fill( 0, count( $library_id ), '%d' ) ) . " )
+                ORDER BY pp.library_id ASC;", $library_id
             ), ARRAY_A
         );
     }

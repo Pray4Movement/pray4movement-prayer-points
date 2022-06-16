@@ -147,7 +147,7 @@ class Pray4Movement_Prayer_Points {
         $test = $wpdb->query(
             "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points` (
                 `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-                `lib_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
+                `library_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
                 `title` LONGTEXT COLLATE utf8mb4_unicode_520_ci NOT NULL,
                 `content` LONGTEXT COLLATE utf8mb4_unicode_520_ci NOT NULL,
                 `reference` VARCHAR(100) COLLATE utf8mb4_unicode_520_ci NULL,
