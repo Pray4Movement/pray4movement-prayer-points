@@ -136,20 +136,23 @@ class Pray4Movement_Prayer_Points {
      * @return void
      */
     public static function activation() {
-        // If tables don't exist, create them
-        self::create_prayer_points_table();
-        self::create_prayer_points_lib_table();
-        self::create_prayer_points_meta_table();
+        self::create_prayer_points_table_if_not_exist();
+        self::create_prayer_points_library_table_if_not_exist();
+        self::create_prayer_points_meta_table_if_not_exist();
     }
 
-    public static function create_prayer_points_table() {
+    private static function create_prayer_points_table_if_not_exist() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         $test = $wpdb->query(
             "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points` (
                 `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-                `lib_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
+                `library_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
+                `title` LONGTEXT COLLATE utf8mb4_unicode_520_ci NOT NULL,
                 `content` LONGTEXT COLLATE utf8mb4_unicode_520_ci NOT NULL,
+                `reference` VARCHAR(100) COLLATE utf8mb4_unicode_520_ci NULL,
+                `book` VARCHAR(50) COLLATE utf8mb4_unicode_520_ci NULL,
+                `verse` VARCHAR(50) COLLATE utf8mb4_unicode_520_ci NULL,
                 `hash` VARCHAR(65) DEFAULT NULL,
                 `status` VARCHAR(20) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'unpublished',
                 PRIMARY KEY (`id`)
@@ -160,7 +163,7 @@ class Pray4Movement_Prayer_Points {
         }
     }
 
-    public static function create_prayer_points_lib_table() {
+    private static function create_prayer_points_library_table_if_not_exist() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         $test = $wpdb->query(
@@ -170,8 +173,6 @@ class Pray4Movement_Prayer_Points {
                 `name` VARCHAR(191) NOT NULL,
                 `description` LONGTEXT DEFAULT NULL,
                 `icon` LONGTEXT COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
-                `location` VARCHAR(191) DEFAULT NULL,
-                `people_group` VARCHAR(191) DEFAULT NULL,
                 `status` VARCHAR(20) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'unpublished',
                 `last_updated` TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
                 PRIMARY KEY (`id`)
@@ -182,7 +183,7 @@ class Pray4Movement_Prayer_Points {
         }
     }
 
-    public static function create_prayer_points_meta_table() {
+    private static function create_prayer_points_meta_table_if_not_exist() {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         $test = $wpdb->query(
