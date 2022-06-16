@@ -21,12 +21,8 @@ class Pray4Movement_Prayer_Points_Menu {
 
     public function register_menu() {
         $this->page_title = __( "Pray4Movement Prayer Points", 'pray4movement-prayer-points' );
-        $menu_icon = self::get_prayer_library_icon();
+        $menu_icon = Pray4Movement_Prayer_Points_Utilities::get_default_prayer_library_icon();
         add_menu_page( 'Prayer Points', 'Prayer Points', 'manage_dt', $this->token, [ $this, 'content' ], $menu_icon, 7 );
-    }
-
-    public static function get_prayer_library_icon() {
-        return 'data:image/svg+xml;base64,PHN2ZyBpZD0ic3ZnIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiB2aWV3Qm94PSIwLCAwLCA0MDAsNDAwIj48ZyBpZD0ic3ZnZyI+PHBhdGggaWQ9InBhdGgwIiBkPSJNMjE5LjcxNiAxOS4yNDggQyAxMzkuNDUzIDMzLjcwNyw5Ni42MDggMTI3LjA1OSwxMzcuODU3IDE5Ny42MDAgTCAxNDEuNjAwIDIwNC4wMDAgMTU3LjExOSAyMDMuNTQzIEwgMTcyLjYzOCAyMDMuMDg2IDE2NC4yNDIgMTkwLjc0MyBDIDEyMS40OTUgMTI3LjkwMSwxNjUuMDQwIDQ0LjU0OSwyNDAuODAwIDQ0LjIwMCBDIDMyMS4xODkgNDMuODI4LDM2NC43NzIgMTM1LjA0OCwzMTQuMjM4IDE5Ny45MDggTCAzMTAuMTMyIDIwMy4wMTYgMzE2LjEwNyAyMDEuMzY2IEMgMzE5LjM5NCAyMDAuNDU5LDMyNS4wMzQgMjAwLjA5NywzMjguNjQyIDIwMC41NjIgQyAzMzIuMjQ5IDIwMS4wMjcsMzM2Ljk0OCAyMDEuNjMxLDMzOS4wODQgMjAxLjkwNCBDIDM0Ny45NDYgMjAzLjAzNiwzNjEuNjAwIDE2NC44MTcsMzYxLjYwMCAxMzguODc3IEMgMzYxLjYwMCA2My4zMjQsMjkzLjU0OSA1Ljk0NywyMTkuNzE2IDE5LjI0OCBNMjI4LjgwMCA4NS42MDAgTCAyMjguODAwIDk3LjYwMCAyMTEuMjAwIDk3LjYwMCBMIDE5My42MDAgOTcuNjAwIDE5My42MDAgMTExLjIwMCBMIDE5My42MDAgMTI0LjgwMCAyMTEuMjAwIDEyNC44MDAgTCAyMjguODAwIDEyNC44MDAgMjI4LjgwMCAxNjEuNjAwIEwgMjI4LjgwMCAxOTguNDAwIDI0Mi40MDAgMTk4LjQwMCBMIDI1Ni4wMDAgMTk4LjQwMCAyNTYuMDAwIDE2MS42MDAgTCAyNTYuMDAwIDEyNC44MDAgMjcyLjgwMCAxMjQuODAwIEwgMjg5LjYwMCAxMjQuODAwIDI4OS42MDAgMTExLjIwMCBMIDI4OS42MDAgOTcuNjAwIDI3Mi44MDAgOTcuNjAwIEwgMjU2LjAwMCA5Ny42MDAgMjU2LjAwMCA4NS42MDAgTCAyNTYuMDAwIDczLjYwMCAyNDIuNDAwIDczLjYwMCBMIDIyOC44MDAgNzMuNjAwIDIyOC44MDAgODUuNjAwIE0yOTcuNjIzIDIyNy43MTkgQyAyNjkuMjU3IDIzNi43MTgsMjcwLjU4MSAyMzUuNzkxLDI2OC4wMTggMjQ4LjQ0MCBDIDI2NC41ODUgMjY1LjM4NiwyNDkuMDY4IDI3MS45NjQsMTk5LjIwMCAyNzcuNjEzIEMgMTY0LjE5NiAyODEuNTc4LDE1OC40MDAgMjgwLjUyMiwxNTguNDAwIDI3MC4xODAgQyAxNTguNDAwIDI2MS45OTIsMTYwLjc2MyAyNjEuMDA3LDE4NC44MDAgMjU5LjE3MyBDIDIzNy4zNjAgMjU1LjE2NSwyNTIuNjcyIDI0OS4yNTYsMjQ4Ljk0OCAyMzQuNDIwIEMgMjQ2LjgwNCAyMjUuODc3LDI0My4xNTIgMjI1LjEwNCwxOTcuODE0IDIyMy42MDcgQyAxNTEuNTM3IDIyMi4wNzksMTQ1LjMyNSAyMjIuNDQzLDEzNS45NDYgMjI3LjIyOCBDIDEyOC43MjcgMjMwLjkxMCw2My45NDIgMjc4LjM2Myw2NC4xMDQgMjc5Ljg0OSBDIDY0LjE2MSAyODAuMzcyLDc5LjY3OCAyOTIuMTg3LDk4LjU4NyAzMDYuMTA1IEwgMTMyLjk2NiAzMzEuNDEwIDE3MC4wODMgMzM0LjczMyBDIDIxMS41ODMgMzM4LjQ1MCwyMTkuMzkzIDMzNy44NjMsMjMxLjA4MyAzMzAuMTUxIEMgMjQyLjQ2MCAzMjIuNjQ2LDMzNS44MzQgMjQ3Ljk3OCwzMzguMzY5IDI0NC4zNTggQyAzNDMuNjgxIDIzNi43NzUsMzM5LjY1NiAyMjMuOTg4LDMzMS4wMTAgMjIwLjk3MyBDIDMyNC42MDUgMjE4Ljc0MSwzMjguMjMyIDIxOC4wMDgsMjk3LjYyMyAyMjcuNzE5IE0zNy4yMDAgMzA4LjM0MCBDIDI0LjgwMSAzMjQuNjk5LDIzLjUyNiAzMjguNzcxLDI5LjIwMCAzMzMuODg5IEMgNDIuOTY5IDM0Ni4zMDgsODYuODgzIDM3Ni4yMjYsOTAuMTQyIDM3NS40MDggQyA5My4yNzggMzc0LjYyMSwxMTIuMjYwIDM1MC45NTMsMTE0LjU1OCAzNDQuOTY2IEMgMTE1LjA0MiAzNDMuNzA1LDEwNC4zMDMgMzM0LjYzNCw4Ni44NzQgMzIxLjU4MiBDIDcxLjIxMyAzMDkuODU1LDU2LjI0MCAyOTguNjM0LDUzLjYwMCAyOTYuNjQ4IEwgNDguODAwIDI5My4wMzYgMzcuMjAwIDMwOC4zNDAgIiBzdHJva2U9Im5vbmUiIGZpbGw9IiMwMDAwMDAiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPjwvZz48L3N2Zz4=';
     }
 
     // Menu stub. Replaced when Disciple.Tools Theme fully loads.
@@ -122,6 +118,10 @@ class Pray4Movement_Prayer_Points_Utilities {
         }
     }
 
+    public static function get_default_prayer_library_icon() {
+        return 'data:image/svg+xml;base64,PHN2ZyBpZD0ic3ZnIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiB2aWV3Qm94PSIwLCAwLCA0MDAsNDAwIj48ZyBpZD0ic3ZnZyI+PHBhdGggaWQ9InBhdGgwIiBkPSJNMjE5LjcxNiAxOS4yNDggQyAxMzkuNDUzIDMzLjcwNyw5Ni42MDggMTI3LjA1OSwxMzcuODU3IDE5Ny42MDAgTCAxNDEuNjAwIDIwNC4wMDAgMTU3LjExOSAyMDMuNTQzIEwgMTcyLjYzOCAyMDMuMDg2IDE2NC4yNDIgMTkwLjc0MyBDIDEyMS40OTUgMTI3LjkwMSwxNjUuMDQwIDQ0LjU0OSwyNDAuODAwIDQ0LjIwMCBDIDMyMS4xODkgNDMuODI4LDM2NC43NzIgMTM1LjA0OCwzMTQuMjM4IDE5Ny45MDggTCAzMTAuMTMyIDIwMy4wMTYgMzE2LjEwNyAyMDEuMzY2IEMgMzE5LjM5NCAyMDAuNDU5LDMyNS4wMzQgMjAwLjA5NywzMjguNjQyIDIwMC41NjIgQyAzMzIuMjQ5IDIwMS4wMjcsMzM2Ljk0OCAyMDEuNjMxLDMzOS4wODQgMjAxLjkwNCBDIDM0Ny45NDYgMjAzLjAzNiwzNjEuNjAwIDE2NC44MTcsMzYxLjYwMCAxMzguODc3IEMgMzYxLjYwMCA2My4zMjQsMjkzLjU0OSA1Ljk0NywyMTkuNzE2IDE5LjI0OCBNMjI4LjgwMCA4NS42MDAgTCAyMjguODAwIDk3LjYwMCAyMTEuMjAwIDk3LjYwMCBMIDE5My42MDAgOTcuNjAwIDE5My42MDAgMTExLjIwMCBMIDE5My42MDAgMTI0LjgwMCAyMTEuMjAwIDEyNC44MDAgTCAyMjguODAwIDEyNC44MDAgMjI4LjgwMCAxNjEuNjAwIEwgMjI4LjgwMCAxOTguNDAwIDI0Mi40MDAgMTk4LjQwMCBMIDI1Ni4wMDAgMTk4LjQwMCAyNTYuMDAwIDE2MS42MDAgTCAyNTYuMDAwIDEyNC44MDAgMjcyLjgwMCAxMjQuODAwIEwgMjg5LjYwMCAxMjQuODAwIDI4OS42MDAgMTExLjIwMCBMIDI4OS42MDAgOTcuNjAwIDI3Mi44MDAgOTcuNjAwIEwgMjU2LjAwMCA5Ny42MDAgMjU2LjAwMCA4NS42MDAgTCAyNTYuMDAwIDczLjYwMCAyNDIuNDAwIDczLjYwMCBMIDIyOC44MDAgNzMuNjAwIDIyOC44MDAgODUuNjAwIE0yOTcuNjIzIDIyNy43MTkgQyAyNjkuMjU3IDIzNi43MTgsMjcwLjU4MSAyMzUuNzkxLDI2OC4wMTggMjQ4LjQ0MCBDIDI2NC41ODUgMjY1LjM4NiwyNDkuMDY4IDI3MS45NjQsMTk5LjIwMCAyNzcuNjEzIEMgMTY0LjE5NiAyODEuNTc4LDE1OC40MDAgMjgwLjUyMiwxNTguNDAwIDI3MC4xODAgQyAxNTguNDAwIDI2MS45OTIsMTYwLjc2MyAyNjEuMDA3LDE4NC44MDAgMjU5LjE3MyBDIDIzNy4zNjAgMjU1LjE2NSwyNTIuNjcyIDI0OS4yNTYsMjQ4Ljk0OCAyMzQuNDIwIEMgMjQ2LjgwNCAyMjUuODc3LDI0My4xNTIgMjI1LjEwNCwxOTcuODE0IDIyMy42MDcgQyAxNTEuNTM3IDIyMi4wNzksMTQ1LjMyNSAyMjIuNDQzLDEzNS45NDYgMjI3LjIyOCBDIDEyOC43MjcgMjMwLjkxMCw2My45NDIgMjc4LjM2Myw2NC4xMDQgMjc5Ljg0OSBDIDY0LjE2MSAyODAuMzcyLDc5LjY3OCAyOTIuMTg3LDk4LjU4NyAzMDYuMTA1IEwgMTMyLjk2NiAzMzEuNDEwIDE3MC4wODMgMzM0LjczMyBDIDIxMS41ODMgMzM4LjQ1MCwyMTkuMzkzIDMzNy44NjMsMjMxLjA4MyAzMzAuMTUxIEMgMjQyLjQ2MCAzMjIuNjQ2LDMzNS44MzQgMjQ3Ljk3OCwzMzguMzY5IDI0NC4zNTggQyAzNDMuNjgxIDIzNi43NzUsMzM5LjY1NiAyMjMuOTg4LDMzMS4wMTAgMjIwLjk3MyBDIDMyNC42MDUgMjE4Ljc0MSwzMjguMjMyIDIxOC4wMDgsMjk3LjYyMyAyMjcuNzE5IE0zNy4yMDAgMzA4LjM0MCBDIDI0LjgwMSAzMjQuNjk5LDIzLjUyNiAzMjguNzcxLDI5LjIwMCAzMzMuODg5IEMgNDIuOTY5IDM0Ni4zMDgsODYuODgzIDM3Ni4yMjYsOTAuMTQyIDM3NS40MDggQyA5My4yNzggMzc0LjYyMSwxMTIuMjYwIDM1MC45NTMsMTE0LjU1OCAzNDQuOTY2IEMgMTE1LjA0MiAzNDMuNzA1LDEwNC4zMDMgMzM0LjYzNCw4Ni44NzQgMzIxLjU4MiBDIDcxLjIxMyAzMDkuODU1LDU2LjI0MCAyOTguNjM0LDUzLjYwMCAyOTYuNjQ4IEwgNDguODAwIDI5My4wMzYgMzcuMjAwIDMwOC4zNDAgIiBzdHJva2U9Im5vbmUiIGZpbGw9IiMwMDAwMDAiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPjwvZz48L3N2Zz4=';
+    }
+
     public static function admin_notice( string $notice, string $type ) {
         ?>
         <div class="notice notice-<?php echo esc_attr( $type ) ?> is-dismissible">
@@ -134,6 +134,13 @@ class Pray4Movement_Prayer_Points_Utilities {
         global $wpdb;
         return $wpdb->get_var(
             "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` ORDER BY id DESC LIMIT 1;"
+        );
+    }
+
+    public static function check_prayer_id_exists( $prayer_id ) {
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}dt_prayer_points WHERE id = %d", $prayer_id )
         );
     }
 
@@ -353,21 +360,19 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
     }
 
     private function process_add_library() {
-        if ( isset( $_POST['add_library_nonce'] ) ) {
-            if ( !isset( $_POST['add_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['add_library_nonce'] ), 'add_library' ) ) {
-                return;
-            }
-            if ( !isset( $_POST['library_name'] ) || !isset( $_POST['library_desc'] ) || !isset( $_POST['library_icon'] ) ) {
-                return;
-            }
-            $library = [
-                'name' => sanitize_text_field( wp_unslash( $_POST['library_name'] ) ),
-                'desc' => sanitize_text_field( wp_unslash( $_POST['library_desc'] ) ),
-                'icon' => sanitize_text_field( wp_unslash( $_POST['library_icon'] ) ),
-            ];
-            $library['key'] = Pray4Movement_Prayer_Points_Utilities::generate_key_from_string( $library['name'] );
-            $this->insert_prayer_library( $library );
+        if ( !isset( $_POST['add_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['add_library_nonce'] ), 'add_library' ) ) {
+            return;
         }
+        if ( !isset( $_POST['library_name'] ) || !isset( $_POST['library_desc'] ) || !isset( $_POST['library_icon'] ) ) {
+            return;
+        }
+        $library = [
+            'name' => sanitize_text_field( wp_unslash( $_POST['library_name'] ) ),
+            'desc' => sanitize_text_field( wp_unslash( $_POST['library_desc'] ) ),
+            'icon' => sanitize_text_field( wp_unslash( $_POST['library_icon'] ) ),
+        ];
+        $library['key'] = Pray4Movement_Prayer_Points_Utilities::generate_key_from_string( $library['name'] );
+        $this->insert_prayer_library( $library );
     }
 
     private function insert_prayer_library( $library ) {
@@ -399,7 +404,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
 
     public function display_prayer_libraries( $prayer_libraries ) {
         foreach ( $prayer_libraries as $library ) :
-            $prayer_icon = Pray4Movement_Prayer_Points_Menu::get_prayer_library_icon();
+            $prayer_icon = Pray4Movement_Prayer_Points_Utilities::get_default_prayer_library_icon();
             if ( isset( $library['icon'] ) ) {
                 if ( $library['icon'] !== '' ) {
                     $prayer_icon = $library['icon'];
@@ -420,9 +425,6 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
     }
 
     public function count_prayer_points( $lib_id ) {
-        if ( !isset( $lib_id ) ) {
-            return;
-        }
         global $wpdb;
         $count_prayer_points = $wpdb->get_var(
             $wpdb->prepare(
@@ -481,17 +483,12 @@ class Pray4Movement_Prayer_Points_Edit_Library {
     }
 
     public function main_edit_library_column() {
-        if ( !isset( $_GET['edit_library'] ) || is_null( $_GET['edit_library'] ) ) {
-            return new WP_Error( __METHOD__, 'Invalid Prayer Library ID' );
+        if ( !isset( $_GET['edit_library'] ) || empty( $_GET['edit_library'] ) || !is_numeric( $_GET['edit_library'] ) ) {
+            Pray4Movement_Prayer_Points_Utilities::admin_notice( 'Invalid Prayer Library ID', 'error' );
+            return;
         }
-
+        $this->process_edit_library();
         $lib_id = sanitize_key( wp_unslash( $_GET['edit_library'] ) );
-        if ( isset( $_POST['edit_library_nonce'] ) ) {
-            if ( !isset( $_POST['edit_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['edit_library_nonce'] ), 'edit_library' ) ) {
-                return;
-            }
-            self::process_edit_library( $lib_id );
-        }
         $library = Pray4Movement_Prayer_Points_View_Library::get_prayer_library( $lib_id );
         ?>
         <p>
@@ -542,6 +539,13 @@ class Pray4Movement_Prayer_Points_Edit_Library {
         <?php
     }
 
+    private function check_library_id_is_set() {
+        if ( !isset( $_GET['edit_library'] ) || empty( $_GET['edit_library'] ) ) {
+            Pray4Movement_Prayer_Points_Utilities::admin_notice( 'Invalid Prayer Library ID', 'error' );
+            return false;
+        }
+    }
+
     public function right_edit_library_column() {
         ?>
         <table class="widefat">
@@ -567,7 +571,7 @@ class Pray4Movement_Prayer_Points_Edit_Library {
         <?php
     }
 
-    private function process_edit_library( $lib_id ) {
+    private function process_edit_library() {
         if ( !isset( $_POST['edit_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['edit_library_nonce'] ), 'edit_library' ) ) {
             return;
         }
@@ -607,12 +611,12 @@ class Pray4Movement_Prayer_Points_Edit_Library {
 class Pray4Movement_Prayer_Points_View_Library {
     public static function get_prayer_library( $library_id ) {
         global $wpdb;
-        $prayer_library = $wpdb->get_row(
+        $library = $wpdb->get_row(
             $wpdb->prepare(
                 "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d;", $library_id
             ), ARRAY_A
         );
-        return $prayer_library;
+        return $library;
     }
 
     public static function get_lib_prayer_points( $library_id ) {
@@ -689,28 +693,23 @@ class Pray4Movement_Prayer_Points_View_Library {
     }
 
     public function main_view_library_column() {
-        // todo: fix validate view_library param is present and is_numeric
-        if ( !isset( $_GET['view_library'] ) || is_null( $_GET['view_library'] ) ) {
-            return new WP_Error( __METHOD__, 'Invalid Prayer Library ID' );
+        $this->process_add_prayer_point();
+        if ( !isset( $_GET['view_library'] ) || empty( $_GET['view_library'] ) || !is_numeric( $_GET['view_library'] ) ) {
+            Pray4Movement_Prayer_Points_Utilities::admin_notice( 'Invalid Prayer Library ID', 'error' );
+            return;
         }
-        $lib_id = sanitize_key( wp_unslash( $_GET['view_library'] ) );
-        $prayer_library = self::get_prayer_library( $lib_id );
-
-
-        if ( isset( $_POST['add_prayer_point_nonce'] ) ) {
-            if ( !isset( $_POST['add_prayer_point_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['add_prayer_point_nonce'] ), 'add_prayer_point' ) ) {
-                return;
-            }
-            self::process_add_prayer_point();
+        $library_id = sanitize_key( wp_unslash( $_GET['view_library'] ) );
+        if ( ! Pray4Movement_Prayer_Points_Utilities::check_library_id_exists( $library_id ) ) {
+            Pray4Movement_Prayer_Points_Utilities::admin_notice( 'Prayer Library ID does not exist.', 'error' );
+            return;
         }
+        $library = self::get_prayer_library( $library_id );
         ?>
         <table class="widefat striped">
             <thead>
                 <tr>
-                    <?php if ( !empty( $prayer_library ) ) : ?>
-                        <th colspan="6"><?php echo esc_html( $prayer_library['name'] ); ?></th>
-                    <?php else : ?>
-                        <td colspan="6"><?php esc_html_e( 'Error: Prayer Library not found', 'pray4movement-prayer-points' ); ?></td>
+                    <?php if ( !empty( $library ) ) : ?>
+                        <th colspan="6"><?php echo esc_html( $library['name'] ); ?></th>
                     <?php endif; ?>
                 </tr>
             </thead>
@@ -723,7 +722,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                     <th>Tags</th>
                     <th>Actions</th>
                 </tr>
-                <?php self::display_prayer_points( $lib_id ); ?>
+                <?php self::display_prayer_points( $library['id'] ); ?>
             </tbody>
         </table>
         <br>
@@ -839,7 +838,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                     </tr>
                     <tr style="display:none;">
                         <td></td>
-                        <td><input type="hidden" name="prayer_library_id" value="<?php echo esc_html( $lib_id ); ?>"></td>
+                        <td><input type="hidden" name="prayer_library_id" value="<?php echo esc_html( $library['id'] ); ?>"></td>
                     </tr>
                     <tr>
                         <td colspan="2">
@@ -1065,10 +1064,15 @@ class Pray4Movement_Prayer_Points_View_Library {
 class Pray4Movement_Prayer_Points_Edit_Prayer {
     public function content() {
         Pray4Movement_Prayer_Points_Utilities::check_permissions();
-        if ( !isset( $_GET['edit_prayer'] ) ) {
+        if ( !isset( $_GET['edit_prayer'] ) || empty( $_GET['edit_prayer'] ) || !is_numeric( $_GET['edit_prayer'] ) ) {
+            Pray4Movement_Prayer_Points_Utilities::admin_notice( 'Invalid Prayer Point ID', 'error' );
             return;
         }
         $prayer_id = sanitize_text_field( wp_unslash( $_GET['edit_prayer'] ) );
+        if ( ! Pray4Movement_Prayer_Points_Utilities::check_prayer_id_exists( $prayer_id ) ) {
+            Pray4Movement_Prayer_Points_Utilities::admin_notice( 'Prayer Point ID does not exist', 'error' );
+            return;
+        }
         $prayer = Pray4Movement_Prayer_Points_View_Library::get_prayer_point( $prayer_id );
         $library = Pray4Movement_Prayer_Points_View_Library::get_prayer_library( $prayer['lib_id'] );
         ?>
