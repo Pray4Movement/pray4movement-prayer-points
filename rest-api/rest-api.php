@@ -76,7 +76,7 @@ class Pray4Movement_Prayer_Points_Endpoints
     private function delete_meta_by_key( $meta_key ) {
         global $wpdb;
         return $wpdb->query(
-            $wpdb->prepare( "DELETE FROM `{$wpdb->prefix}dt_prayer_point_meta` WHERE meta_key = %s;", $meta_key )
+            $wpdb->prepare( "DELETE FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = %s;", $meta_key )
         );
     }
 
