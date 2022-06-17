@@ -189,7 +189,7 @@ class Pray4Movement_Prayer_Points {
         $test = $wpdb->query(
             "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points_meta` (
                 `meta_id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-                `prayer_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
+                `prayer_id` BIGINT(20) UNSIGNED DEFAULT NULL,
                 `meta_key` varchar(255) DEFAULT NULL,
                 `meta_value` LONGTEXT,
                 PRIMARY KEY (`meta_id`)

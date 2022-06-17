@@ -238,6 +238,13 @@ class Pray4Movement_Prayer_Points_Utilities {
         return $prayer_libraries;
     }
 
+    public static function get_meta_value_by_key( $meta_key ) {
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare( "SELECT meta_value FROM {$wpdb->prefix}dt_prayer_points_meta WHERE meta_key = %s;", $meta_key )
+        );
+    }
+
     public static function insert_prayer_library( $library ) {
         global $wpdb;
         $test = $wpdb->insert(
@@ -368,6 +375,41 @@ class Pray4Movement_Prayer_Points_Utilities {
             $wpdb->prepare( "SELECT id FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d;", $library_id )
         );
     }
+
+    public static function localize_prayers_column() {
+        $location = self::get_meta_value_by_key( 'location' );
+        $people_group = self::get_meta_value_by_key( 'people_group' );
+        ?>
+        <table class="widefat">
+            <thead>
+                <tr>
+                    <th colspan="2">
+                        <?php esc_html_e( 'Localize your prayers', 'pray4movement_prayer_points' ); ?>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <?php esc_html_e( 'Location:', 'pray4movement_prayer_points' ); ?>
+                </td>
+                <td>
+                    <input type="text" name="location" value="<?php echo esc_html( $location ); ?>">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php esc_html_e( 'People Group:', 'pray4movement_prayer_points' ); ?>
+                </td>
+                <td>
+                    <input type="text" name="people_group" value="<?php echo esc_html( $people_group ); ?>">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <br>
+        <?php
+    }
 }
 
 class Pray4Movement_Prayer_Points_Tab_Explore {
@@ -381,7 +423,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                         <?php $this->main_explore_column() ?>
                     </div>
                     <div id="postbox-container-1" class="postbox-container">
-                        <?php $this->right_explore_column() ?>
+                        <?php Pray4Movement_Prayer_Points_Utilities::localize_prayers_column() ?>
                     </div>
                     <div id="postbox-container-2" class="postbox-container">
                     </div>
@@ -523,31 +565,6 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             </td>
         </tr>
         <?php endforeach;
-    }
-
-    public function right_explore_column() {
-        ?>
-        <table class="widefat">
-            <thead>
-                <tr>
-                    <th><?php esc_html_e( 'Information', 'pray4movement_prayer_points' ); ?></th>
-                </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>
-                    <?php esc_html_e( 'Manage your Prayer Libraries from this screen.', 'pray4movement_prayer_points' ); ?>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <?php esc_html_e( 'Prayer Library Icon must be a Base 64 encoded string.', 'pray4movement_prayer_points' ); ?>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <br>
-        <?php
     }
 }
 
@@ -713,7 +730,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                         <?php $this->main_view_library_column(); ?>
                     </div>
                     <div id="postbox-container-1" class="postbox-container">
-                        <?php $this->right_view_library_column() ?>
+                        <?php Pray4Movement_Prayer_Points_Utilities::localize_prayers_column(); ?>
                     </div>
                     <div id="postbox-container-2" class="postbox-container">
                     </div>
@@ -1043,26 +1060,6 @@ class Pray4Movement_Prayer_Points_View_Library {
                     jQuery('#post-body-content').prepend(admin_notice);
             }
         </script>
-        <?php
-    }
-
-    public function right_view_library_column() {
-        ?>
-        <table class="widefat">
-            <thead>
-                <tr>
-                    <th><?php esc_html_e( 'Information', 'pray4movement_prayer_points' ); ?></th>
-                </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>
-                    <?php esc_html_e( 'View, add, edit, and delete your Prayer Points for this Prayer Library.', 'pray4movement_prayer_points' ); ?>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <br>
         <?php
     }
 }

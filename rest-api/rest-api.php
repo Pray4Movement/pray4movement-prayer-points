@@ -9,6 +9,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         self::register_delete_prayer_library_endpoint();
         self::register_delete_prayer_point_endpoint();
         self::register_get_prayer_points_endpoint();
+        self::register_set_location_and_people_group_endpoint();
     }
 
     private function get_namespace() {
@@ -69,6 +70,13 @@ class Pray4Movement_Prayer_Points_Endpoints
         global $wpdb;
         $wpdb->query(
             $wpdb->prepare( "DELETE FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE prayer_id = %d;", $prayer_id )
+        );
+    }
+
+    private function delete_meta_by_key( $meta_key ) {
+        global $wpdb;
+        return $wpdb->query(
+            $wpdb->prepare( "DELETE FROM `{$wpdb->prefix}dt_prayer_point_meta` WHERE meta_key = %s;", $meta_key )
         );
     }
 
@@ -145,6 +153,35 @@ class Pray4Movement_Prayer_Points_Endpoints
                 WHERE pp.library_id IN ( " . implode( ',', array_fill( 0, count( $library_id ), '%d' ) ) . " )
                 ORDER BY pp.library_id ASC;", $library_id
             ), ARRAY_A
+        );
+    }
+
+    private function register_set_location_and_people_group_endpoint() {
+        register_rest_route(
+            $this->get_namespace(), '/set_location_and_people_group/(?P<location>.+)/(?P<people_group>.+)', [
+                'methods'  => 'GET',
+                'callback' => [ $this, 'endpoint_for_set_location_and_people_group' ],
+                // 'permission_callback' => function( WP_REST_Request $request ) {
+                //     return $this->has_permission();
+                // },
+            ]
+        );
+    }
+
+    public function endpoint_for_set_location_and_people_group( WP_REST_Request $request ) {
+        $params = $request->get_params();
+        if ( isset( $params['location'] ) && isset( $params['people_group'] ) ) {
+            self::delete_meta_by_key( 'location' );
+            self::delete_meta_by_key( 'people_group' );
+            self::set_meta_key_and_value( 'location', $params['location'] );
+            self::set_meta_key_and_value( 'people_group', $params['people_group'] );
+        }
+    }
+
+    private function set_meta_key_and_value( $meta_key, $meta_value ) {
+        global $wpdb;
+        return $wpdb->query(
+            $wpdb->prepare( "INSERT INTO `{$wpdb->prefix}dt_prayer_points_meta` ( meta_key, meta_value ) VALUES ( %s, %s )", $meta_key, $meta_value )
         );
     }
 
