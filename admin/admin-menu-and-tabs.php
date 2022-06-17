@@ -1564,7 +1564,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                     </strong>
                     <div class="row-actions visible">
                         <span>
-                            <a href="javascript:void(0);" class="export_library" onclick="export_csv(<?php echo esc_attr( $prayer_library['id'] ); ?>)">
+                            <a href="javascript:void(0);" class="export_library" onclick="export_csv(<?php echo esc_attr( $prayer_library['id'] ); ?>, '<?php echo esc_attr( $prayer_library['key'] ); ?>')">
                                 <?php esc_html_e( 'Export', 'pray4movement_prayer_points' ); ?>
                             </a>
                         </span>
@@ -1590,22 +1590,26 @@ class Pray4Movement_Prayer_Points_Tab_Export {
             </tbody>
         </table>
         <script>
-            function export_csv( library_id ) {
+            function export_csv( libraryId, fileName='pray4movement_prayer_libraries_download' ) {
                 jQuery.ajax( {
                         type: 'POST',
                         contentType: 'application/json; charset=utf-8',
                         dataType: 'json',
-                        url: window.location.origin + '/wp-json/pray4movement-prayer-points/v1/get_prayer_points/' + library_id,
+                        url: window.location.origin + '/wp-json/pray4movement-prayer-points/v1/get_prayer_points/' + libraryId,
                         beforeSend: function(xhr) {
                             xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
                         },
                         success: function(response) {
+                            var columnsAlreadyDisplayed = false;
                             let output = "data:text/csv;charset=utf-8,";
                                 var columnNames = _.keys(response[0])
-                                columnNames.forEach( function(column) {
-                                    output += `"` + column + `",`;
-                                } )
-                                output += `\r\n`;
+                                if (columnsAlreadyDisplayed){
+                                    columnNames.forEach( function(column) {
+                                        output += `"` + column + `",`;
+                                    } )
+                                    output += `\r\n`;
+                                    columnsAlreadyDisplayed = true;
+                                }
                                 response.forEach( function(row){
                                     columnNames.forEach( function( columnName ) {
                                         output += `"${row[columnName]}",`;
@@ -1613,7 +1617,13 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                                 output += `\r\n`;
                             } );
                             var encodedUri = encodeURI(output);
-                            window.open(encodedUri);
+                            var downloadLink = document.createElement('a');
+                            downloadLink.href = encodedUri;
+                            downloadLink.download = `pray4movement_prayer_library_${fileName}.csv`;
+                            document.body.appendChild(downloadLink);
+                            downloadLink.click();
+                            document.body.removeChild(downloadLink);
+                            //window.open(encodedUri);
                         }
                     } );
             }
