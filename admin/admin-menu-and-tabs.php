@@ -407,7 +407,7 @@ class Pray4Movement_Prayer_Points_Utilities {
             </tr>
             <tr>
                 <td></td>
-                <td align="right">
+                <td style="text-align:right;">
                     <button id="update_localization" class="button" type="post" disabled>Update</button>
                 </td>
             </tr>
