@@ -179,6 +179,7 @@ class Pray4Movement_Prayer_Points_Endpoints
     }
 
     private function set_meta_key_and_value( $meta_key, $meta_value ) {
+        $meta_value = urldecode( $meta_value );
         global $wpdb;
         return $wpdb->query(
             $wpdb->prepare( "INSERT INTO `{$wpdb->prefix}dt_prayer_points_meta` ( meta_key, meta_value ) VALUES ( %s, %s )", $meta_key, $meta_value )
