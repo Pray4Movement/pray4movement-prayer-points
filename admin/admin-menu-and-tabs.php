@@ -144,7 +144,34 @@ class Pray4Movement_Prayer_Points_Utilities {
         global $wpdb;
         return $wpdb->get_results(
             $wpdb->prepare(
-                "SELECT * FROM `{$wpdb->prefix}dt_prayer_points` WHERE library_id = %d;", $library_id
+                "SELECT
+                    id,
+                    library_id,
+                    REPLACE(
+                        REPLACE(
+                            `title`,
+                            'XXX',
+                            IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'people_group'), 'XXX')
+                        ),
+                        'YYY',
+                        IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'location'), 'YYY')
+                    ) AS `title`,
+                    REPLACE(
+                        REPLACE(
+                            `content`,
+                            'XXX',
+                            IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'people_group'), 'XXX')
+                        ),
+                        'YYY',
+                        IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'location'), 'YYY')
+                    ) AS `content`,
+                    reference,
+                    book,
+                    verse,
+                    hash,
+                    status
+                FROM `{$wpdb->prefix}dt_prayer_points`
+                WHERE library_id = %d;", $library_id
             ), ARRAY_A
         );
     }
