@@ -138,8 +138,24 @@ class Pray4Movement_Prayer_Points_Endpoints
         return $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT
-                    pp.title AS 'title',
-	                pp.content AS 'content',
+                    REPLACE(
+                        REPLACE(
+                            pp.title,
+                            'XXX',
+                            IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'people_group'), 'XXX')
+                        ),
+                        'YYY',
+                        IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'location'), 'YYY')
+                    ) AS `title`,
+	                REPLACE(
+                        REPLACE(
+                            pp.content,
+                            'XXX',
+                            IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'people_group'), 'XXX')
+                        ),
+                        'YYY',
+                        IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'location'), 'YYY')
+                    ) AS `title`,
                     (SELECT IFNULL( GROUP_CONCAT(meta_value), '' ) FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = pp.id) AS 'tags',
                     IFNULL( pp.reference, '' ) AS 'reference',
                     IFNULL( pp.book, '' ) AS 'book',
