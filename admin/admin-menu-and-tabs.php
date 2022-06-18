@@ -73,7 +73,7 @@ class Pray4Movement_Prayer_Points_Menu {
         $link = self::get_url_path_with_tab();
         ?>
         <div class="wrap">
-            <h2><?php echo esc_html( $this->page_title ) ?></h2>
+            <h2><?php echo esc_html( $this->page_title ); ?></h2>
             <h2 class="nav-tab-wrapper">
                 <a href="<?php echo esc_attr( $link ) . 'explore' ?>"
                 class="nav-tab <?php echo esc_html( ( $tab == 'explore' || !isset( $tab ) ) ? 'nav-tab-active' : '' ); ?>"><?php echo esc_html( 'Explore', 'pray4movement_prayer_points' ); ?></a>
@@ -124,8 +124,8 @@ class Pray4Movement_Prayer_Points_Utilities {
 
     public static function admin_notice( string $notice, string $type ) {
         ?>
-        <div class="notice notice-<?php echo esc_attr( $type ) ?> is-dismissible">
-            <p><?php echo esc_html( $notice ) ?></p>
+        <div class="notice notice-<?php echo esc_attr( $type ); ?> is-dismissible">
+            <p><?php echo esc_html( $notice ); ?></p>
         </div>
         <?php
     }
@@ -479,10 +479,10 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             <div id="poststuff">
                 <div id="post-body" class="metabox-holder columns-2">
                     <div id="post-body-content">
-                        <?php $this->main_explore_column() ?>
+                        <?php $this->main_explore_column(); ?>
                     </div>
                     <div id="postbox-container-1" class="postbox-container">
-                        <?php Pray4Movement_Prayer_Points_Utilities::localize_prayers_column() ?>
+                        <?php Pray4Movement_Prayer_Points_Utilities::localize_prayers_column(); ?>
                     </div>
                     <div id="postbox-container-2" class="postbox-container">
                     </div>
@@ -636,10 +636,10 @@ class Pray4Movement_Prayer_Points_Edit_Library {
             <div id="poststuff">
                 <div id="post-body" class="metabox-holder columns-2">
                     <div id="post-body-content">
-                        <?php $this->main_edit_library_column() ?>
+                        <?php $this->main_edit_library_column(); ?>
                     </div>
                     <div id="postbox-container-1" class="postbox-container">
-                        <?php $this->right_edit_library_column() ?>
+                        <?php $this->right_edit_library_column(); ?>
                     </div>
                     <div id="postbox-container-2" class="postbox-container">
                     </div>
@@ -1147,10 +1147,10 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
                 </p>
                 <div id="post-body" class="metabox-holder columns-2">
                     <div id="post-body-content">
-                        <?php $this->main_edit_prayer_column() ?>
+                        <?php $this->main_edit_prayer_column(); ?>
                     </div>
                     <div id="postbox-container-1" class="postbox-container">
-                        <?php $this->right_edit_prayer_column() ?>
+                        <?php $this->right_edit_prayer_column(); ?>
                     </div>
                     <div id="postbox-container-2" class="postbox-container">
                     </div>
@@ -1328,10 +1328,10 @@ class Pray4Movement_Prayer_Points_Tab_Import {
             <div id="poststuff">
                 <div id="post-body" class="metabox-holder columns-2">
                     <div id="post-body-content">
-                        <?php $this->main_prayer_points_import_column() ?>
+                        <?php $this->main_prayer_points_import_column(); ?>
                     </div>
                     <div id="postbox-container-1" class="postbox-container">
-                        <?php $this->right_prayer_points_import_column() ?>
+                        <?php $this->right_prayer_points_import_column(); ?>
                     </div>
                     <div id="postbox-container-2" class="postbox-container">
                     </div>
@@ -1573,10 +1573,10 @@ class Pray4Movement_Prayer_Points_Tab_Export {
             <div id="poststuff">
                 <div id="post-body" class="metabox-holder columns-2">
                     <div id="post-body-content">
-                        <?php $this->main_prayer_points_column() ?>
+                        <?php $this->main_prayer_points_column(); ?>
                     </div>
                     <div id="postbox-container-1" class="postbox-container">
-                        <?php $this->right_prayer_points_column() ?>
+                        <?php Pray4Movement_Prayer_Points_Utilities::localize_prayers_column(); ?>
                     </div>
                     <div id="postbox-container-2" class="postbox-container">
                     </div>
@@ -1694,26 +1694,6 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                 export_csv(library_ids);
             });
         </script>
-        <?php
-    }
-
-    public function right_prayer_points_column() {
-        ?>
-        <table class="widefat">
-            <thead>
-                <tr>
-                    <th><?php esc_html_e( 'Information', 'pray4movement_prayer_points' ); ?></th>
-                </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>
-                    <?php esc_html_e( 'Export your Prayer Libraries to a CSV file and distribute it among your contacts.', 'pray4movement_prayer_points' ); ?>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <br>
         <?php
     }
 }
