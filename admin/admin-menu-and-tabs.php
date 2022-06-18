@@ -394,7 +394,7 @@ class Pray4Movement_Prayer_Points_Utilities {
                     <?php esc_html_e( 'Location:', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
-                    <input type="text" name="location" value="<?php echo esc_html( $location ); ?>">
+                    <input type="text" id="location" class="localization" value="<?php echo esc_html( $location ); ?>">
                 </td>
             </tr>
             <tr>
@@ -402,12 +402,44 @@ class Pray4Movement_Prayer_Points_Utilities {
                     <?php esc_html_e( 'People Group:', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
-                    <input type="text" name="people_group" value="<?php echo esc_html( $people_group ); ?>">
+                    <input type="text" id="people_group" class="localization" value="<?php echo esc_html( $people_group ); ?>">
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td align="right">
+                    <button id="update_localization" class="button" type="post" disabled>Update</button>
                 </td>
             </tr>
             </tbody>
         </table>
         <br>
+        <script>
+            jQuery('.localization').on('input', function() {
+                jQuery('#update_localization').prop('disabled',false);
+            });
+
+            jQuery('#update_localization').on('click', function() {
+                var location = jQuery('#location')[0].value;
+                var people_group = jQuery('#people_group')[0].value;
+                jQuery.ajax( {
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/set_location_and_people_group/${location}/${people_group}`,
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
+                        },
+                        success: update_localization_success(),
+                    } );
+            });
+
+            function update_localization_success() {
+                var update_button = jQuery('#update_localization');
+                update_button.html('Updated!');
+                update_button.prop('disabled',true);
+            }
+        </script>
         <?php
     }
 }
@@ -499,11 +531,11 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             </table>
         </form>
         <script>
-            jQuery( '.delete_library' ).on( 'click', function () {
+            jQuery('.delete_library').on('click', function () {
                 var lib_name = jQuery(this).data('name');
                 if(confirm(`Delete the '${lib_name}' Prayer Library?`)) {
                     var library_id = jQuery(this).data('id');
-                    jQuery.ajax( {
+                    jQuery.ajax({
                         type: 'POST',
                         contentType: 'application/json; charset=utf-8',
                         dataType: 'json',
@@ -512,7 +544,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                             xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
                         },
                         success: delete_lib_success(library_id, lib_name),
-                    } );
+                    });
                 }
             } );
 
@@ -523,7 +555,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                             <p>'${lib_name}' Prayer Library deleted successfully!</p>
                         </div>
                     `;
-                    jQuery('.nav-tab-wrapper').before(admin_notice);
+                jQuery('.nav-tab-wrapper').before(admin_notice);
             }
         </script>
         <?php

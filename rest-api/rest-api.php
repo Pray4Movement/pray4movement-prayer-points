@@ -159,11 +159,11 @@ class Pray4Movement_Prayer_Points_Endpoints
     private function register_set_location_and_people_group_endpoint() {
         register_rest_route(
             $this->get_namespace(), '/set_location_and_people_group/(?P<location>.+)/(?P<people_group>.+)', [
-                'methods'  => 'GET',
+                'methods'  => 'POST',
                 'callback' => [ $this, 'endpoint_for_set_location_and_people_group' ],
-                // 'permission_callback' => function( WP_REST_Request $request ) {
-                //     return $this->has_permission();
-                // },
+                'permission_callback' => function( WP_REST_Request $request ) {
+                    return $this->has_permission();
+                },
             ]
         );
     }
