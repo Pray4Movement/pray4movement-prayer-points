@@ -1658,11 +1658,12 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                         success: function(response) {
                             var columnsAlreadyDisplayed = false;
                             let output = "data:text/csv;charset=utf-8,";
-                                var columnNames = _.keys(response[0])
+                                var columnNames = Object.keys(response[0])
                                 if (columnsAlreadyDisplayed){
                                     columnNames.forEach( function(column) {
                                         output += `"` + column + `",`;
                                     } )
+                                    output = output.slice(0,-1);
                                     output += `\r\n`;
                                     columnsAlreadyDisplayed = true;
                                 }
@@ -1670,6 +1671,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                                     columnNames.forEach( function( columnName ) {
                                         output += `"${row[columnName]}",`;
                                     } )
+                                output = output.slice(0,-1);
                                 output += `\r\n`;
                             } );
                             var encodedUri = encodeURI(output);
@@ -1679,7 +1681,6 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                             document.body.appendChild(downloadLink);
                             downloadLink.click();
                             document.body.removeChild(downloadLink);
-                            //window.open(encodedUri);
                         }
                     } );
             }
