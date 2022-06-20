@@ -114,9 +114,6 @@ class Pray4Movement_Prayer_Points_Endpoints
             $this->get_namespace(), '/get_prayer_points/(?P<library_id>\d*[,\d+]*)', [
                 'methods' => 'POST',
                 'callback' => [ $this , 'endpoint_for_get_prayer_points' ],
-                'permission_callback' => function( WP_REST_Request $request ) {
-                    return $this->has_permission();
-                },
             ]
         );
     }
