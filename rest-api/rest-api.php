@@ -9,6 +9,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         self::register_delete_prayer_library_endpoint();
         self::register_delete_prayer_point_endpoint();
         self::register_get_prayer_points_endpoint();
+        self::register_get_prayer_libraries_endpoint();
         self::register_set_location_and_people_group_endpoint();
     }
 
@@ -170,6 +171,23 @@ class Pray4Movement_Prayer_Points_Endpoints
                 ORDER BY pp.library_id ASC;", $library_id
             ), ARRAY_A
         );
+    }
+
+    private function register_get_prayer_libraries_endpoint() {
+        register_rest_route(
+            $this->get_namespace(), '/get_prayer_libraries', [
+                'methods' => 'POST',
+                'callback' => [ $this , 'endpoint_for_get_prayer_libraries' ],
+                'permission_callback' => function( WP_REST_Request $request ) {
+                    return $this->has_permission();
+                },
+            ]
+        );
+    }
+
+    public function endpoint_for_get_prayer_libraries( WP_REST_Request $request ) {
+        global $wpdb;
+        return $wpdb->get_results( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib`;", ARRAY_A );
     }
 
     private function register_set_location_and_people_group_endpoint() {
