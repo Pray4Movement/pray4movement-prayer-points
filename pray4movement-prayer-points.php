@@ -84,39 +84,19 @@ class Pray4Movement_Prayer_Points {
 
     private function __construct() {
         $is_rest = dt_is_rest();
-        /**
-         * @todo Decide if you want to use the REST API example
-         * To remove: delete this following line and remove the folder named /rest-api
-         */
         require_once( 'rest-api/rest-api.php' ); // adds starter rest api class
 
-        /**
-         * @todo Decide if you want to add a custom admin page in the admin area
-         * To remove: delete the 3 lines below and remove the folder named /admin
-         */
         if ( is_admin() ) {
             require_once( 'admin/admin-menu-and-tabs.php' ); // adds starter admin page and section for plugin
         }
 
-        /**
-         * @todo Decide if you want to support localization of your plugin
-         * To remove: delete the line below and remove the folder named /languages
-         */
         $this->i18n();
 
-        /**
-         * @todo Decide if you want to customize links for your plugin in the plugin admin area
-         * To remove: delete the lines below and remove the function named "plugin_description_links"
-         */
         if ( is_admin() ) { // adds links to the plugin description area in the plugin admin list.
             add_filter( 'plugin_row_meta', [ $this, 'plugin_description_links' ], 10, 4 );
         }
     }
 
-    /**
-     * Filters the array of row meta for each/specific plugin in the Plugins list table.
-     * Appends additional links below each/specific plugin on the plugins page.
-     */
     public function plugin_description_links( $links_array, $plugin_file_name, $plugin_data, $status ) {
         if ( strpos( $plugin_file_name, basename( __FILE__ ) ) ) {
             // You can still use `array_unshift()` to add links at the beginning.
@@ -128,13 +108,6 @@ class Pray4Movement_Prayer_Points {
         return $links_array;
     }
 
-    /**
-     * Method that runs only when the plugin is activated.
-     *
-     * @since  0.1
-     * @access public
-     * @return void
-     */
     public static function activation() {
         self::create_prayer_points_table_if_not_exist();
         self::create_prayer_points_library_table_if_not_exist();
@@ -200,72 +173,28 @@ class Pray4Movement_Prayer_Points {
         }
     }
 
-    /**
-     * Method that runs only when the plugin is deactivated.
-     *
-     * @since  0.1
-     * @access public
-     * @return void
-     */
     public static function deactivation() {
         // add functions here that need to happen on deactivation
         delete_option( 'dismissed-pray4movement-prayer-points' );
     }
 
-    /**
-     * Loads the translation files.
-     *
-     * @since  0.1
-     * @access public
-     * @return void
-     */
     public function i18n() {
         $domain = 'pray4movement-prayer-points';
         load_plugin_textdomain( $domain, false, trailingslashit( dirname( plugin_basename( __FILE__ ) ) ). 'languages' );
     }
 
-    /**
-     * Magic method to output a string if trying to use the object as a string.
-     *
-     * @since  0.1
-     * @access public
-     * @return string
-     */
     public function __toString() {
         return 'pray4movement-prayer-points';
     }
 
-    /**
-     * Magic method to keep the object from being cloned.
-     *
-     * @since  0.1
-     * @access public
-     * @return void
-     */
     public function __clone() {
         _doing_it_wrong( __FUNCTION__, 'Whoah, partner!', '0.1' );
     }
 
-    /**
-     * Magic method to keep the object from being unserialized.
-     *
-     * @since  0.1
-     * @access public
-     * @return void
-     */
     public function __wakeup() {
         _doing_it_wrong( __FUNCTION__, 'Whoah, partner!', '0.1' );
     }
 
-    /**
-     * Magic method to prevent a fatal error when calling a method that doesn't exist.
-     *
-     * @param string $method
-     * @param array $args
-     * @return null
-     * @since  0.1
-     * @access public
-     */
     public function __call( $method = '', $args = array() ) {
         _doing_it_wrong( "pray4movement_prayer_points::" . esc_html( $method ), 'Method does not exist.', '0.1' );
         unset( $method, $args );
@@ -274,7 +203,6 @@ class Pray4Movement_Prayer_Points {
 }
 
 
-// Register activation hook.
 register_activation_hook( __FILE__, [ 'Pray4Movement_Prayer_Points', 'activation' ] );
 register_deactivation_hook( __FILE__, [ 'Pray4Movement_Prayer_Points', 'deactivation' ] );
 
