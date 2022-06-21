@@ -136,9 +136,9 @@ class Pray4Movement_Prayer_Points_Endpoints
         return $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT
+                    pp.id,
                     REPLACE(
                         REPLACE(
-                            pp.id,
                             pp.title,
                             'XXX',
                             IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'people_group'), 'XXX')
