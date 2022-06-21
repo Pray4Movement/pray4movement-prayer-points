@@ -36,7 +36,7 @@ function show_prayer_points( $library_id ) {
                             <td>${prayer['reference']}</td>
                             <td>${prayer['content']}</td>
                             <td>`;
-                    prayer['tags'].split(',').forEach( function(tag){ row += `<a href="?tag=${tag}">${tag}</a>`;});
+                    prayer['tags'].split(',').forEach( function(tag){ row += `<li><a href="?tag=${tag}">${tag}</a></li>`;});
                     row += `</td>
                         </tr>
                     </tbody>
@@ -85,7 +85,9 @@ function show_prayer_points_by_tag( $tag ) {
                                 <td>${prayer['title']}</td>
                                 <td>${prayer['reference']}</td>
                                 <td>${prayer['content']}</td>
-                                <td>${prayer['tag']}</td>
+                                <td>`;
+                        prayer['tags'].split(',').forEach( function(tag){ row += `<li><a href="?tag=${tag}">${tag}</a></li>`;});
+                        row += `</td>
                             </tr>
                         </tbody>
                         `;
@@ -104,7 +106,7 @@ function show_prayer_libraries() {
     <style>
         .p4m-libraries-table {
             margin: auto;
-            width: 75%;
+            width: 100%;
             text-align: center;
         }
         .p4m-libraries-table th {
