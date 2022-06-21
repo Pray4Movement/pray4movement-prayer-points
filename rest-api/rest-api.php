@@ -206,7 +206,7 @@ class Pray4Movement_Prayer_Points_Endpoints
     private function get_prayer_points_by_tag( $tag ) {
         global $wpdb;
         return $wpdb->get_results(
-            $wpdb->prepare( "SELECT pp.*, pm.meta_value
+            $wpdb->prepare( "SELECT pp.*, pm.meta_value AS 'tag'
                                 FROM `{$wpdb->prefix}dt_prayer_points` pp
                                 INNER JOIN `{$wpdb->prefix}dt_prayer_points_meta` pm
                                 ON pp.id = pm.prayer_id

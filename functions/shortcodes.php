@@ -22,23 +22,26 @@ function show_prayer_points( $library_id ) {
                         <th>Title</th>
                         <th>Reference</th>
                         <th>Content</th>
-                        <th>Tags</th>
+                        <th>Tag</th>
                     <tr>
                 </thead>
                 `);
                 response.forEach( function(prayer){
                     jQuery('#p4m-spinner-row').remove();
-                    jQuery('.p4m-libraries-table').append(`
+                    var row = `
                     <tbody>
                         <tr>
                             <td>${prayer['id']}</td>
                             <td>${prayer['title']}</td>
                             <td>${prayer['reference']}</td>
                             <td>${prayer['content']}</td>
-                            <td>${prayer['tags']}</td>
+                            <td>`;
+                    prayer['tags'].split(',').forEach( function(tag){ row += `<a href="?tag=${tag}">${tag}</a>`;});
+                    row += `</td>
                         </tr>
                     </tbody>
-                    `);
+                    `;
+                    jQuery('.p4m-libraries-table').append(row);
                 });
             },
         });
@@ -46,6 +49,54 @@ function show_prayer_points( $library_id ) {
     loadPrayerPoints('<?php echo esc_html( $library_id ); ?>');
 </script>
     <?php
+}
+
+function show_prayer_points_by_tag( $tag ) {
+    ?>
+    <script>
+        function loadPrayerPointsByTag(tag) {
+            jQuery.ajax({
+                type: 'POST',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/get_prayer_points_by_tag/${tag}`,
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
+                },
+                success: function(response) {
+                    jQuery('#p4m-library-spinner').remove();
+                    jQuery('.p4m-libraries-table').append(`
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Title</th>
+                            <th>Reference</th>
+                            <th>Content</th>
+                            <th>Tags</th>
+                        <tr>
+                    </thead>
+                    `);
+                    response.forEach( function(prayer){
+                        jQuery('#p4m-spinner-row').remove();
+                        var row = `
+                        <tbody>
+                            <tr>
+                                <td>${prayer['id']}</td>
+                                <td>${prayer['title']}</td>
+                                <td>${prayer['reference']}</td>
+                                <td>${prayer['content']}</td>
+                                <td>${prayer['tag']}</td>
+                            </tr>
+                        </tbody>
+                        `;
+                        jQuery('.p4m-libraries-table').append(row);
+                    });
+                },
+            });
+        }
+        loadPrayerPointsByTag('<?php echo esc_html( $tag ); ?>');
+    </script>
+        <?php
 }
 
 function show_prayer_libraries() {
@@ -56,10 +107,18 @@ function show_prayer_libraries() {
             width: 75%;
             text-align: center;
         }
+        .p4m-libraries-table th {
+            background-color: lightgray;
+        }
     </style>
     <?php
     if ( isset( $_GET['library_id'] ) ) {
         show_prayer_points( sanitize_text_field( wp_unslash( $_GET['library_id'] ) ) );
+        return;
+    }
+
+    if ( isset( $_GET['tag'] ) ) {
+        show_prayer_points_by_tag( sanitize_text_field( wp_unslash( $_GET['tag'] ) ) );
         return;
     }
     ?>
@@ -78,7 +137,7 @@ function show_prayer_libraries() {
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Action</th>
+                            <th>Download</th>
                         </tr>
                     </thead>
                     `);
