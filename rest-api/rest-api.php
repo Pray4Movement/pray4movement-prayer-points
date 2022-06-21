@@ -138,6 +138,7 @@ class Pray4Movement_Prayer_Points_Endpoints
                 "SELECT
                     REPLACE(
                         REPLACE(
+                            pp.id,
                             pp.title,
                             'XXX',
                             IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'people_group'), 'XXX')
@@ -153,7 +154,7 @@ class Pray4Movement_Prayer_Points_Endpoints
                         ),
                         'YYY',
                         IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'location'), 'YYY')
-                    ) AS `title`,
+                    ) AS `content`,
                     (SELECT IFNULL( GROUP_CONCAT(meta_value), '' ) FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = pp.id) AS 'tags',
                     IFNULL( pp.reference, '' ) AS 'reference',
                     IFNULL( pp.book, '' ) AS 'book',
