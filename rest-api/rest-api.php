@@ -10,6 +10,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         self::register_delete_prayer_point_endpoint();
         self::register_get_prayer_points_endpoint();
         self::register_get_prayer_libraries_endpoint();
+        self::register_get_prayer_points_by_tag_endpoint();
         self::register_set_location_and_people_group_endpoint();
     }
 
@@ -188,6 +189,29 @@ class Pray4Movement_Prayer_Points_Endpoints
         return $wpdb->get_results( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib`;", ARRAY_A );
     }
 
+    private function register_get_prayer_points_by_tag_endpoint() {
+        register_rest_route(
+            $this->get_namespace(), '/get_prayer_points_by_tag/(?P<tag>.+)', [
+                'methods' => 'POST',
+                'callback' => [ $this , 'endpoint_for_get_prayer_points_by_tag' ],
+            ]
+        );
+    }
+
+    public function endpoint_for_get_prayer_points_by_tag( WP_REST_Request $request ) {
+        $params = $request->get_params();
+        return self::get_prayer_points_by_tag( $params['tag'] );
+    }
+
+    private function get_prayer_points_by_tag( $tag ) {
+        global $wpdb;
+        return $wpdb->get_results(
+            $wpdb->prepare( "SELECT pp.*, pm.meta_value
+                                FROM `{$wpdb->prefix}dt_prayer_points` pp
+                                INNER JOIN `{$wpdb->prefix}dt_prayer_points_meta` pm
+                                ON pp.id = pm.prayer_id
+                                WHERE pm.meta_key = 'tags' AND meta_value = %s;", $tag ), ARRAY_A );
+    }
     private function register_set_location_and_people_group_endpoint() {
         register_rest_route(
             $this->get_namespace(), '/set_location_and_people_group/(?P<location>.+)/(?P<people_group>.+)', [
