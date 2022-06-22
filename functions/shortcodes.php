@@ -134,14 +134,15 @@ function show_prayer_libraries() {
             width: 75%;
             text-align: center;
         }
-        .p4m-libraries-table th {
-            margin-bottom: 8px;
-        }
         .p4m-prayer-points-table {
             margin: auto;
             width: 100%;
             text-align: left;
             border-collapse: separate;
+        }
+        .p4m-prayer-points-table th {
+            margin-bottom: 12px;
+            display: block;
         }
         .p4m-prayer-points-table td {
             padding: 28px;
