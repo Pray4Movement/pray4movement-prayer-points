@@ -5,6 +5,15 @@ function show_prayer_points( $library_id ) {
     ?>
 <script>
     function loadPrayerPoints(libraryId) {
+        var prayerPointsTable = `
+        <table class="p4m-prayer-points-table">
+            <tr id="p4m-library-spinner">
+                <td colspan="2">
+                    <i>loading...</i>
+                </td>
+            </tr>
+        </table>`;
+        jQuery('#p4m-content').append(prayerPointsTable);
         jQuery.ajax({
             type: 'POST',
             contentType: 'application/json; charset=utf-8',
@@ -15,7 +24,7 @@ function show_prayer_points( $library_id ) {
             },
             success: function(response) {
                 jQuery('#p4m-library-spinner').remove();
-                jQuery('.p4m-libraries-table').append(`
+                jQuery('.p4m-prayer-points-table').append(`
                     <tr>
                         <th>Prayer Points</th>
                     <tr>`);
@@ -34,19 +43,24 @@ function show_prayer_points( $library_id ) {
                             <br>`;
                     if ( tags.length > 1 ) {
                         var tagRow = `<b><i>Tags: </i></b>`;
-                        tags.forEach( function(tag){ tagRow += `<a href="?tag=${tag}">${tag}</a>, `;});
+                        tags.forEach( function(tag){
+                            tag = jQuery.trim(tag);
+                            tagRow += `<a href="?tag=${tag}">${tag}</a>, `;
+                        });
                         tagRow = tagRow.slice(0,-2);
                         tagRow += `<br><br>`;
                         row += tagRow;
                     }
                     row += `</td>
                         </tr>`;
-                    jQuery('.p4m-libraries-table').append(row);
+                    jQuery('.p4m-prayer-points-table').append(row);
                 });
             },
         });
     }
-    loadPrayerPoints('<?php echo esc_html( $library_id ); ?>');
+    jQuery(document).ready(function() {
+        loadPrayerPoints('<?php echo esc_html( $library_id ); ?>');
+    });
 </script>
     <?php
 }
@@ -55,6 +69,15 @@ function show_prayer_points_by_tag( $tag ) {
     ?>
     <script>
         function loadPrayerPointsByTag(tag) {
+            var prayerPointsTable = `
+            <table class="p4m-prayer-points-table">
+                <tr id="p4m-library-spinner">
+                    <td colspan="2">
+                        <i>loading...</i>
+                    </td>
+                </tr>
+            </table>`;
+            jQuery('#p4m-content').append(prayerPointsTable);
             jQuery.ajax({
                 type: 'POST',
                 contentType: 'application/json; charset=utf-8',
@@ -65,7 +88,7 @@ function show_prayer_points_by_tag( $tag ) {
                 },
                 success: function(response) {
                     jQuery('#p4m-library-spinner').remove();
-                    jQuery('.p4m-libraries-table').append(`
+                    jQuery('.p4m-prayer-points-table').append(`
                         <tr>
                             <th>Prayer Points</th>
                         <tr>`);
@@ -91,12 +114,14 @@ function show_prayer_points_by_tag( $tag ) {
                         }
                         row += `</td>
                             </tr>`;
-                        jQuery('.p4m-libraries-table').append(row);
+                        jQuery('.p4m-prayer-points-table').append(row);
                     });
                 },
             });
         }
-        loadPrayerPointsByTag('<?php echo esc_html( $tag ); ?>');
+        jQuery(document).ready(function() {
+            loadPrayerPointsByTag('<?php echo esc_html( $tag ); ?>');
+        });
     </script>
         <?php
 }
@@ -105,18 +130,29 @@ function show_prayer_libraries() {
     ?>
     <style>
         .p4m-libraries-table {
+            margin:auto;
+            width: 75%;
+            text-align: center;
+        }
+        .p4m-libraries-table th {
+            margin-bottom: 8px;
+        }
+        .p4m-prayer-points-table {
             margin: auto;
             width: 100%;
             text-align: left;
             border-collapse: separate;
         }
-        .p4m-libraries-table td {
+        .p4m-prayer-points-table td {
             padding: 28px;
         }
-        .p4m-libraries-table td:hover {
-            background-color: #f6f6f6;
-            box-shadow: -4px 4px 18px lightgray;
+        .p4m-prayer-points-table td {
             border-radius: 8px;
+        }
+        .p4m-prayer-points-table td:hover {
+            background-color: #f6f6f6;
+            border-left: solid 6px gray;
+            box-shadow: -4px 4px 18px lightgray;
         }
         .p4m-prayer-title {
             display: block;
@@ -146,6 +182,15 @@ function show_prayer_libraries() {
     ?>
     <script>
         function loadLibraries() {
+            var librariesTable = `
+            <table class="p4m-libraries-table">
+                <tr id="p4m-library-spinner">
+                    <td colspan="2">
+                        <i>loading...</i>
+                    </td>
+                </tr>
+            </table>`;
+            jQuery('#p4m-content').append(librariesTable);
             jQuery.ajax({
                 type: 'POST',
                 contentType: 'application/json; charset=utf-8',
@@ -210,7 +255,9 @@ function show_prayer_libraries() {
                     }
                 } );
         }
-        loadLibraries();
+        jQuery(document).ready(function() {
+            loadLibraries();
+        });
     </script>
     <?php
 }
