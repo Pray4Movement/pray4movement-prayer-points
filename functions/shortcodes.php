@@ -16,31 +16,31 @@ function show_prayer_points( $library_id ) {
             success: function(response) {
                 jQuery('#p4m-library-spinner').remove();
                 jQuery('.p4m-libraries-table').append(`
-                <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Title</th>
-                        <th>Reference</th>
-                        <th>Content</th>
-                        <th>Tag</th>
-                    <tr>
-                </thead>
-                `);
+                        <th>Prayer Points</th>
+                    <tr>`);
                 response.forEach( function(prayer){
                     jQuery('#p4m-spinner-row').remove();
+                    var tags = prayer['tags'].split(',');
                     var row = `
-                    <tbody>
                         <tr>
-                            <td>${prayer['id']}</td>
-                            <td>${prayer['title']}</td>
-                            <td>${prayer['reference']}</td>
-                            <td>${prayer['content']}</td>
-                            <td>`;
-                    prayer['tags'].split(',').forEach( function(tag){ row += `<li><a href="?tag=${tag}">${tag}</a></li>`;});
+                        <td>
+                            <span class="p4m-prayer-title">
+                                <span class="p4m-prayer-title-name">${prayer['title']}</span> - <i>${prayer['reference']}</i>
+                                <span class="p4m-prayer-point-id">#${prayer['id']}</span>
+                            </span>
+                            ${prayer['content']}
+                            <br>
+                            <br>`;
+                    if ( tags.length > 1 ) {
+                        var tagRow = `<b><i>Tags: </i></b>`;
+                        tags.forEach( function(tag){ tagRow += `<a href="?tag=${tag}">${tag}</a>, `;});
+                        tagRow = tagRow.slice(0,-2);
+                        tagRow += `<br><br>`;
+                        row += tagRow;
+                    }
                     row += `</td>
-                        </tr>
-                    </tbody>
-                    `;
+                        </tr>`;
                     jQuery('.p4m-libraries-table').append(row);
                 });
             },
@@ -66,31 +66,31 @@ function show_prayer_points_by_tag( $tag ) {
                 success: function(response) {
                     jQuery('#p4m-library-spinner').remove();
                     jQuery('.p4m-libraries-table').append(`
-                    <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Title</th>
-                            <th>Reference</th>
-                            <th>Content</th>
-                            <th>Tags</th>
-                        <tr>
-                    </thead>
-                    `);
+                            <th>Prayer Points</th>
+                        <tr>`);
                     response.forEach( function(prayer){
                         jQuery('#p4m-spinner-row').remove();
+                        var tags = prayer['tags'].split(',');
                         var row = `
-                        <tbody>
                             <tr>
-                                <td>${prayer['id']}</td>
-                                <td>${prayer['title']}</td>
-                                <td>${prayer['reference']}</td>
-                                <td>${prayer['content']}</td>
-                                <td>`;
-                        prayer['tags'].split(',').forEach( function(tag){ row += `<li><a href="?tag=${tag}">${tag}</a></li>`;});
+                                <td>
+                                <span class="p4m-prayer-title">
+                                    <span class="p4m-prayer-title-name">${prayer['title']}</span> - <i>${prayer['reference']}</i>
+                                    <span style="text-align:right;">#${prayer['id']}</span>
+                                </span>
+                                ${prayer['content']}
+                                <br>
+                                <br>`;
+                        if ( tags.length > 1 ) {
+                            var tagRow = `<b><i>Tags: </i></b>`;
+                            tags.forEach( function(tag){ tagRow += `<a href="?tag=${tag}">${tag}</a>, `;});
+                            tagRow = tagRow.slice(0,-2);
+                            tagRow += `<br><br>`;
+                            row += tagRow;
+                        }
                         row += `</td>
-                            </tr>
-                        </tbody>
-                        `;
+                            </tr>`;
                         jQuery('.p4m-libraries-table').append(row);
                     });
                 },
@@ -107,10 +107,30 @@ function show_prayer_libraries() {
         .p4m-libraries-table {
             margin: auto;
             width: 100%;
-            text-align: center;
+            text-align: left;
+            border-collapse: separate;
         }
-        .p4m-libraries-table th {
-            background-color: lightgray;
+        .p4m-libraries-table td {
+            padding: 28px;
+        }
+        .p4m-libraries-table td:hover {
+            background-color: #f6f6f6;
+            box-shadow: -4px 4px 18px lightgray;
+            border-radius: 8px;
+        }
+        .p4m-prayer-title {
+            display: block;
+            font-weight: bolder;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .p4m-prayer-title-name {
+            color: <?php echo esc_attr( PORCH_COLOR_SCHEME_HEX ); ?>;
+        }
+        .p4m-prayer-point-id {
+            float: right;
+            color: gray;
+            font-weight: 300;
         }
     </style>
     <?php
@@ -136,23 +156,17 @@ function show_prayer_libraries() {
                 },
                 success: function(response) {
                     jQuery('.p4m-libraries-table').append(`
-                    <thead>
                         <tr>
                             <th>Name</th>
                             <th>Download</th>
-                        </tr>
-                    </thead>
-                    `);
+                        </tr>`);
                     response.forEach( function(library){
                         jQuery('#p4m-library-spinner').remove();
                         jQuery('.p4m-libraries-table').append(`
-                        <tbody>
                             <tr>
                                 <td><a href="?library_id=${library['id']}">${library['name']}</a></td>
                                 <td><a href="javascript:downloadCSV(${library['id']}, '${library['key']}')">csv</a></td>
-                            </tr>
-                        </tbody>
-                        `);
+                            </tr>`);
                     });
                 },
             });
