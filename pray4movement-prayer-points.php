@@ -84,15 +84,16 @@ class Pray4Movement_Prayer_Points {
 
     private function __construct() {
         $is_rest = dt_is_rest();
-        require_once( 'rest-api/rest-api.php' ); // adds starter rest api class
+        require_once( 'rest-api/rest-api.php' );
+
 
         if ( is_admin() ) {
-            require_once( 'admin/admin-menu-and-tabs.php' ); // adds starter admin page and section for plugin
+            require_once( 'admin/admin-menu-and-tabs.php' );
         }
 
         $this->i18n();
 
-        if ( is_admin() ) { // adds links to the plugin description area in the plugin admin list.
+        if ( is_admin() ) {
             add_filter( 'plugin_row_meta', [ $this, 'plugin_description_links' ], 10, 4 );
         }
     }
@@ -251,6 +252,7 @@ if ( !function_exists( "dt_hook_ajax_notice_handler" ) ){
         }
     }
 }
+require_once( 'functions/shortcodes.php' );
 
 /**
  * Plugin Releases and updates
