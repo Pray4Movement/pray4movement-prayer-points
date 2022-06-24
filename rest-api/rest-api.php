@@ -9,6 +9,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         self::register_delete_prayer_library_endpoint();
         self::register_delete_prayer_point_endpoint();
         self::register_get_prayer_points_endpoint();
+        self::register_get_replaced_prayer_points_endpoint();
         self::register_get_prayer_libraries_endpoint();
         self::register_get_prayer_points_by_tag_endpoint();
         self::register_set_location_and_people_group_endpoint();
@@ -128,34 +129,14 @@ class Pray4Movement_Prayer_Points_Endpoints
         }
     }
 
-    private function validate_library_ids_string( $library_ids ) {
-        return sanitize_text_field( wp_unslash( $library_ids ) );
-    }
-
     private function get_full_prayer_points_from_library_id( $library_id ) {
         global $wpdb;
         return $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT
-                    pp.id,
-                    REPLACE(
-                        REPLACE(
-                            pp.title,
-                            'XXX',
-                            IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'people_group'), 'XXX')
-                        ),
-                        'YYY',
-                        IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'location'), 'YYY')
-                    ) AS `title`,
-	                REPLACE(
-                        REPLACE(
-                            pp.content,
-                            'XXX',
-                            IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'people_group'), 'XXX')
-                        ),
-                        'YYY',
-                        IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'location'), 'YYY')
-                    ) AS `content`,
+                    pp.id AS `id`,
+                    pp.title AS `title`,
+                    pp.content AS `content`,
                     (SELECT IFNULL( GROUP_CONCAT(meta_value), '' ) FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = pp.id) AS 'tags',
                     IFNULL( pp.reference, '' ) AS 'reference',
                     IFNULL( pp.book, '' ) AS 'book',
@@ -168,6 +149,60 @@ class Pray4Movement_Prayer_Points_Endpoints
                 ON pl.id = pp.library_id
                 WHERE pp.library_id IN ( " . implode( ',', array_fill( 0, count( $library_id ), '%d' ) ) . " )
                 ORDER BY pp.library_id ASC;", $library_id
+            ), ARRAY_A
+        );
+    }
+
+    private function register_get_replaced_prayer_points_endpoint() {
+        register_rest_route(
+            $this->get_namespace(), '/get_prayer_points/(?P<library_id>\d*[,\d+]*)/(?P<location>.+)/(?P<people_group>.+)', [
+                'methods' => 'POST',
+                'callback' => [ $this , 'endpoint_for_get_replaced_prayer_points' ],
+            ]
+        );
+    }
+
+    public function endpoint_for_get_replaced_prayer_points( WP_REST_Request $request ) {
+        $params = $request->get_params();
+        $location = sanitize_text_field( wp_unslash( $params['location'] ) );
+        $people_group = sanitize_text_field( wp_unslash( $params['people_group'] ) );
+        if ( !isset( $params['location'] ) || empty( $params['location'] ) || is_null( $params['location'] ) || $params['location'] === 'null' ) {
+            $location = 'the world';
+        }
+        if ( !isset( $params['people_group'] ) || empty( $params['people_group'] ) || is_null( $params['people_group'] ) || $params['people_group'] === 'null' ) {
+            $people_group = 'people';
+        }
+        if ( isset( $params['library_id'] ) ) {
+            $library_ids = self::validate_library_ids_string( $params['library_id'] );
+            $library_ids = explode( ',', $library_ids );
+            return self::get_full_replaced_prayer_points_from_library_id( $library_ids, $location, $people_group );
+        }
+    }
+
+    private function validate_library_ids_string( $library_ids ) {
+        return sanitize_text_field( wp_unslash( $library_ids ) );
+    }
+
+    private function get_full_replaced_prayer_points_from_library_id( $library_id, $location, $people_group ) {
+        global $wpdb;
+        return $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT
+                    pp.id AS `id`,
+                    REPLACE( REPLACE( pp.title, 'XXX', %s ), 'YYY', %s ) AS `title`,
+	                REPLACE( REPLACE( pp.content, 'XXX', %s ), 'YYY', %s ) AS `content`,
+                    (SELECT IFNULL( GROUP_CONCAT(meta_value), '' ) FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = pp.id) AS 'tags',
+                    IFNULL( pp.reference, '' ) AS 'reference',
+                    IFNULL( pp.book, '' ) AS 'book',
+                    IFNULL( pp.verse, '' ) AS 'verse',
+                    pp.status AS 'status',
+                    pl.id AS 'library_id',
+                    pl.name AS 'library_name'
+                FROM `{$wpdb->prefix}dt_prayer_points` pp
+                INNER JOIN `{$wpdb->prefix}dt_prayer_points_lib` pl
+                ON pl.id = pp.library_id
+                WHERE pp.library_id IN ( %d )
+                ORDER BY pp.library_id ASC;", $location, $people_group, $location, $people_group, $library_id[0]
             ), ARRAY_A
         );
     }

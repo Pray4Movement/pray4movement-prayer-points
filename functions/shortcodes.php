@@ -4,7 +4,25 @@ add_shortcode( 'p4m_prayer_libraries', 'show_prayer_libraries' );
 function show_prayer_points( $library_id ) {
     ?>
 <script>
-    function loadPrayerPoints(libraryId) {
+    function loadPrayerPoints(libraryId, location = null, people_group = null) {
+        var localizationInputs = `
+        <div class="p4m-localization-box">
+            <div class="p4m-localization-box-title">
+                Hit close to home!
+                <br>
+                Localize these prayer points below.
+            </div>
+            <div>
+                <label>Location: </label> <input type="text" id="p4m-localization-location" placeholder="the world">
+            </div>
+            <div>
+                <label>People Groups: </label><input type="text" id="p4m-localization-people-group" placeholder="people">
+            </div>
+            <div>
+                <a class="btn btn-common btn-rm" id="update-prayer-points" href="javascript:updateLocalization();">Update</a>
+            </div>
+        </div>`;
+        jQuery('#p4m-content').append(localizationInputs);
         var prayerPointsTable = `
         <table class="p4m-prayer-points-table">
             <tr id="p4m-library-spinner">
@@ -31,6 +49,10 @@ function show_prayer_points( $library_id ) {
                 response.forEach( function(prayer){
                     jQuery('#p4m-spinner-row').remove();
                     var tags = prayer['tags'].split(',');
+                    prayer['title'] = prayer['title'].replace(/XXX/g, '<span class="p4m-location">XXX</span>');
+                    prayer['title'] = prayer['title'].replace(/YYY/g, '<span class="p4m-people-group">YYY</span>');
+                    prayer['content'] = prayer['content'].replace(/XXX/g, '<span class="p4m-location">XXX</span>');
+                    prayer['content'] = prayer['content'].replace(/YYY/g, '<span class="p4m-people-group">YYY</span>');
                     var row = `
                         <tr>
                         <td>
@@ -38,11 +60,13 @@ function show_prayer_points( $library_id ) {
                                 <span class="p4m-prayer-title-name">${prayer['title']}</span> - <i>${prayer['reference']}</i>
                                 <span class="p4m-prayer-point-id">#${prayer['id']}</span>
                             </span>
-                            ${prayer['content']}
+                            <span class="p4m-prayer-point-content">
+                                ${prayer['content']}
+                            </span>
                             <br>
                             <br>`;
                     if ( tags.length > 1 ) {
-                        var tagRow = `<b><i>Tags: </i></b>`;
+                        var tagRow = `<span class="p4m-tag">tags: </span>`;
                         tags.forEach( function(tag){
                             tag = jQuery.trim(tag);
                             tagRow += `<a href="?tag=${tag}">${tag}</a>, `;
@@ -58,6 +82,14 @@ function show_prayer_points( $library_id ) {
             },
         });
     }
+    
+    function updateLocalization() {
+        var location = jQuery('#p4m-localization-location').val();
+        var people_group = jQuery('#p4m-localization-people-group').val();
+        jQuery('.p4m-location').text(location);
+        jQuery('.p4m-people-group').text(people_group);
+    }
+
     jQuery(document).ready(function() {
         loadPrayerPoints('<?php echo esc_html( $library_id ); ?>');
     });
@@ -129,6 +161,22 @@ function show_prayer_points_by_tag( $tag ) {
 function show_prayer_libraries() {
     ?>
     <style>
+        .p4m-localization-box {
+            margin: auto;
+            display: table;
+            text-align: right;
+        }
+
+        .p4m-localization-box button {
+            width: 100%;
+            margin: 32px 0 32px 0;
+        }
+        .p4m-localization-box-title {
+            text-align: center;
+            font-weight: 400;
+            margin-bottom: 12px;
+            color: #343434;
+        }
         .p4m-libraries-table {
             margin:auto;
             width: 75%;
@@ -168,6 +216,10 @@ function show_prayer_libraries() {
             float: right;
             color: gray;
             font-weight: 300;
+        }
+        .p4m-tag {
+            color: dimgray;
+            font-weight: 400;
         }
     </style>
     <?php
