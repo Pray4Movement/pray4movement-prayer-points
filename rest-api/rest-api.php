@@ -3,7 +3,7 @@ if ( !defined( 'ABSPATH' ) ) { exit; } // Exit if accessed directly.
 
 class Pray4Movement_Prayer_Points_Endpoints
 {
-    public $permissions = [ 'access_contacts', 'dt_all_access_contacts', 'view_project_metrics' ];
+    public $permissions = [ 'publish_posts', 'edit_posts', 'delete_posts' ];
 
     public function add_api_routes() {
         self::register_delete_prayer_library_endpoint();

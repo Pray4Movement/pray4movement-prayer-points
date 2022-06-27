@@ -637,7 +637,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
 
 class Pray4Movement_Prayer_Points_Edit_Library {
     public function content() {
-        Pray4Movement_Prayer_Points_Utilities::check_user_can( 'publish_posts' );
+        Pray4Movement_Prayer_Points_Utilities::check_user_can( 'edit_posts' );
         ?>
         <div class="wrap">
             <div id="poststuff">
@@ -1098,9 +1098,16 @@ class Pray4Movement_Prayer_Points_View_Library {
                     </td>
                     <td>
                         <?php
-                        if ( Pray4Movement_Prayer_Points_Utilities::check_user_can( 'publish_posts', false ) ) {
+                        if ( Pray4Movement_Prayer_Points_Utilities::check_user_can( 'edit_posts', false ) ) {
                             ?>
                             <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_prayer=<?php echo esc_html( $prayer['id'] ); ?>"" >Edit</a> | 
+                            <?php
+                        }
+                        if ( Pray4Movement_Prayer_Points_Utilities::check_user_can( 'edit_posts', false ) && Pray4Movement_Prayer_Points_Utilities::check_user_can( 'delete_posts', false ) ) {
+                            echo esc_html( '|' );
+                        }
+                        if ( Pray4Movement_Prayer_Points_Utilities::check_user_can( 'delete_posts', false ) ) {
+                            ?>
                             <a href="#" style="color:#b32d2e;" class="delete_prayer"  data-id="<?php echo esc_html( $prayer['id'] ); ?>" data-title="<?php echo esc_html( $prayer['title'] ); ?>">Delete</a>
                             <?php
                         }
@@ -1142,7 +1149,7 @@ class Pray4Movement_Prayer_Points_View_Library {
 
 class Pray4Movement_Prayer_Points_Edit_Prayer {
     public function content() {
-        Pray4Movement_Prayer_Points_Utilities::check_user_can( 'publish_posts' );
+        Pray4Movement_Prayer_Points_Utilities::check_user_can( 'edit_posts' );
         if ( !isset( $_GET['edit_prayer'] ) || empty( $_GET['edit_prayer'] ) || !is_numeric( $_GET['edit_prayer'] ) ) {
             Pray4Movement_Prayer_Points_Utilities::admin_notice( 'Invalid Prayer Point ID', 'error' );
             return;
