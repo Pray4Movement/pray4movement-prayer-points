@@ -22,15 +22,14 @@ class Pray4Movement_Prayer_Points_Menu {
     public function register_menu() {
         $this->page_title = __( "Pray4Movement Prayer Points", 'pray4movement-prayer-points' );
         $menu_icon = Pray4Movement_Prayer_Points_Utilities::get_default_prayer_library_icon();
-        add_menu_page( 'Prayer Points', 'Prayer Points', 'publish_posts', $this->token, [ $this, 'content' ], $menu_icon, 7 );
-
+        add_menu_page( 'Prayer Points', 'Prayer Points', 'read', $this->token, [ $this, 'content' ], $menu_icon, 7 );
     }
 
     // Menu stub. Replaced when Disciple.Tools Theme fully loads.
     public function extensions_menu() {}
 
     public function content() {
-        Pray4Movement_Prayer_Points_Utilities::check_permissions();
+        Pray4Movement_Prayer_Points_Utilities::check_user_can( 'read' );
         $this->check_view_library_tab();
         $this->check_edit_library_tab();
         $this->check_edit_prayer_tab();
@@ -113,10 +112,16 @@ class Pray4Movement_Prayer_Points_Menu {
 Pray4Movement_Prayer_Points_Menu::instance();
 
 class Pray4Movement_Prayer_Points_Utilities {
-    public static function check_permissions() {
-        if ( !current_user_can( 'publish_posts' ) ) {
-            wp_die( 'You do not have sufficient permissions to access this page.' );
+    public static function check_user_can( $permission, $verbose = true ) {
+        if ( !current_user_can( $permission ) ) {
+            $error_message = '';
+            if ( $verbose ) {
+                $error_message = 'You do not have sufficient permissions to access this page.';
+            }
+            wp_die( esc_html( $error_message ) );
+            return false;
         }
+        return true;
     }
 
     public static function get_default_prayer_library_icon() {
@@ -474,7 +479,7 @@ class Pray4Movement_Prayer_Points_Utilities {
 
 class Pray4Movement_Prayer_Points_Tab_Explore {
     public function content() {
-        Pray4Movement_Prayer_Points_Utilities::check_permissions();
+        Pray4Movement_Prayer_Points_Utilities::check_user_can( 'read' );
         ?>
         <div class="wrap">
             <div id="poststuff">
@@ -517,6 +522,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             </tbody>
         </table>
         <br>
+        <?php Pray4Movement_Prayer_Points_Utilities::check_user_can( 'publish_posts', false ); ?>
         <form method="POST">
             <?php wp_nonce_field( 'add_library', 'add_library_nonce' ); ?>
             <table class="widefat striped">
@@ -631,7 +637,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
 
 class Pray4Movement_Prayer_Points_Edit_Library {
     public function content() {
-        Pray4Movement_Prayer_Points_Utilities::check_permissions();
+        Pray4Movement_Prayer_Points_Utilities::check_user_can( 'publish_posts' );
         ?>
         <div class="wrap">
             <div id="poststuff">
@@ -778,7 +784,7 @@ class Pray4Movement_Prayer_Points_Edit_Library {
 
 class Pray4Movement_Prayer_Points_View_Library {
     public function content() {
-        Pray4Movement_Prayer_Points_Utilities::check_permissions();
+        Pray4Movement_Prayer_Points_Utilities::check_user_can( 'read' );
         ?>
         <div class="wrap">
             <div id="poststuff">
@@ -835,7 +841,11 @@ class Pray4Movement_Prayer_Points_View_Library {
         </table>
         <br>
         <form method="POST">
-            <?php wp_nonce_field( 'add_prayer_point', 'add_prayer_point_nonce' ); ?>
+            <?php
+            wp_nonce_field( 'add_prayer_point', 'add_prayer_point_nonce' );
+            Pray4Movement_Prayer_Points_Utilities::check_user_can( 'publish_posts', false );
+            ?>
+
             <table class="widefat striped">
                 <thead>
                     <tr>
@@ -1087,8 +1097,14 @@ class Pray4Movement_Prayer_Points_View_Library {
                         <?php echo esc_html( implode( ', ', $prayer['tags'] ) ); ?>
                     </td>
                     <td>
-                        <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_prayer=<?php echo esc_html( $prayer['id'] ); ?>"" >Edit</a> | 
-                        <a href="#" style="color:#b32d2e;" class="delete_prayer"  data-id="<?php echo esc_html( $prayer['id'] ); ?>" data-title="<?php echo esc_html( $prayer['title'] ); ?>">Delete</a>
+                        <?php
+                        if ( Pray4Movement_Prayer_Points_Utilities::check_user_can( 'publish_posts', false ) ) {
+                            ?>
+                            <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_prayer=<?php echo esc_html( $prayer['id'] ); ?>"" >Edit</a> | 
+                            <a href="#" style="color:#b32d2e;" class="delete_prayer"  data-id="<?php echo esc_html( $prayer['id'] ); ?>" data-title="<?php echo esc_html( $prayer['title'] ); ?>">Delete</a>
+                            <?php
+                        }
+                        ?>
                     </td>
                 </tr>
         <?php endforeach; ?>
@@ -1126,7 +1142,7 @@ class Pray4Movement_Prayer_Points_View_Library {
 
 class Pray4Movement_Prayer_Points_Edit_Prayer {
     public function content() {
-        Pray4Movement_Prayer_Points_Utilities::check_permissions();
+        Pray4Movement_Prayer_Points_Utilities::check_user_can( 'publish_posts' );
         if ( !isset( $_GET['edit_prayer'] ) || empty( $_GET['edit_prayer'] ) || !is_numeric( $_GET['edit_prayer'] ) ) {
             Pray4Movement_Prayer_Points_Utilities::admin_notice( 'Invalid Prayer Point ID', 'error' );
             return;
@@ -1323,7 +1339,7 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
 
 class Pray4Movement_Prayer_Points_Tab_Import {
     public function content() {
-        Pray4Movement_Prayer_Points_Utilities::check_permissions();
+        Pray4Movement_Prayer_Points_Utilities::check_user_can( 'publish_posts' );
         ?>
         <div class="wrap">
             <div id="poststuff">
@@ -1568,7 +1584,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
 
 class Pray4Movement_Prayer_Points_Tab_Export {
     public function content() {
-        Pray4Movement_Prayer_Points_Utilities::check_permissions();
+        Pray4Movement_Prayer_Points_Utilities::check_user_can( 'read' );
         ?>
         <div class="wrap">
             <div id="poststuff">
