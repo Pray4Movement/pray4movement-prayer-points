@@ -18,14 +18,6 @@
  *          https://www.gnu.org/licenses/gpl-2.0.html
  */
 
-/**
- * Refactoring (renaming) this plugin as your own:
- * 1. @todo Rename the `pray4movement-prayer-points.php file.
- * 2. @todo Refactor all occurrences of the name Pray4Movement_Prayer_Points, pray4movement_prayer_points, pray4movement-prayer-points, prayer_point, and "Pray4Movement Prayer Points"
- * 3. @todo Update the README.md and LICENSE
- * 4. @todo Update the default.pot file if you intend to make your plugin multilingual. Use a tool like POEdit
- */
-
 if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
@@ -38,32 +30,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return object|bool
  */
 function pray4movement_prayer_points() {
-    $pray4movement_prayer_points_required_dt_theme_version = '1.19';
-    $wp_theme = wp_get_theme();
-    $version = $wp_theme->version;
-
-    /*
-     * Check if the Disciple.Tools theme is loaded and is the latest required version
-     */
-    $is_theme_dt = class_exists( "Disciple_Tools" );
-    if ( $is_theme_dt && version_compare( $version, $pray4movement_prayer_points_required_dt_theme_version, "<" ) ) {
-        add_action( 'admin_notices', 'pray4movement_prayer_points_hook_admin_notice' );
-        add_action( 'wp_ajax_dismissed_notice_handler', 'dt_hook_ajax_notice_handler' );
-        return false;
-    }
-    if ( !$is_theme_dt ){
-        return false;
-    }
-    /**
-     * Load useful function from the theme
-     */
-    if ( !defined( 'DT_FUNCTIONS_READY' ) ){
-        require_once get_template_directory() . '/dt-core/global-functions.php';
-    }
-
     return Pray4Movement_Prayer_Points::instance();
-
 }
+
 add_action( 'after_setup_theme', 'pray4movement_prayer_points', 20 );
 
 /**
@@ -83,7 +52,6 @@ class Pray4Movement_Prayer_Points {
     }
 
     private function __construct() {
-        $is_rest = dt_is_rest();
         require_once( 'rest-api/rest-api.php' );
 
 
@@ -175,7 +143,6 @@ class Pray4Movement_Prayer_Points {
     }
 
     public static function deactivation() {
-        // add functions here that need to happen on deactivation
         delete_option( 'dismissed-pray4movement-prayer-points' );
     }
 
@@ -203,42 +170,8 @@ class Pray4Movement_Prayer_Points {
     }
 }
 
-
 register_activation_hook( __FILE__, [ 'Pray4Movement_Prayer_Points', 'activation' ] );
 register_deactivation_hook( __FILE__, [ 'Pray4Movement_Prayer_Points', 'deactivation' ] );
-
-
-if ( ! function_exists( 'pray4movement_prayer_points_hook_admin_notice' ) ) {
-    function pray4movement_prayer_points_hook_admin_notice() {
-        global $pray4movement_prayer_points_required_dt_theme_version;
-        $wp_theme = wp_get_theme();
-        $current_version = $wp_theme->version;
-        $message = "'Disciple.Tools - Pray4Movement Prayer Points' plugin requires 'Disciple.Tools' theme to work. Please activate 'Disciple.Tools' theme or make sure it is latest version.";
-        if ( $wp_theme->get_template() === "disciple-tools-theme" ){
-            $message .= ' ' . sprintf( esc_html( 'Current Disciple.Tools version: %1$s, required version: %2$s' ), esc_html( $current_version ), esc_html( $pray4movement_prayer_points_required_dt_theme_version ) );
-        }
-        // Check if it's been dismissed...
-        if ( ! get_option( 'dismissed-pray4movement-prayer-points', false ) ) { ?>
-            <div class="notice notice-error notice-pray4movement-prayer-points is-dismissible" data-notice="pray4movement-prayer-points">
-                <p><?php echo esc_html( $message );?></p>
-            </div>
-            <script>
-                jQuery(function($) {
-                    $( document ).on( 'click', '.notice-pray4movement-prayer-points .notice-dismiss', function () {
-                        $.ajax( ajaxurl, {
-                            type: 'POST',
-                            data: {
-                                action: 'dismissed_notice_handler',
-                                type: 'pray4movement-prayer-points',
-                                security: '<?php echo esc_html( wp_create_nonce( 'wp_rest_dismiss' ) ) ?>'
-                            }
-                        })
-                    });
-                });
-            </script>
-        <?php }
-    }
-}
 
 /**
  * AJAX handler to store the state of dismissible notices.

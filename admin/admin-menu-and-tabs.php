@@ -22,7 +22,8 @@ class Pray4Movement_Prayer_Points_Menu {
     public function register_menu() {
         $this->page_title = __( "Pray4Movement Prayer Points", 'pray4movement-prayer-points' );
         $menu_icon = Pray4Movement_Prayer_Points_Utilities::get_default_prayer_library_icon();
-        add_menu_page( 'Prayer Points', 'Prayer Points', 'manage_dt', $this->token, [ $this, 'content' ], $menu_icon, 7 );
+        add_menu_page( 'Prayer Points', 'Prayer Points', 'publish_posts', $this->token, [ $this, 'content' ], $menu_icon, 7 );
+
     }
 
     // Menu stub. Replaced when Disciple.Tools Theme fully loads.
@@ -113,7 +114,7 @@ Pray4Movement_Prayer_Points_Menu::instance();
 
 class Pray4Movement_Prayer_Points_Utilities {
     public static function check_permissions() {
-        if ( !current_user_can( 'manage_dt' ) ) {
+        if ( !current_user_can( 'publish_posts' ) ) {
             wp_die( 'You do not have sufficient permissions to access this page.' );
         }
     }
