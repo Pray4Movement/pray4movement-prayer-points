@@ -1,0 +1,59 @@
+.p4m-localization-box {
+    margin: auto;
+    display: table;
+    text-align: right;
+}
+.p4m-localization-box button {
+    width: 100%;
+    margin: 32px 0 32px 0;
+}
+.p4m-localization-box-title {
+    text-align: center;
+    font-weight: 400;
+    margin-bottom: 12px;
+    color: #343434;
+}
+.p4m-libraries-table {
+    margin:auto;
+    width: 75%;
+    text-align: center;
+}
+.p4m-prayer-points-table {
+    margin: auto;
+    width: 100%;
+    text-align: left;
+    border-collapse: separate;
+}
+.p4m-prayer-points-table th {
+    margin-bottom: 12px;
+    display: block;
+}
+.p4m-prayer-points-table td {
+    padding: 28px;
+}
+.p4m-prayer-points-table td {
+    border-radius: 8px;
+}
+.p4m-prayer-points-table td:hover {
+    background-color: #f6f6f6;
+    border-left: solid 6px gray;
+    box-shadow: -4px 4px 18px lightgray;
+}
+.p4m-prayer-title {
+    display: block;
+    font-weight: bolder;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+.p4m-prayer-title-name {
+    color: greenyellow;
+}
+.p4m-prayer-point-id {
+    float: right;
+    color: gray;
+    font-weight: 300;
+}
+.p4m-tag {
+    color: dimgray;
+    font-weight: 400;
+}
