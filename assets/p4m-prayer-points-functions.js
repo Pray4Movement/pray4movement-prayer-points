@@ -14,7 +14,7 @@ function loadLibraries() {
         dataType: 'json',
         url: window.location.origin + '/wp-json/pray4movement-prayer-points/v1/get_prayer_libraries',
         beforeSend: function(xhr) {
-            xhr.setRequestHeader('X-WP-Nonce', wp_create_nonce( 'wp_rest' ) );
+            xhr.setRequestHeader('X-WP-Nonce', p4mPrayerPoints.nonce );
         },
         success: function(response) {
             jQuery('.p4m-libraries-table').append(`
@@ -34,11 +34,7 @@ function loadLibraries() {
     });
 }
 
-jQuery(document).ready(function() {
-    loadLibraries();
-});
-
-function loadPrayerPoints(libraryId, location = null, people_group = null) {
+function loadPrayerPoints() {
     var localizationInputs = `
     <div class="p4m-localization-box">
         <div class="p4m-localization-box-title">
@@ -57,6 +53,7 @@ function loadPrayerPoints(libraryId, location = null, people_group = null) {
         </div>
     </div>`;
     jQuery('#p4m-content').append(localizationInputs);
+
     var prayerPointsTable = `
     <table class="p4m-prayer-points-table">
         <tr id="p4m-library-spinner">
@@ -66,13 +63,14 @@ function loadPrayerPoints(libraryId, location = null, people_group = null) {
         </tr>
     </table>`;
     jQuery('#p4m-content').append(prayerPointsTable);
+
     jQuery.ajax({
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/get_prayer_points/${libraryId}`,
+        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/get_prayer_points/` + p4mPrayerPoints.libraryId,
         beforeSend: function(xhr) {
-            xhr.setRequestHeader('X-WP-Nonce', wp_create_nonce( 'wp_rest' ) );
+            xhr.setRequestHeader('X-WP-Nonce', p4mPrayerPoints.nonce );
         },
         success: function(response) {
             jQuery('#p4m-library-spinner').remove();
@@ -100,10 +98,10 @@ function loadPrayerPoints(libraryId, location = null, people_group = null) {
                         <br>
                         <br>`;
                 if ( tags.length > 1 ) {
-                    var tagRow = `<span class="p4m-tag">tags: </span>`;
+                    var tagRow = `<span class="p4m-prayer-tag">tags: </span>`;
                     tags.forEach( function(tag){
                         tag = jQuery.trim(tag);
-                        tagRow += `<a href="?tag=${tag}">${tag}</a>, `;
+                        tagRow += `<a href="?prayer_tag=${tag}">${tag}</a>, `;
                     });
                     tagRow = tagRow.slice(0,-2);
                     tagRow += `<br><br>`;
@@ -117,7 +115,7 @@ function loadPrayerPoints(libraryId, location = null, people_group = null) {
     });
 }
 
-function loadPrayerPointsByTag(tag) {
+function loadPrayerPointsByTag() {
     var prayerPointsTable = `
     <table class="p4m-prayer-points-table">
         <tr id="p4m-library-spinner">
@@ -131,9 +129,9 @@ function loadPrayerPointsByTag(tag) {
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/get_prayer_points_by_tag/${tag}`,
+        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/get_prayer_points_by_tag/${p4mPrayerPoints.tag}`,
         beforeSend: function(xhr) {
-            xhr.setRequestHeader('X-WP-Nonce', wp_create_nonce( 'wp_rest' ) );
+            xhr.setRequestHeader('X-WP-Nonce', p4mPrayerPoints.nonce );
         },
         success: function(response) {
             jQuery('#p4m-library-spinner').remove();
@@ -168,9 +166,6 @@ function loadPrayerPointsByTag(tag) {
         },
     });
 }
-jQuery(document).ready(function() {
-    loadPrayerPointsByTag('<?php echo esc_html( $tag ); ?>');
-});
 
 function updateLocalization() {
     var location = jQuery('#p4m-localization-location').val();
@@ -179,45 +174,41 @@ function updateLocalization() {
     jQuery('.p4m-people-group').text(people_group);
 }
 
-jQuery(document).ready(function() {
-    loadPrayerPoints('<?php echo esc_html( $library_id ); ?>');
-});
-
 function downloadCSV( libraryId, fileName='pray4movement_prayer_library_download' ) {
     jQuery.ajax( {
-            type: 'POST',
-            contentType: 'application/json; charset=utf-8',
-            dataType: 'json',
-            url: window.location.origin + '/wp-json/pray4movement-prayer-points/v1/get_prayer_points/' + libraryId,
-            beforeSend: function(xhr) {
-                xhr.setRequestHeader('X-WP-Nonce', wp_create_nonce( 'wp_rest' ) );
-            },
-            success: function(response) {
-                var columnsAlreadyDisplayed = false;
-                let output = "data:text/csv;charset=utf-8,";
-                    var columnNames = Object.keys(response[0]);
-                    if (columnsAlreadyDisplayed){
-                        columnNames.forEach( function(column) {
-                            output += `"` + column + `",`;
-                        } )
-                        output = output.slice(0,-1);
-                        output += `\r\n`;
-                        columnsAlreadyDisplayed = true;
-                    }
-                    response.forEach( function(row){
-                        columnNames.forEach( function( columnName ) {
-                            output += `"${row[columnName]}",`;
-                        } )
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/get_prayer_points/${libraryId}`,
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-WP-Nonce', p4mPrayerPoints.nonce );
+        },
+        success: function(response) {
+            var columnsAlreadyDisplayed = false;
+            let output = "data:text/csv;charset=utf-8,";
+                var columnNames = Object.keys(response[0]);
+                if (columnsAlreadyDisplayed){
+                    columnNames.forEach( function(column) {
+                        output += `"` + column + `",`;
+                    } )
                     output = output.slice(0,-1);
                     output += `\r\n`;
-                } );
-                var encodedUri = encodeURI(output);
-                var downloadLink = document.createElement('a');
-                downloadLink.href = encodedUri;
-                downloadLink.download = `pray4movement_prayer_library_${fileName}.csv`;
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-            }
-        } );
+                    columnsAlreadyDisplayed = true;
+                }
+                response.forEach( function(row){
+                    columnNames.forEach( function( columnName ) {
+                        output += `"${row[columnName]}",`;
+                    } )
+                output = output.slice(0,-1);
+                output += `\r\n`;
+            } );
+            var encodedUri = encodeURI(output);
+            var downloadLink = document.createElement('a');
+            downloadLink.href = encodedUri;
+            downloadLink.download = `pray4movement_prayer_library_${fileName}.csv`;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+    } );
 }
