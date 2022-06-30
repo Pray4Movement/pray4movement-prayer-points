@@ -116,6 +116,7 @@ class Pray4Movement_Prayer_Points_Endpoints
             $this->get_namespace(), '/get_prayer_points/(?P<library_id>\d*[,\d+]*)', [
                 'methods' => 'POST',
                 'callback' => [ $this , 'endpoint_for_get_prayer_points' ],
+                'permission_callback' => '__return_true',
             ]
         );
     }
@@ -158,6 +159,7 @@ class Pray4Movement_Prayer_Points_Endpoints
             $this->get_namespace(), '/get_prayer_points/(?P<library_id>\d*[,\d+]*)/(?P<location>.+)/(?P<people_group>.+)', [
                 'methods' => 'POST',
                 'callback' => [ $this , 'endpoint_for_get_replaced_prayer_points' ],
+                'permission_callback' => '__return_true',
             ]
         );
     }
@@ -212,9 +214,7 @@ class Pray4Movement_Prayer_Points_Endpoints
             $this->get_namespace(), '/get_prayer_libraries', [
                 'methods' => 'POST',
                 'callback' => [ $this , 'endpoint_for_get_prayer_libraries' ],
-                'permission_callback' => function( WP_REST_Request $request ) {
-                    return $this->has_permission();
-                },
+                'permission_callback' => '__return_true',
             ]
         );
     }
@@ -229,6 +229,7 @@ class Pray4Movement_Prayer_Points_Endpoints
             $this->get_namespace(), '/get_prayer_points_by_tag/(?P<tag>.+)', [
                 'methods' => 'POST',
                 'callback' => [ $this , 'endpoint_for_get_prayer_points_by_tag' ],
+                'permission_callback' => '__return_true',
             ]
         );
     }
