@@ -27,7 +27,7 @@ function loadLibraries() {
                 jQuery('.p4m-libraries-table').append(`
                     <tr>
                         <td><a href="?library_id=${library['id']}">${library['name']}</a></td>
-                        <td><a href="javascript:downloadCSV(${library['id']}, '${library['key']}')">csv</a></td>
+                        <td><a href="javascript:displayLocalizationDownload(${library['id']}, '${library['name']}', '${library['key']}')">csv</a></td>
                     </tr>`);
             });
         },
@@ -35,24 +35,7 @@ function loadLibraries() {
 }
 
 function loadPrayerPoints() {
-    var localizationInputs = `
-    <div class="p4m-localization-box">
-        <div class="p4m-localization-box-title">
-            Hit close to home!
-            <br>
-            Localize these prayer points below.
-        </div>
-        <div>
-            <label>Location: </label> <input type="text" id="p4m-localization-location" placeholder="the world">
-        </div>
-        <div>
-            <label>People Groups: </label><input type="text" id="p4m-localization-people-group" placeholder="people">
-        </div>
-        <div>
-            <a class="btn btn-common btn-rm" id="update-prayer-points" href="javascript:updateLocalization();">Update</a>
-        </div>
-    </div>`;
-    jQuery('#p4m-content').append(localizationInputs);
+    displayLocalizationInputs();
 
     var prayerPointsTable = `
     <table class="p4m-prayer-points-table">
@@ -89,8 +72,12 @@ function loadPrayerPoints() {
                     <tr>
                     <td>
                         <span class="p4m-prayer-title">
-                            <span class="p4m-prayer-title-name">${prayer['title']}</span> - <i>${prayer['reference']}</i>
-                            <span class="p4m-prayer-point-id">#${prayer['id']}</span>
+                            <span class="p4m-prayer-title-name">${prayer['title']}</span>`;
+                if ( prayer['reference'] ) {
+                    row += ` - <i>${prayer['reference']}</i>`;
+                }
+                row += `
+                        <span class="p4m-prayer-point-id">#${prayer['id']}</span>
                         </span>
                         <span class="p4m-prayer-point-content">
                             ${prayer['content']}
@@ -113,6 +100,51 @@ function loadPrayerPoints() {
             });
         },
     });
+}
+
+function displayLocalizationInputs() {
+    var localizationInputs = `
+    <div class="p4m-localization-box">
+        <div class="p4m-localization-box-title">
+            Hit close to home!
+            <br>
+            Localize these prayer points below.
+        </div>
+        <div>
+            <label>Location: </label> <input type="text" id="p4m-localization-location" placeholder="the world">
+        </div>
+        <div>
+            <label>People Group: </label><input type="text" id="p4m-localization-people-group" placeholder="people">
+        </div>
+        <div>
+            <a class="btn btn-common btn-rm" id="update-prayer-points" href="javascript:updateLocalization();">Update</a>
+        </div>
+    </div>`;
+    jQuery('#p4m-content').append(localizationInputs);
+}
+
+function displayLocalizationDownload( libraryID, libraryName, libraryKey ) {
+    var localizationInputs = `
+    <div class="p4m-download-modal">
+        <div class="p4m-modal-box">
+            <span class="modal-close" onclick="jQuery('.p4m-download-modal').css('display', 'none');">&times;</span>
+            <div class="p4m-localization-box-title">
+                Localize the prayer points for
+                <br>
+                '${libraryName}'
+            </div>
+            <div>
+                <label>Location: </label> <input type="text" id="p4m-localization-location" placeholder="the world" value="">
+            </div>
+            <div>
+                <label>People Group: </label><input type="text" id="p4m-localization-people-group" placeholder="people" value="">
+            </div>
+            <div class="p4m-modal-download-button">
+                <a id="update-prayer-points" href="javascript:downloadCSV(${libraryID}, '${libraryKey}');">Download</a>
+            </div>
+        </div>
+    </div>`;
+    jQuery('#p4m-content').append(localizationInputs);
 }
 
 function loadPrayerPointsByTag() {
@@ -147,14 +179,14 @@ function loadPrayerPointsByTag() {
                         <td>
                         <span class="p4m-prayer-title">
                             <span class="p4m-prayer-title-name">${prayer['title']}</span> - <i>${prayer['reference']}</i>
-                            <span style="text-align:right;">#${prayer['id']}</span>
+                            <span class="p4m-prayer-point-id">#${prayer['id']}</span>
                         </span>
                         ${prayer['content']}
                         <br>
                         <br>`;
                 if ( tags.length > 1 ) {
                     var tagRow = `<b><i>Tags: </i></b>`;
-                    tags.forEach( function(tag){ tagRow += `<a href="?tag=${tag}">${tag}</a>, `;});
+                    tags.forEach( function(tag){ tagRow += `<a href="?prayer_tag=${tag}">${tag}</a>, `;});
                     tagRow = tagRow.slice(0,-2);
                     tagRow += `<br><br>`;
                     row += tagRow;
@@ -175,6 +207,16 @@ function updateLocalization() {
 }
 
 function downloadCSV( libraryId, fileName='pray4movement_prayer_library_download' ) {
+    var p4mLocation = jQuery('#p4m-localization-location')[0].value;
+    var p4mPeopleGroup = jQuery('#p4m-localization-people-group')[0].value;
+    if (p4mLocation === ''){
+        p4mLocation = 'the World';
+    }
+
+    if (p4mPeopleGroup === ''){
+        p4mPeopleGroup = 'people';
+    }
+    var peopleGroup = jQuery('#p4m-localization-people-group')[0].value;
     jQuery.ajax( {
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
@@ -202,6 +244,8 @@ function downloadCSV( libraryId, fileName='pray4movement_prayer_library_download
                 output = output.slice(0,-1);
                 output += `\r\n`;
             } );
+            output = output.replace(/XXX/g, p4mLocation);
+            output = output.replace(/YYY/g, p4mPeopleGroup);
             var encodedUri = encodeURI(output);
             var downloadLink = document.createElement('a');
             downloadLink.href = encodedUri;

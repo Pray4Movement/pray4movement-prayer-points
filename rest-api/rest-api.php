@@ -240,6 +240,7 @@ class Pray4Movement_Prayer_Points_Endpoints
     }
 
     private function get_prayer_points_by_tag( $tag ) {
+        $tag = urldecode( $tag );
         global $wpdb;
         return $wpdb->get_results(
             $wpdb->prepare( "SELECT pp.*,

@@ -54,7 +54,6 @@ class Pray4Movement_Prayer_Points {
     private function __construct() {
         require_once( 'rest-api/rest-api.php' );
 
-
         if ( is_admin() ) {
             require_once( 'admin/admin-menu-and-tabs.php' );
         }
