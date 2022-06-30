@@ -1,3 +1,7 @@
+h1 {
+    font-family: 'Gantari';
+    font-size: 72px;
+}
 .p4m-download-modal {  
     position: fixed;
     z-index: 1;
@@ -10,32 +14,50 @@
 }
 .p4m-localization-box {
     margin: auto;
-    background-color: white;
+    background-color: #d6d6d6;
     display: table;
     text-align: right;
     padding: 32px;
     border: solid 2px black;
 }
 .p4m-modal-box {
+    position: relative;
     margin: 12% auto;
     background-color: white;
     display: table;
     text-align: right;
     padding: 32px;
     border: solid 2px black;
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
+}
+@-webkit-keyframes animatetop {
+    from {top:-100px; opacity:0} 
+    to {top:0; opacity:1}
+}
+  
+@keyframes animatetop {
+    from {top:-100px; opacity:0}
+    to {top:0; opacity:1}
 }
 .modal-close {
-    color: #aaa;
-    float: right;
+    color: #bebebe;
     font-size: 28px;
     font-weight: 500;
     position: absolute;
-    margin: -40px -24px 0px 0px;
+    margin: -40px 0px 0px 8px;
     cursor: pointer;
 }
 .p4m-modal-download-button {
     width: 100%;
-    background-color: green;
+    font-family: 'Gantari';
+    background-color: burlywood;
+    border-bottom: solid 1px rosybrown;
+    border-right: solid 1px rosybrown;
+    border-top: solid 1px #ffe7d2;
+    border-left: solid 1px #ffe7d2;
     text-align: center;
     margin-top: 18px;
 }
@@ -53,6 +75,7 @@
 .p4m-prayer-points-table {
     margin: auto;
     width: 100%;
+    font-family: 'Gantari';
     text-align: left;
     border-collapse: separate;
 }
@@ -67,8 +90,8 @@
     border-radius: 8px;
 }
 .p4m-prayer-points-table td:hover {
-    background-color: #f6f6f6;
-    border-left: solid 6px gray;
+    background-color: #ffedc7;
+    border-left: solid 6px #725008;
     box-shadow: -4px 4px 18px lightgray;
 }
 .p4m-prayer-title {
@@ -78,7 +101,7 @@
     margin-bottom: 12px;
 }
 .p4m-prayer-title-name {
-    color: greenyellow;
+    color: #2c664a;
 }
 .p4m-prayer-point-id {
     float: right;

@@ -57,10 +57,7 @@ function loadPrayerPoints() {
         },
         success: function(response) {
             jQuery('#p4m-library-spinner').remove();
-            jQuery('.p4m-prayer-points-table').append(`
-                <tr>
-                    <th>Prayer Points</th>
-                <tr>`);
+            jQuery('.p4m-prayer-points-table').append(`<br>`);
             response.forEach( function(prayer){
                 jQuery('#p4m-spinner-row').remove();
                 var tags = prayer['tags'].split(',');

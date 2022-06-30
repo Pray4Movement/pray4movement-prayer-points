@@ -18,6 +18,7 @@ function p4m_prayer_libraries() {
 }
 
 function p4m_prayer_points_enqueue_scripts( $params ) {
+    wp_enqueue_style( 'gantari', 'https://fonts.googleapis.com/css2?family=Gantari', [], 'Gantari' );
     wp_enqueue_style( 'p4m-prayer-points-style', trailingslashit( plugin_dir_url( __FILE__ ) ) . '../assets/p4m-prayer-points-styles.css', [], filemtime( plugin_dir_path( __FILE__ ) . '../assets/p4m-prayer-points-styles.css' ) );
     wp_enqueue_script( 'jquery', 'https://code.jquery.com/jquery-3.6.0.min.js', [], '3.6.0' );
 }
