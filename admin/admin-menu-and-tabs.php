@@ -1461,6 +1461,10 @@ class Pray4Movement_Prayer_Points_Tab_Import {
                         </td>
                     </tr>
                     <tr>
+                        <td><?php esc_html_e( 'Data has header row', 'pray4movement_prayer_points' ); ?></td>
+                        <td><input type="checkbox" name="has_header"></td>
+                    </tr>
+                    <tr>
                         <td colspan="2" style="text-align:right;">
                             <input type="submit" class="button" value="<?php esc_html_e( 'Import', 'pray4movement_prayer_points' ); ?>">
                         </td>
@@ -1489,8 +1493,9 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         )
         {
             $file_tmp_name = $this->get_file_tmp_name();
-            $csv_data = $this->prepare_prayer_data_from_csv_file( $file_tmp_name );
-            $this->add_prayer_points_from_csv_data( $csv_data );
+            $has_header = $this->get_has_header_boolean();
+            $csv_data = $this->prepare_prayer_data_from_csv_file( $file_tmp_name, $has_header );
+            $this->add_prayer_points_from_csv_data( $csv_data, $has_header );
         }
     }
 
@@ -1544,7 +1549,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         return sanitize_text_field( wp_unslash( $_FILES['import-file']['tmp_name'] ) );
     }
 
-    private function prepare_prayer_data_from_csv_file( $file_tmp_name ) {
+    private function prepare_prayer_data_from_csv_file( $file_tmp_name, $has_header ) {
         $csv_input = fopen( $file_tmp_name, 'r' );
         $output = [];
         $linecount = 0;
@@ -1560,6 +1565,21 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         return $output;
     }
 
+    private function get_has_header_boolean() {
+        $has_header = false;
+        if ( !isset( $_POST['import_prayer_points_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['import_prayer_points_nonce'] ), 'import_prayer_points' ) || !isset( $_FILES['import-file']['tmp_name'] ) ) {
+            return false;
+        }
+
+        if ( isset( $_POST['has_header'] ) ) {
+            if ( $_POST['has_header'] === 'on' ) {
+                $has_header = true;
+
+            }
+        }
+        return $has_header;
+    }
+
     private function csv_line_is_invalid( $csv_data ) {
         $data_col_count = count( $csv_data );
         $required_columns = [ 'title', 'content', 'book', 'verse', 'tags', 'status' ];
@@ -1570,9 +1590,12 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         return false;
     }
 
-    private function add_prayer_points_from_csv_data( $csv_data ) {
+    private function add_prayer_points_from_csv_data( $csv_data, $has_header = false ) {
         $insert_count = 0;
         $linecount = 0;
+        if ( $has_header ) {
+            array_shift( $csv_data );
+        }
         foreach ( $csv_data as $csv_prayer ) {
             $prayer = self::get_prayer_data_from_prepared_csv_data( $csv_prayer );
             if ( !is_null( $prayer['title'] ) || !is_null( $prayer['content'] ) ) {
