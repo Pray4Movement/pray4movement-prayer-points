@@ -1155,11 +1155,11 @@ class Pray4Movement_Prayer_Points_View_Library {
                         <?php
                         if ( Pray4Movement_Prayer_Points_Utilities::check_user_can( 'edit_posts', false ) ) {
                             ?>
-                            <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_prayer=<?php echo esc_html( $prayer['id'] ); ?>"" >Edit</a> | 
+                            <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_prayer=<?php echo esc_html( $prayer['id'] ); ?>"" >Edit</a> 
                             <?php
                         }
                         if ( Pray4Movement_Prayer_Points_Utilities::check_user_can( 'edit_posts', false ) && Pray4Movement_Prayer_Points_Utilities::check_user_can( 'delete_posts', false ) ) {
-                            echo esc_html( '|' );
+                            echo esc_html( ' | ' );
                         }
                         if ( Pray4Movement_Prayer_Points_Utilities::check_user_can( 'delete_posts', false ) ) {
                             ?>
