@@ -272,7 +272,14 @@ class Pray4Movement_Prayer_Points_Utilities {
     public static function check_prayer_id_exists( $prayer_id ) {
         global $wpdb;
         return $wpdb->get_var(
-            $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}dt_prayer_points WHERE id = %d", $prayer_id )
+            $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}dt_prayer_points WHERE id = %d;", $prayer_id )
+        );
+    }
+
+    public static function check_prayer_point_exists( $hash ) {
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare( "SELECT hash FROM {$wpdb->prefix}dt_prayer_points WHERE hash = %s;", $hash )
         );
     }
 
@@ -1050,6 +1057,9 @@ class Pray4Movement_Prayer_Points_View_Library {
             'status' => 'unpublished',
         ];
 
+        if ( Pray4Movement_Prayer_Points_Utilities::check_prayer_point_exists( $prayer['hash'] ) ) {
+            return;
+        }
         Pray4Movement_Prayer_Points_Utilities::insert_prayer_point( $prayer );
         $prayer['id'] = Pray4Movement_Prayer_Points_Utilities::get_last_prayer_point_id();
         $tags = Pray4Movement_Prayer_Points_Utilities::sanitize_tags( $prayer['tags'] );
@@ -1599,6 +1609,9 @@ class Pray4Movement_Prayer_Points_Tab_Import {
         foreach ( $csv_data as $csv_prayer ) {
             $prayer = self::get_prayer_data_from_prepared_csv_data( $csv_prayer );
             if ( !is_null( $prayer['title'] ) || !is_null( $prayer['content'] ) ) {
+                if ( Pray4Movement_Prayer_Points_Utilities::check_prayer_point_exists( $prayer['hash'] ) ) {
+                    continue;
+                }
                 Pray4Movement_Prayer_Points_Utilities::insert_prayer_point( $prayer );
                 $prayer['id'] = Pray4Movement_Prayer_Points_Utilities::get_last_prayer_point_id();
                 Pray4Movement_Prayer_Points_Utilities::insert_all_tags( $prayer['id'], $prayer['tags'] );
