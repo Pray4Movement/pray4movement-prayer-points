@@ -95,7 +95,6 @@ class Pray4Movement_Prayer_Points {
                 `book` VARCHAR(50) COLLATE utf8mb4_unicode_520_ci NULL,
                 `verse` VARCHAR(50) COLLATE utf8mb4_unicode_520_ci NULL,
                 `hash` VARCHAR(65) DEFAULT NULL,
-                `language` VARCHAR(50) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'english',
                 `status` VARCHAR(20) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'unpublished',
                 PRIMARY KEY (`id`)
             ) $charset_collate;" //@phpcs:ignore
@@ -115,6 +114,7 @@ class Pray4Movement_Prayer_Points {
                 `name` VARCHAR(191) NOT NULL,
                 `description` LONGTEXT DEFAULT NULL,
                 `icon` LONGTEXT COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,
+                `language` VARCHAR(50) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'english',
                 `status` VARCHAR(20) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'unpublished',
                 `last_updated` TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
                 PRIMARY KEY (`id`)
