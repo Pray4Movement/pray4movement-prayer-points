@@ -158,6 +158,21 @@ class Pray4Movement_Prayer_Points_Utilities {
         return;
     }
 
+    public static function display_parent_libraries_dropdown() {
+        $prayer_libraries = self::get_parent_prayer_libraries(); ?>
+        <select name="library_parent_id" required>
+                <option hidden>- <?php esc_html_e( 'Parent Library', 'pray4movement_prayer_points' ); ?> -</option>
+                <?php if ( empty( $prayer_libraries ) ) : ?>
+                    <option disabled><?php esc_html_e( 'No Prayer Libraries found', 'pray4movement_prayer_points' ); ?></option>
+                <?php else : ?>
+                    <?php foreach ( $prayer_libraries as $library ) : ?>
+                    <option value="<?php echo esc_html( $library['parent_id'] ); ?>"><?php echo esc_html( $library['name'] ); ?></option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+        </select>
+        <?php
+    }
+
     public static function admin_notice( string $notice, string $type ) {
         ?>
         <div class="notice notice-<?php echo esc_attr( $type ); ?> is-dismissible">
@@ -295,10 +310,16 @@ class Pray4Movement_Prayer_Points_Utilities {
 
     public static function get_prayer_libraries() {
         global $wpdb;
-        $prayer_libraries = $wpdb->get_results(
+        return $wpdb->get_results(
             "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib`;", ARRAY_A
         );
-        return $prayer_libraries;
+    }
+
+    public static function get_parent_prayer_libraries() {
+        global $wpdb;
+        return $wpdb->get_results(
+            "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE parent_id IS NULL;", ARRAY_A
+        );
     }
 
     public static function get_meta_value_by_key( $meta_key ) {
@@ -317,9 +338,10 @@ class Pray4Movement_Prayer_Points_Utilities {
                 'name' => $library['name'],
                 'description' => $library['desc'],
                 'language' => $library['language'],
+                'parent_id' => $library['parent_id'],
                 'icon' => $library['icon'],
             ],
-            [ '%s', '%s', '%s', '%s' ]
+            [ '%s', '%s', '%s', '%s', '%d', '%s' ]
         );
         if ( !$test ) {
             self::admin_notice( __( 'Could not add new Prayer Library to table', 'pray4movement_prayer_points' ), 'error' );
@@ -590,6 +612,14 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             </tr>
             <tr>
                 <td>
+                    <?php esc_html_e( 'Parent Library', 'pray4movement_prayer_points' ); ?>
+                </td>
+                <td>
+                    <?php Pray4Movement_Prayer_Points_Utilities::display_parent_libraries_dropdown(); ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <?php esc_html_e( 'Icon', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
@@ -639,13 +669,14 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         if ( !isset( $_POST['add_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['add_library_nonce'] ), 'add_library' ) ) {
             return;
         }
-        if ( !isset( $_POST['library_name'] ) || !isset( $_POST['library_desc'] ) || !isset( $_POST['library_lang'] ) || !isset( $_POST['library_icon'] ) ) {
+        if ( !isset( $_POST['library_name'] ) || !isset( $_POST['library_desc'] ) || !isset( $_POST['library_lang'] ) || !isset( $_POST['library_parent_id'] ) || !isset( $_POST['library_icon'] ) ) {
             return;
         }
         $library = [
             'name' => sanitize_text_field( wp_unslash( $_POST['library_name'] ) ),
             'desc' => sanitize_text_field( wp_unslash( $_POST['library_desc'] ) ),
             'language' => sanitize_text_field( wp_unslash( $_POST['library_lang'] ) ),
+            'parent_id' => sanitize_text_field( wp_unslash( $_POST['library_parent_id'] ) ),
             'icon' => sanitize_text_field( wp_unslash( $_POST['library_icon'] ) ),
         ];
         $library['key'] = Pray4Movement_Prayer_Points_Utilities::generate_key_from_string( $library['name'] );
@@ -745,6 +776,14 @@ class Pray4Movement_Prayer_Points_Edit_Library {
             </tr>
             <tr>
                 <td>
+                    <?php esc_html_e( 'Parent Library', 'pray4movement_prayer_points' ); ?>
+                </td>
+                <td>
+                    <?php Pray4Movement_Prayer_Points_Utilities::display_parent_libraries_dropdown(); ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <?php esc_html_e( 'Icon', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
@@ -824,10 +863,11 @@ class Pray4Movement_Prayer_Points_Edit_Library {
                 'name' => $library['name'],
                 'description' => $library['desc'],
                 'language' => $library['language'],
+                'parent_id' => $library['parent_id'],
                 'icon' => $library['icon'],
             ],
             [ 'id' => $library['id'] ],
-            [ '%s', '%s', '%s' ]
+            [ '%s', '%s', '%s', '%d', '%s' ]
         );
         if ( !$test ) {
             Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Could not update Prayer Library', 'pray4movement_prayer_points' ), 'error' );
@@ -1689,7 +1729,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
     }
 
     public function main_prayer_points_column() {
-        $prayer_libraries = Pray4Movement_Prayer_Points_Utilities::get_prayer_libraries();
+        $prayer_libraries = Pray4Movement_Prayer_Points_Utilities::get_parent_prayer_libraries();
         if ( empty( $prayer_libraries ) ) {
             ?>
             <p>

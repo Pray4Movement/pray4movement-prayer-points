@@ -89,12 +89,14 @@ class Pray4Movement_Prayer_Points {
             "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points` (
                 `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
                 `library_id` BIGINT(20) UNSIGNED NOT NULL DEFAULT '0',
+                `parent_id` BIGINT(20) UNSIGNED DEFAULT NULL,
                 `title` LONGTEXT COLLATE utf8mb4_unicode_520_ci NOT NULL,
                 `content` LONGTEXT COLLATE utf8mb4_unicode_520_ci NOT NULL,
                 `reference` VARCHAR(100) COLLATE utf8mb4_unicode_520_ci NULL,
                 `book` VARCHAR(50) COLLATE utf8mb4_unicode_520_ci NULL,
                 `verse` VARCHAR(50) COLLATE utf8mb4_unicode_520_ci NULL,
                 `hash` VARCHAR(65) DEFAULT NULL,
+                `language` VARCHAR(20) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'en',
                 `status` VARCHAR(20) COLLATE utf8mb4_unicode_520_ci NOT NULL DEFAULT 'unpublished',
                 PRIMARY KEY (`id`)
             ) $charset_collate;" //@phpcs:ignore
@@ -110,6 +112,7 @@ class Pray4Movement_Prayer_Points {
         $test = $wpdb->query(
             "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points_lib` (
                 `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `parent_id` BIGINT(20) UNSIGNED DEFAULT NULL,
                 `key` VARCHAR(255) NOT NULL,
                 `name` VARCHAR(191) NOT NULL,
                 `description` LONGTEXT DEFAULT NULL,
