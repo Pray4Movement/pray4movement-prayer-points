@@ -286,6 +286,7 @@ class Pray4Movement_Prayer_Points_Utilities {
                 'key' => $library['key'],
                 'name' => $library['name'],
                 'description' => $library['desc'],
+                'language' => $library['language'],
                 'icon' => $library['icon'],
             ],
             [ '%s', '%s', '%s', '%s' ]
@@ -550,6 +551,18 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             </tr>
             <tr>
                 <td>
+                    <?php esc_html_e( 'Language', 'pray4movement_prayer_points' ); ?>
+                </td>
+                <td>
+                    <select name="library_lang">
+                        <option value="en">English</option>
+                        <option value="es">Spanish</option>
+                        <option value="fr">French</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <?php esc_html_e( 'Icon', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
@@ -599,12 +612,13 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         if ( !isset( $_POST['add_library_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['add_library_nonce'] ), 'add_library' ) ) {
             return;
         }
-        if ( !isset( $_POST['library_name'] ) || !isset( $_POST['library_desc'] ) || !isset( $_POST['library_icon'] ) ) {
+        if ( !isset( $_POST['library_name'] ) || !isset( $_POST['library_desc'] ) || !isset( $_POST['library_lang'] ) || !isset( $_POST['library_icon'] ) ) {
             return;
         }
         $library = [
             'name' => sanitize_text_field( wp_unslash( $_POST['library_name'] ) ),
             'desc' => sanitize_text_field( wp_unslash( $_POST['library_desc'] ) ),
+            'language' => sanitize_text_field( wp_unslash( $_POST['library_lang'] ) ),
             'icon' => sanitize_text_field( wp_unslash( $_POST['library_icon'] ) ),
         ];
         $library['key'] = Pray4Movement_Prayer_Points_Utilities::generate_key_from_string( $library['name'] );
@@ -695,6 +709,18 @@ class Pray4Movement_Prayer_Points_Edit_Library {
             </tr>
             <tr>
                 <td>
+                    <?php esc_html_e( 'Language', 'pray4movement_prayer_points' ); ?>
+                </td>
+                <td>
+                    <select name="library_lang" id="library_lang">
+                        <option value="en">English</option>
+                        <option value="es">Spanish</option>
+                        <option value="fr">French</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <?php esc_html_e( 'Icon', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
@@ -710,6 +736,9 @@ class Pray4Movement_Prayer_Points_Edit_Library {
                 </tbody>
             </table>
         </form>
+        <script>
+            jQuery('#library_lang option[value="<?php echo esc_html( $library['language'] ); ?>"]').attr("selected", "selected");
+        </script>
         <?php
     }
 
@@ -750,13 +779,14 @@ class Pray4Movement_Prayer_Points_Edit_Library {
             return;
         }
 
-        if ( !isset( $_POST['library_id'] ) || !isset( $_POST['library_name'] ) || !isset( $_POST['library_desc'] ) || !isset( $_POST['library_icon'] ) ) {
+        if ( !isset( $_POST['library_id'] ) || !isset( $_POST['library_name'] ) || !isset( $_POST['library_desc'] ) || !isset( $_POST['library_lang'] ) || !isset( $_POST['library_icon'] ) ) {
             return;
         }
         $library = [
             'id' => sanitize_text_field( wp_unslash( $_POST['library_id'] ) ),
             'name' => sanitize_text_field( wp_unslash( $_POST['library_name'] ) ),
             'desc' => sanitize_text_field( wp_unslash( $_POST['library_desc'] ) ),
+            'language' => sanitize_text_field( wp_unslash( $_POST['library_lang'] ) ),
             'icon' => sanitize_text_field( wp_unslash( $_POST['library_icon'] ) ),
         ];
         $this->update_prayer_library( $library );
@@ -769,6 +799,7 @@ class Pray4Movement_Prayer_Points_Edit_Library {
             [
                 'name' => $library['name'],
                 'description' => $library['desc'],
+                'language' => $library['language'],
                 'icon' => $library['icon'],
             ],
             [ 'id' => $library['id'] ],
@@ -866,7 +897,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                             <?php esc_html_e( 'Reference', 'pray4movement_prayer_points' ); ?>
                         </td>
                         <td>
-                            <select name="prayer_reference_book" id="">
+                            <select name="prayer_reference_book">
                                 <option value="">(No Reference)</option>
                                 <option value="Genesis">Genesis</option>
                                 <option value="Exodus">Exodus</option>
