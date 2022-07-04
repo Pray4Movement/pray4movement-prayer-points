@@ -128,45 +128,73 @@ class Pray4Movement_Prayer_Points_Utilities {
         return 'data:image/svg+xml;base64,PHN2ZyBpZD0ic3ZnIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiB2aWV3Qm94PSIwLCAwLCA0MDAsNDAwIj48ZyBpZD0ic3ZnZyI+PHBhdGggaWQ9InBhdGgwIiBkPSJNMjE5LjcxNiAxOS4yNDggQyAxMzkuNDUzIDMzLjcwNyw5Ni42MDggMTI3LjA1OSwxMzcuODU3IDE5Ny42MDAgTCAxNDEuNjAwIDIwNC4wMDAgMTU3LjExOSAyMDMuNTQzIEwgMTcyLjYzOCAyMDMuMDg2IDE2NC4yNDIgMTkwLjc0MyBDIDEyMS40OTUgMTI3LjkwMSwxNjUuMDQwIDQ0LjU0OSwyNDAuODAwIDQ0LjIwMCBDIDMyMS4xODkgNDMuODI4LDM2NC43NzIgMTM1LjA0OCwzMTQuMjM4IDE5Ny45MDggTCAzMTAuMTMyIDIwMy4wMTYgMzE2LjEwNyAyMDEuMzY2IEMgMzE5LjM5NCAyMDAuNDU5LDMyNS4wMzQgMjAwLjA5NywzMjguNjQyIDIwMC41NjIgQyAzMzIuMjQ5IDIwMS4wMjcsMzM2Ljk0OCAyMDEuNjMxLDMzOS4wODQgMjAxLjkwNCBDIDM0Ny45NDYgMjAzLjAzNiwzNjEuNjAwIDE2NC44MTcsMzYxLjYwMCAxMzguODc3IEMgMzYxLjYwMCA2My4zMjQsMjkzLjU0OSA1Ljk0NywyMTkuNzE2IDE5LjI0OCBNMjI4LjgwMCA4NS42MDAgTCAyMjguODAwIDk3LjYwMCAyMTEuMjAwIDk3LjYwMCBMIDE5My42MDAgOTcuNjAwIDE5My42MDAgMTExLjIwMCBMIDE5My42MDAgMTI0LjgwMCAyMTEuMjAwIDEyNC44MDAgTCAyMjguODAwIDEyNC44MDAgMjI4LjgwMCAxNjEuNjAwIEwgMjI4LjgwMCAxOTguNDAwIDI0Mi40MDAgMTk4LjQwMCBMIDI1Ni4wMDAgMTk4LjQwMCAyNTYuMDAwIDE2MS42MDAgTCAyNTYuMDAwIDEyNC44MDAgMjcyLjgwMCAxMjQuODAwIEwgMjg5LjYwMCAxMjQuODAwIDI4OS42MDAgMTExLjIwMCBMIDI4OS42MDAgOTcuNjAwIDI3Mi44MDAgOTcuNjAwIEwgMjU2LjAwMCA5Ny42MDAgMjU2LjAwMCA4NS42MDAgTCAyNTYuMDAwIDczLjYwMCAyNDIuNDAwIDczLjYwMCBMIDIyOC44MDAgNzMuNjAwIDIyOC44MDAgODUuNjAwIE0yOTcuNjIzIDIyNy43MTkgQyAyNjkuMjU3IDIzNi43MTgsMjcwLjU4MSAyMzUuNzkxLDI2OC4wMTggMjQ4LjQ0MCBDIDI2NC41ODUgMjY1LjM4NiwyNDkuMDY4IDI3MS45NjQsMTk5LjIwMCAyNzcuNjEzIEMgMTY0LjE5NiAyODEuNTc4LDE1OC40MDAgMjgwLjUyMiwxNTguNDAwIDI3MC4xODAgQyAxNTguNDAwIDI2MS45OTIsMTYwLjc2MyAyNjEuMDA3LDE4NC44MDAgMjU5LjE3MyBDIDIzNy4zNjAgMjU1LjE2NSwyNTIuNjcyIDI0OS4yNTYsMjQ4Ljk0OCAyMzQuNDIwIEMgMjQ2LjgwNCAyMjUuODc3LDI0My4xNTIgMjI1LjEwNCwxOTcuODE0IDIyMy42MDcgQyAxNTEuNTM3IDIyMi4wNzksMTQ1LjMyNSAyMjIuNDQzLDEzNS45NDYgMjI3LjIyOCBDIDEyOC43MjcgMjMwLjkxMCw2My45NDIgMjc4LjM2Myw2NC4xMDQgMjc5Ljg0OSBDIDY0LjE2MSAyODAuMzcyLDc5LjY3OCAyOTIuMTg3LDk4LjU4NyAzMDYuMTA1IEwgMTMyLjk2NiAzMzEuNDEwIDE3MC4wODMgMzM0LjczMyBDIDIxMS41ODMgMzM4LjQ1MCwyMTkuMzkzIDMzNy44NjMsMjMxLjA4MyAzMzAuMTUxIEMgMjQyLjQ2MCAzMjIuNjQ2LDMzNS44MzQgMjQ3Ljk3OCwzMzguMzY5IDI0NC4zNTggQyAzNDMuNjgxIDIzNi43NzUsMzM5LjY1NiAyMjMuOTg4LDMzMS4wMTAgMjIwLjk3MyBDIDMyNC42MDUgMjE4Ljc0MSwzMjguMjMyIDIxOC4wMDgsMjk3LjYyMyAyMjcuNzE5IE0zNy4yMDAgMzA4LjM0MCBDIDI0LjgwMSAzMjQuNjk5LDIzLjUyNiAzMjguNzcxLDI5LjIwMCAzMzMuODg5IEMgNDIuOTY5IDM0Ni4zMDgsODYuODgzIDM3Ni4yMjYsOTAuMTQyIDM3NS40MDggQyA5My4yNzggMzc0LjYyMSwxMTIuMjYwIDM1MC45NTMsMTE0LjU1OCAzNDQuOTY2IEMgMTE1LjA0MiAzNDMuNzA1LDEwNC4zMDMgMzM0LjYzNCw4Ni44NzQgMzIxLjU4MiBDIDcxLjIxMyAzMDkuODU1LDU2LjI0MCAyOTguNjM0LDUzLjYwMCAyOTYuNjQ4IEwgNDguODAwIDI5My4wMzYgMzcuMjAwIDMwOC4zNDAgIiBzdHJva2U9Im5vbmUiIGZpbGw9IiMwMDAwMDAiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPjwvZz48L3N2Zz4=';
     }
 
+    public static function get_languages() {
+        $languages = [
+            'en' => [
+                    'code' => 'en',
+                    'name' => __( 'English', 'pray4movement-prayer-points' ),
+                    'flag' => '🇺🇸'
+                ],
+            'es' => [
+                'code' => 'es',
+                'name' => __( 'Spanish', 'pray4movement-prayer-points' ),
+                'flag' => '🇲🇽'
+                ],
+            'fr' => [
+                'code' => 'fr',
+                'name' => __( 'French', 'pray4movement-prayer-points' ),
+                'flag' => '🇫🇷'
+                ],
+            'pt' => [
+                'code' => 'pt',
+                'name' => __( 'Portuguese', 'pray4movement-prayer-points' ),
+                'flag' => '🇧🇷'
+            ],
+        ];
+        return $languages;
+    }
     public static function display_languages_dropdown() {
+        $languages = self::get_languages();
         ?>
         <select name="library_lang" id="library_lang">
-            <option value="en">English</option>
-            <option value="es">Spanish</option>
-            <option value="fr">French</option>
-            <option value="pt">Portuguese</option>
+            <?php foreach ( $languages as $key => $value ): ?>
+            <option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $languages[$key]['flag'] ); ?> <?php echo esc_html( $languages[$key]['name'] ); ?></option>
+            <?php endforeach; ?>
         </select>
         <?php
     }
     public static function display_language_flag( $lang_code ) {
-        $flag = '🇺🇸';
-        switch ( $lang_code ) {
-            case 'en':
-                $flag = '🇺🇸';
-                break;
-            case 'es':
-                $flag = '🇲🇽';
-                break;
-            case 'fr':
-                $flag = '🇫🇷';
-                break;
-            case 'pt':
-                $flag = '🇧🇷';
-                break;
-        }
+        $languages = self::get_languages();
+        $flag = $languages[$lang_code]['flag'];
         echo esc_html( $flag );
         return;
     }
 
+    public static function display_library_translation_links( $library_id ) {
+        $child_libraries = self::get_library_translation_links( $library_id );
+        foreach ( $child_libraries as $library ) {
+            ?><a href="?page=pray4movement_prayer_points&view_library=<?php echo esc_attr( $library['id'] ); ?>"><?php self::display_language_flag( $library['language'] ) ?></a>
+            <?php
+        }
+    }
+
+    public static function get_library_translation_links( $library_id ) {
+        global $wpdb;
+        return $wpdb->get_results(
+            $wpdb->prepare( "SELECT `id`, `language` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE parent_id = %d", $library_id ), ARRAY_A
+        );
+    }
+
     public static function display_parent_libraries_dropdown() {
-        $prayer_libraries = self::get_parent_prayer_libraries(); ?>
+        $prayer_libraries = self::get_parent_prayer_libraries();
+        ?>
         <select name="library_parent_id" required>
                 <option hidden>- <?php esc_html_e( 'Parent Library', 'pray4movement_prayer_points' ); ?> -</option>
                 <?php if ( empty( $prayer_libraries ) ) : ?>
                     <option disabled><?php esc_html_e( 'No Prayer Libraries found', 'pray4movement_prayer_points' ); ?></option>
                 <?php else : ?>
                     <?php foreach ( $prayer_libraries as $library ) : ?>
-                    <option value="<?php echo esc_html( $library['parent_id'] ); ?>"><?php echo esc_html( $library['name'] ); ?></option>
+                    <option value="<?php echo esc_html( $library['id'] ); ?>"><?php echo esc_html( $library['name'] ); ?></option>
                     <?php endforeach; ?>
                 <?php endif; ?>
         </select>
@@ -570,7 +598,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                     <th><?php esc_html_e( 'Actions', 'pray4movement_prayer_points' ); ?></th>
                 </tr>
                 <?php
-                $prayer_libraries = Pray4Movement_Prayer_Points_Utilities::get_prayer_libraries();
+                $prayer_libraries = Pray4Movement_Prayer_Points_Utilities::get_parent_prayer_libraries();
                 $this->display_prayer_libraries( $prayer_libraries );
                 ?>
             </tbody>
@@ -697,7 +725,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             <td><a href="/wp-admin/admin.php?page=pray4movement_prayer_points&view_library=<?php echo esc_html( $library['id'] ); ?>"><?php echo esc_html( $library['name'] ); ?></a></td>
             <td><?php echo esc_html( $library['description'] ); ?></td>
             <td><?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::count_prayer_points_in_library( $library['id'] ) ); ?></td>
-            <td><?php Pray4Movement_Prayer_Points_Utilities::display_language_flag( $library['language'] ); ?></td>
+            <td><?php Pray4Movement_Prayer_Points_Utilities::display_library_translation_links( $library['id'] ); ?></td>
             <td>
                 <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_library=<?php echo esc_attr( $library['id'] ); ?>"><?php esc_html_e( 'Edit', 'pray4movement_prayer_points' ); ?></a> | 
                 <a href="#" style="color:#b32d2e;" class="delete_library" data-id="<?php echo esc_attr( $library['id'] ); ?>" data-name="<?php echo esc_html( $library['name'] ); ?>"><?php esc_html_e( 'Delete', 'pray4movement_prayer_points' ); ?></a>
@@ -1487,7 +1515,9 @@ class Pray4Movement_Prayer_Points_Tab_Import {
                             <?php esc_html_e( 'Please select the Prayer Library you want to insert the Prayer Points into', 'pray4movement_prayer_points' ); ?>
                         </td>
                         <td>
-                        <?php $prayer_libraries = Pray4Movement_Prayer_Points_Utilities::get_prayer_libraries(); ?>
+                        <?php
+                        $prayer_libraries = Pray4Movement_Prayer_Points_Utilities::get_parent_prayer_libraries();
+                        ?>
                         <select name="prayer-library-id" required>
                                 <option hidden><?php esc_html_e( 'Select a Prayer Library', 'pray4movement_prayer_points' ); ?></option>
                                 <?php if ( empty( $prayer_libraries ) ) : ?>
