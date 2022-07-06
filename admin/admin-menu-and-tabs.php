@@ -131,73 +131,72 @@ class Pray4Movement_Prayer_Points_Utilities {
     public static function display_bible_book_dropdown() {
         ?>
         <select name="prayer_reference_book" id="prayer_reference_book">
-            <option value="">(No Reference)</option>
-            <option value="Genesis">Genesis</option>
-            <option value="Exodus">Exodus</option>
-            <option value="Leviticus">Leviticus</option>
-            <option value="Numbers">Numbers</option>
-            <option value="Deuteronomy">Deuteronomy</option>
-            <option value="Joshua">Joshua</option>
-            <option value="Judges">Judges</option>
-            <option value="Ruth">Ruth</option>
-            <option value="1 Samuel">1 Samuel</option>
-            <option value="2 Samuel">2 Samuel</option>
-            <option value="1 Kings">1 Kings</option>
-            <option value="2 Kings">2 Kings</option>
-            <option value="1 Chronicles">1 Chronicles</option>
-            <option value="2 Chronicles">2 Chronicles</option>
-            <option value="Ezra">Ezra</option>
-            <option value="Nehemiah">Nehemiah</option>
-            <option value="Esther">Esther</option>
-            <option value="Job">Job</option>
-            <option value="Psalm">Psalm</option>
-            <option value="Proverbs">Proverbs</option>
-            <option value="Ecclesiastes">Ecclesiastes</option>
-            <option value="Song of Solomon">Song of Solomon</option>
-            <option value="Isaiah">Isaiah</option>
-            <option value="Jeremiah">Jeremiah</option>
-            <option value="Lamentations">Lamentations</option>
-            <option value="Ezekiel">Ezekiel</option>
-            <option value="Daniel">Daniel</option>
-            <option value="Hosea">Hosea</option>
-            <option value="Joel">Joel</option>
-            <option value="Amos">Amos</option>
-            <option value="Obadiah">Obadiah</option>
-            <option value="Jonah">Jonah</option>
-            <option value="Micah">Micah</option>
-            <option value="Nahum">Nahum</option>
-            <option value="Habakkuk">Habakkuk</option>
-            <option value="Zephaniah">Zephaniah</option>
-            <option value="Haggai">Haggai</option>
-            <option value="Zechariah">Zechariah</option>
-            <option value="Malachi">Malachi</option>
-            <option value="Matthew">Matthew</option>
-            <option value="Mark">Mark</option>
-            <option value="Luke">Luke</option>
-            <option value="John">John</option>
-            <option value="Acts">Acts</option>
-            <option value="Romans">Romans</option>
-            <option value="1 Corinthians">1 Corinthians</option>
-            <option value="2 Corinthians">2 Corinthians</option>
-            <option value="Galatians">Galatians</option>
-            <option value="Ephesians">Ephesians</option>
-            <option value="Philippians">Philippians</option>
-            <option value="Colossians">Colossians</option>
-            <option value="1 Thessalonians">1 Thessalonians</option>
-            <option value="2 Thessalonians">2 Thessalonians</option>
-            <option value="1 Timothy">1 Timothy</option>
-            <option value="2 Timothy">2 Timothy</option>
-            <option value="Titus">Titus</option>
-            <option value="Philemon">Philemon</option>
-            <option value="Hebrews">Hebrews</option>
-            <option value="James">James</option>
-            <option value="1 Peter">1 Peter</option>
-            <option value="2 Peter">2 Peter</option>
-            <option value="1 John">1 John</option>
-            <option value="2 John">2 John</option>
-            <option value="3 John">3 John</option>
-            <option value="Jude">Jude</option>
-            <option value="Revelation">Revelation</option>
+            <option value="Genesis"><?php echo esc_html( 'Genesis', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Exodus"><?php echo esc_html( 'Exodus', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Leviticus"><?php echo esc_html( 'Leviticus', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Numbers"><?php echo esc_html( 'Numbers', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Deuteronomy"><?php echo esc_html( 'Deuteronomy', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Joshua"><?php echo esc_html( 'Joshua', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Judges"><?php echo esc_html( 'Judges', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Ruth"><?php echo esc_html( 'Ruth', 'pray4movement_prayer_points' ); ?></option>
+            <option value="1 Samuel"><?php echo esc_html( '1 Samuel', 'pray4movement_prayer_points' ); ?></option>
+            <option value="2 Samuel"><?php echo esc_html( '2 Samuel', 'pray4movement_prayer_points' ); ?></option>
+            <option value="1 Kings"><?php echo esc_html( '1 Kings', 'pray4movement_prayer_points' ); ?></option>
+            <option value="2 Kings"><?php echo esc_html( '2 Kings', 'pray4movement_prayer_points' ); ?></option>
+            <option value="1 Chronicles"><?php echo esc_html( '1 Chronicles', 'pray4movement_prayer_points' ); ?></option>
+            <option value="2 Chronicles"><?php echo esc_html( '2 Chronicles', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Ezra"><?php echo esc_html( 'Ezra', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Nehemiah"><?php echo esc_html( 'Nehemiah', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Esther"><?php echo esc_html( 'Esther', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Job"><?php echo esc_html( 'Job', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Psalm"><?php echo esc_html( 'Psalm', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Proverbs"><?php echo esc_html( 'Proverbs', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Ecclesiastes"><?php echo esc_html( 'Ecclesiastes', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Song of Solomon"><?php echo esc_html( 'Song of Solomon', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Isaiah"><?php echo esc_html( 'Isaiah', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Jeremiah"><?php echo esc_html( 'Jeremiah', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Lamentations"><?php echo esc_html( 'Lamentations', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Ezekiel"><?php echo esc_html( 'Ezekiel', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Daniel"><?php echo esc_html( 'Daniel', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Hosea"><?php echo esc_html( 'Hosea', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Joel"><?php echo esc_html( 'Joel', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Amos"><?php echo esc_html( 'Amos', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Obadiah"><?php echo esc_html( 'Obadiah', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Jonah"><?php echo esc_html( 'Jonah', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Micah"><?php echo esc_html( 'Micah', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Nahum"><?php echo esc_html( 'Nahum', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Habakkuk"><?php echo esc_html( 'Habakkuk', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Zephaniah"><?php echo esc_html( 'Zephaniah', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Haggai"><?php echo esc_html( 'Haggai', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Zechariah"><?php echo esc_html( 'Zechariah', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Malachi"><?php echo esc_html( 'Malachi', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Matthew"><?php echo esc_html( 'Matthew', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Mark"><?php echo esc_html( 'Mark', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Luke"><?php echo esc_html( 'Luke', 'pray4movement_prayer_points' ); ?></option>
+            <option value="John"><?php echo esc_html( 'John', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Acts"><?php echo esc_html( 'Acts', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Romans"><?php echo esc_html( 'Romans', 'pray4movement_prayer_points' ); ?></option>
+            <option value="1 Corinthians"><?php echo esc_html( '1 Corinthians', 'pray4movement_prayer_points' ); ?></option>
+            <option value="2 Corinthians"><?php echo esc_html( '2 Corinthians', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Galatians"><?php echo esc_html( 'Galatians', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Ephesians"><?php echo esc_html( 'Ephesians', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Philippians"><?php echo esc_html( 'Philippians', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Colossians"><?php echo esc_html( 'Colossians', 'pray4movement_prayer_points' ); ?></option>
+            <option value="1 Thessalonians"><?php echo esc_html( '1 Thessalonians', 'pray4movement_prayer_points' ); ?></option>
+            <option value="2 Thessalonians"><?php echo esc_html( '2 Thessalonians', 'pray4movement_prayer_points' ); ?></option>
+            <option value="1 Timothy"><?php echo esc_html( '1 Timothy', 'pray4movement_prayer_points' ); ?></option>
+            <option value="2 Timothy"><?php echo esc_html( '2 Timothy', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Titus"><?php echo esc_html( 'Titus', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Philemon"><?php echo esc_html( 'Philemon', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Hebrews"><?php echo esc_html( 'Hebrews', 'pray4movement_prayer_points' ); ?></option>
+            <option value="James"><?php echo esc_html( 'James', 'pray4movement_prayer_points' ); ?></option>
+            <option value="1 Peter"><?php echo esc_html( '1 Peter', 'pray4movement_prayer_points' ); ?></option>
+            <option value="2 Peter"><?php echo esc_html( '2 Peter', 'pray4movement_prayer_points' ); ?></option>
+            <option value="1 John"><?php echo esc_html( '1 John', 'pray4movement_prayer_points' ); ?></option>
+            <option value="2 John"><?php echo esc_html( '2 John', 'pray4movement_prayer_points' ); ?></option>
+            <option value="3 John"><?php echo esc_html( '3 John', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Jude"><?php echo esc_html( 'Jude', 'pray4movement_prayer_points' ); ?></option>
+            <option value="Revelation"><?php echo esc_html( 'Revelation', 'pray4movement_prayer_points' ); ?></option>
         </select>
         <?php
     }
@@ -282,13 +281,406 @@ class Pray4Movement_Prayer_Points_Utilities {
         ARRAY_A );
     }
 
-    public static function get_translation( $string, $language ) {
-        global $locale;
-        $old_locale = $locale;
-        $locale = $language;
-        $string = __( $string, 'pray4movement_prayer_points' );
-        $locale = $old_locale;
-        return;
+    public static function get_book_translation( $string, $language ) {
+        $books = [
+            'Genesis' => [
+                'en' => 'Genesis',
+                'es' => 'Génesis',
+                'fr' => 'Genesis',
+                'pt' => 'Genesis',
+            ],
+            'Exodus' => [
+                'en' => 'Exodus',
+                'es' => 'Éxodo',
+                'fr' => 'Exodus',
+                'pt' => 'Exodus',
+            ],
+            'Leviticus' => [
+                'en' => 'Leviticus',
+                'es' => 'Levítico',
+                'fr' => 'Leviticus',
+                'pt' => 'Leviticus',
+            ],
+            'Numbers' => [
+                'en' => 'Numbers',
+                'es' => 'Números',
+                'fr' => 'Numbers',
+                'pt' => 'Numbers',
+            ],
+            'Deuteronomy' => [
+                'en' => 'Deuteronomy',
+                'es' => 'Deuteronomio',
+                'fr' => 'Deuteronomy',
+                'pt' => 'Deuteronomy',
+            ],
+            'Joshua' => [
+                'en' => 'Joshua',
+                'es' => 'Josué',
+                'fr' => 'Joshua',
+                'pt' => 'Joshua',
+            ],
+            'Judges' => [
+                'en' => 'Judges',
+                'es' => 'Jueces',
+                'fr' => 'Judges',
+                'pt' => 'Judges',
+            ],
+            'Ruth' => [
+                'en' => 'Ruth',
+                'es' => 'Rut',
+                'fr' => 'Ruth',
+                'pt' => 'Ruth',
+            ],
+            '1 Samuel' => [
+                'en' => '1 Samuel',
+                'es' => '1 Samuel',
+                'fr' => '1 Samuel',
+                'pt' => '1 Samuel',
+            ],
+            '2 Samuel' => [
+                'en' => '2 Samuel',
+                'es' => '2 Samuel',
+                'fr' => '2 Samuel',
+                'pt' => '2 Samuel',
+            ],
+            '1 Kings' => [
+                'en' => '1 Kings',
+                'es' => '1 Reyes',
+                'fr' => '1 Kings',
+                'pt' => '1 Kings',
+            ],
+            '2 Kings' => [
+                'en' => '2 Kings',
+                'es' => '2 Reyes',
+                'fr' => '2 Kings',
+                'pt' => '2 Kings',
+            ],
+            '1 Chronicles' => [
+                'en' => '1 Chronicles',
+                'es' => '1 Crónicas',
+                'fr' => '1 Chronicles',
+                'pt' => '1 Chronicles',
+            ],
+            '2 Chronicles' => [
+                'en' => '2 Chronicles',
+                'es' => '2 Crónicas',
+                'fr' => '2 Chronicles',
+                'pt' => '2 Chronicles',
+            ],
+            'Ezra' => [
+                'en' => 'Ezra',
+                'es' => 'Esdras',
+                'fr' => 'Ezra',
+                'pt' => 'Ezra',
+            ],
+            'Nehemiah' => [
+                'en' => 'Nehemiah',
+                'es' => 'Nehemías',
+                'fr' => 'Nehemiah',
+                'pt' => 'Nehemiah',
+            ],
+            'Esther' => [
+                'en' => 'Esther',
+                'es' => 'Ester',
+                'fr' => 'Esther',
+                'pt' => 'Esther',
+            ],
+            'Job' => [
+                'en' => 'Job',
+                'es' => 'Job',
+                'fr' => 'Job',
+                'pt' => 'Job',
+            ],
+            'Psalm' => [
+                'en' => 'Psalm',
+                'es' => 'Salmos',
+                'fr' => 'Psalm',
+                'pt' => 'Psalm',
+            ],
+            'Proverbs' => [
+                'en' => 'Proverbs',
+                'es' => 'Proverbios',
+                'fr' => 'Proverbs',
+                'pt' => 'Proverbs',
+            ],
+            'Ecclesiastes' => [
+                'en' => 'Ecclesiastes',
+                'es' => 'Eclesiastés',
+                'fr' => 'Ecclesiastes',
+                'pt' => 'Ecclesiastes',
+            ],
+            'Song of Solomon' => [
+                'en' => 'Song of Solomon',
+                'es' => 'Cantar de los Cantares',
+                'fr' => 'Song of Solomon',
+                'pt' => 'Song of Solomon',
+            ],
+            'Isaiah' => [
+                'en' => 'Isaiah',
+                'es' => 'Isaías',
+                'fr' => 'Isaiah',
+                'pt' => 'Isaiah',
+            ],
+            'Jeremiah' => [
+                'en' => 'Jeremiah',
+                'es' => 'Jeremías',
+                'fr' => 'Jeremiah',
+                'pt' => 'Jeremiah',
+            ],
+            'Lamentations' => [
+                'en' => 'Lamentations',
+                'es' => 'Lamentaciones',
+                'fr' => 'Lamentations',
+                'pt' => 'Lamentations',
+            ],
+            'Ezekiel' => [
+                'en' => 'Ezekiel',
+                'es' => 'Ezequiel',
+                'fr' => 'Ezekiel',
+                'pt' => 'Ezekiel',
+            ],
+            'Daniel' => [
+                'en' => 'Daniel',
+                'es' => 'Daniel',
+                'fr' => 'Daniel',
+                'pt' => 'Daniel',
+            ],
+            'Hosea' => [
+                'en' => 'Hosea',
+                'es' => 'Oseas',
+                'fr' => 'Hosea',
+                'pt' => 'Hosea',
+            ],
+            'Joel' => [
+                'en' => 'Joel',
+                'es' => 'Joel',
+                'fr' => 'Joel',
+                'pt' => 'Joel',
+            ],
+            'Amos' => [
+                'en' => 'Amos',
+                'es' => 'Amós',
+                'fr' => 'Amos',
+                'pt' => 'Amos',
+            ],
+            'Obadiah' => [
+                'en' => 'Obadiah',
+                'es' => 'Abdías',
+                'fr' => 'Obadiah',
+                'pt' => 'Obadiah',
+            ],
+            'Jonah' => [
+                'en' => 'Jonah',
+                'es' => 'Jonás',
+                'fr' => 'Jonah',
+                'pt' => 'Jonah',
+            ],
+            'Micah' => [
+                'en' => 'Micah',
+                'es' => 'Miquéas',
+                'fr' => 'Micah',
+                'pt' => 'Micah',
+            ],
+            'Nahum' => [
+                'en' => 'Nahum',
+                'es' => 'Nahúm',
+                'fr' => 'Nahum',
+                'pt' => 'Nahum',
+            ],
+            'Habakkuk' => [
+                'en' => 'Habakkuk',
+                'es' => 'Habacuc',
+                'fr' => 'Habakkuk',
+                'pt' => 'Habakkuk',
+            ],
+            'Zephaniah' => [
+                'en' => 'Zephaniah',
+                'es' => 'Sofonías',
+                'fr' => 'Zephaniah',
+                'pt' => 'Zephaniah',
+            ],
+            'Haggai' => [
+                'en' => 'Haggai',
+                'es' => 'Hageo',
+                'fr' => 'Haggai',
+                'pt' => 'Haggai',
+            ],
+            'Zechariah' => [
+                'en' => 'Zechariah',
+                'es' => 'Zacarías',
+                'fr' => 'Zechariah',
+                'pt' => 'Zechariah',
+            ],
+            'Malachi' => [
+                'en' => 'Malachi',
+                'es' => 'Malaquías',
+                'fr' => 'Malachi',
+                'pt' => 'Malachi',
+            ],
+            'Matthew' => [
+                'en' => 'Matthew',
+                'es' => 'Mateo',
+                'fr' => 'Matthew',
+                'pt' => 'Matthew',
+            ],
+            'Mark' => [
+                'en' => 'Mark',
+                'es' => 'Marcos',
+                'fr' => 'Mark',
+                'pt' => 'Mark',
+            ],
+            'Luke' => [
+                'en' => 'Luke',
+                'es' => 'Lucas',
+                'fr' => 'Luke',
+                'pt' => 'Luke',
+            ],
+            'John' => [
+                'en' => 'John',
+                'es' => 'Juan',
+                'fr' => 'John',
+                'pt' => 'John',
+            ],
+            'Acts' => [
+                'en' => 'Acts',
+                'es' => 'Hechos',
+                'fr' => 'Acts',
+                'pt' => 'Acts',
+            ],
+            'Romans' => [
+                'en' => 'Romans',
+                'es' => 'Romanos',
+                'fr' => 'Romans',
+                'pt' => 'Romans',
+            ],
+            '1 Corinthians' => [
+                'en' => '1 Corinthians',
+                'es' => '1 Corintios',
+                'fr' => '1 Corinthians',
+                'pt' => '1 Corinthians',
+            ],
+            '2 Corinthians' => [
+                'en' => '2 Corinthians',
+                'es' => '2 Corintios',
+                'fr' => '2 Corinthians',
+                'pt' => '2 Corinthians',
+            ],
+            'Galatians' => [
+                'en' => 'Galatians',
+                'es' => 'Gálatas',
+                'fr' => 'Galatians',
+                'pt' => 'Galatians',
+            ],
+            'Ephesians' => [
+                'en' => 'Ephesians',
+                'es' => 'Efesios',
+                'fr' => 'Ephesians',
+                'pt' => 'Ephesians',
+            ],
+            'Philippians' => [
+                'en' => 'Philippians',
+                'es' => 'Filipenses',
+                'fr' => 'Philippians',
+                'pt' => 'Philippians',
+            ],
+            'Colossians' => [
+                'en' => 'Colossians',
+                'es' => 'Colosenses',
+                'fr' => 'Colossians',
+                'pt' => 'Colossians',
+            ],
+            '1 Thessalonians' => [
+                'en' => '1 Thessalonians',
+                'es' => '1 Tesalonicenses',
+                'fr' => '1 Thessalonians',
+                'pt' => '1 Thessalonians',
+            ],
+            '2 Thessalonians' => [
+                'en' => '2 Thessalonians',
+                'es' => '2 Tesalonicenses',
+                'fr' => '2 Thessalonians',
+                'pt' => '2 Thessalonians',
+            ],
+            '1 Timothy' => [
+                'en' => '1 Timothy',
+                'es' => '1 Timoteo',
+                'fr' => '1 Timothy',
+                'pt' => '1 Timothy',
+            ],
+            '2 Timothy' => [
+                'en' => '2 Timothy',
+                'es' => '2 Timoteo',
+                'fr' => '2 Timothy',
+                'pt' => '2 Timothy',
+            ],
+            'Titus' => [
+                'en' => 'Titus',
+                'es' => 'Tito',
+                'fr' => 'Titus',
+                'pt' => 'Titus',
+            ],
+            'Philemon' => [
+                'en' => 'Philemon',
+                'es' => 'Filemón',
+                'fr' => 'Philemon',
+                'pt' => 'Philemon',
+            ],
+            'Hebrews' => [
+                'en' => 'Hebrews',
+                'es' => 'Hebreos',
+                'fr' => 'Hebrews',
+                'pt' => 'Hebrews',
+            ],
+            'James' => [
+                'en' => 'James',
+                'es' => 'Santiago',
+                'fr' => 'James',
+                'pt' => 'James',
+            ],
+            '1 Peter' => [
+                'en' => '1 Peter',
+                'es' => '1 Pedro',
+                'fr' => '1 Peter',
+                'pt' => '1 Peter',
+            ],
+            '2 Peter' => [
+                'en' => '2 Peter',
+                'es' => '2 Pedro',
+                'fr' => '2 Peter',
+                'pt' => '2 Peter',
+            ],
+            '1 John' => [
+                'en' => '1 John',
+                'es' => '1 Juan',
+                'fr' => '1 John',
+                'pt' => '1 John',
+            ],
+            '2 John' => [
+                'en' => '2 John',
+                'es' => '2 Juan',
+                'fr' => '2 John',
+                'pt' => '2 John',
+            ],
+            '3 John' => [
+                'en' => '3 John',
+                'es' => '3 Juan',
+                'fr' => '3 John',
+                'pt' => '3 John',
+            ],
+            'Jude' => [
+                'en' => 'Jude',
+                'es' => 'Judas',
+                'fr' => 'Jude',
+                'pt' => 'Jude',
+            ],
+            'Revelation' => [
+                'en' => 'Revelation',
+                'es' => 'Apocalipsis',
+                'fr' => 'Revelation',
+                'pt' => 'Revelation',
+            ],
+        ];
+        return $books[$string][$language];
     }
 
     public static function admin_notice( string $notice, string $type ) {
@@ -1407,7 +1799,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                             <?php echo esc_html( $parent_prayer_point['reference'] ); ?>
                         </td>
                         <td>
-                            <?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::get_translation( $parent_prayer_point['reference'], $child_library['language'] ) ); ?>
+                            <?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::get_book_translation( $parent_prayer_point['book'], $child_library['language'] ) ); ?> <?php echo esc_html( $parent_prayer_point['verse'] ); ?>
                         </td>
                         <td></td>
                     </tr>

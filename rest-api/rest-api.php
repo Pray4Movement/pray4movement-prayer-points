@@ -309,15 +309,18 @@ class Pray4Movement_Prayer_Points_Endpoints
 
     public function update_child_prayer_point( $wp_rest_params ) {
         $parent_prayer_point = self::get_prayer_point( $wp_rest_params['parent_prayer_point_id'] );
+        $child_library_language = self::get_library_language( $wp_rest_params['library_id'] );
+        $translated_book = self::get_book_translation( $parent_prayer_point['book'], $child_library_language );
+        $translated_reference = str_replace( $parent_prayer_point['book'], $translated_book, $parent_prayer_point['reference'] );
         global $wpdb;
         $wpdb->update(
             $wpdb->prefix.'dt_prayer_points',
             [
                 'title' => urldecode( $wp_rest_params['title'] ),
                 'content' => urldecode( $wp_rest_params['content'] ),
-                'book' => $parent_prayer_point['book'],
+                'book' => $translated_book,
                 'verse' => $parent_prayer_point['verse'],
-                'reference' => $parent_prayer_point['reference'],
+                'reference' => $translated_reference,
                 'hash' => md5( urldecode( $wp_rest_params['content'] ) ),
                 'status' => 'unpublished',
             ],
@@ -327,6 +330,415 @@ class Pray4Movement_Prayer_Points_Endpoints
             ]
         );
         return;
+    }
+
+    private function get_library_language( $library_id ) {
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare( "SELECT `language` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `id` = %d;", $library_id )
+        );
+    }
+
+    private function get_book_translation( $string, $language ) {
+        $books = [
+            'Genesis' => [
+                'en' => 'Genesis',
+                'es' => 'Génesis',
+                'fr' => 'Genesis',
+                'pt' => 'Genesis',
+            ],
+            'Exodus' => [
+                'en' => 'Exodus',
+                'es' => 'Éxodo',
+                'fr' => 'Exodus',
+                'pt' => 'Exodus',
+            ],
+            'Leviticus' => [
+                'en' => 'Leviticus',
+                'es' => 'Levítico',
+                'fr' => 'Leviticus',
+                'pt' => 'Leviticus',
+            ],
+            'Numbers' => [
+                'en' => 'Numbers',
+                'es' => 'Números',
+                'fr' => 'Numbers',
+                'pt' => 'Numbers',
+            ],
+            'Deuteronomy' => [
+                'en' => 'Deuteronomy',
+                'es' => 'Deuteronomio',
+                'fr' => 'Deuteronomy',
+                'pt' => 'Deuteronomy',
+            ],
+            'Joshua' => [
+                'en' => 'Joshua',
+                'es' => 'Josué',
+                'fr' => 'Joshua',
+                'pt' => 'Joshua',
+            ],
+            'Judges' => [
+                'en' => 'Judges',
+                'es' => 'Jueces',
+                'fr' => 'Judges',
+                'pt' => 'Judges',
+            ],
+            'Ruth' => [
+                'en' => 'Ruth',
+                'es' => 'Rut',
+                'fr' => 'Ruth',
+                'pt' => 'Ruth',
+            ],
+            '1 Samuel' => [
+                'en' => '1 Samuel',
+                'es' => '1 Samuel',
+                'fr' => '1 Samuel',
+                'pt' => '1 Samuel',
+            ],
+            '2 Samuel' => [
+                'en' => '2 Samuel',
+                'es' => '2 Samuel',
+                'fr' => '2 Samuel',
+                'pt' => '2 Samuel',
+            ],
+            '1 Kings' => [
+                'en' => '1 Kings',
+                'es' => '1 Reyes',
+                'fr' => '1 Kings',
+                'pt' => '1 Kings',
+            ],
+            '2 Kings' => [
+                'en' => '2 Kings',
+                'es' => '2 Reyes',
+                'fr' => '2 Kings',
+                'pt' => '2 Kings',
+            ],
+            '1 Chronicles' => [
+                'en' => '1 Chronicles',
+                'es' => '1 Crónicas',
+                'fr' => '1 Chronicles',
+                'pt' => '1 Chronicles',
+            ],
+            '2 Chronicles' => [
+                'en' => '2 Chronicles',
+                'es' => '2 Crónicas',
+                'fr' => '2 Chronicles',
+                'pt' => '2 Chronicles',
+            ],
+            'Ezra' => [
+                'en' => 'Ezra',
+                'es' => 'Esdras',
+                'fr' => 'Ezra',
+                'pt' => 'Ezra',
+            ],
+            'Nehemiah' => [
+                'en' => 'Nehemiah',
+                'es' => 'Nehemías',
+                'fr' => 'Nehemiah',
+                'pt' => 'Nehemiah',
+            ],
+            'Esther' => [
+                'en' => 'Esther',
+                'es' => 'Ester',
+                'fr' => 'Esther',
+                'pt' => 'Esther',
+            ],
+            'Job' => [
+                'en' => 'Job',
+                'es' => 'Job',
+                'fr' => 'Job',
+                'pt' => 'Job',
+            ],
+            'Psalm' => [
+                'en' => 'Psalm',
+                'es' => 'Salmos',
+                'fr' => 'Psalm',
+                'pt' => 'Psalm',
+            ],
+            'Proverbs' => [
+                'en' => 'Proverbs',
+                'es' => 'Proverbios',
+                'fr' => 'Proverbs',
+                'pt' => 'Proverbs',
+            ],
+            'Ecclesiastes' => [
+                'en' => 'Ecclesiastes',
+                'es' => 'Eclesiastés',
+                'fr' => 'Ecclesiastes',
+                'pt' => 'Ecclesiastes',
+            ],
+            'Song of Solomon' => [
+                'en' => 'Song of Solomon',
+                'es' => 'Cantar de los Cantares',
+                'fr' => 'Song of Solomon',
+                'pt' => 'Song of Solomon',
+            ],
+            'Isaiah' => [
+                'en' => 'Isaiah',
+                'es' => 'Isaías',
+                'fr' => 'Isaiah',
+                'pt' => 'Isaiah',
+            ],
+            'Jeremiah' => [
+                'en' => 'Jeremiah',
+                'es' => 'Jeremías',
+                'fr' => 'Jeremiah',
+                'pt' => 'Jeremiah',
+            ],
+            'Lamentations' => [
+                'en' => 'Lamentations',
+                'es' => 'Lamentaciones',
+                'fr' => 'Lamentations',
+                'pt' => 'Lamentations',
+            ],
+            'Ezekiel' => [
+                'en' => 'Ezekiel',
+                'es' => 'Ezequiel',
+                'fr' => 'Ezekiel',
+                'pt' => 'Ezekiel',
+            ],
+            'Daniel' => [
+                'en' => 'Daniel',
+                'es' => 'Daniel',
+                'fr' => 'Daniel',
+                'pt' => 'Daniel',
+            ],
+            'Hosea' => [
+                'en' => 'Hosea',
+                'es' => 'Oseas',
+                'fr' => 'Hosea',
+                'pt' => 'Hosea',
+            ],
+            'Joel' => [
+                'en' => 'Joel',
+                'es' => 'Joel',
+                'fr' => 'Joel',
+                'pt' => 'Joel',
+            ],
+            'Amos' => [
+                'en' => 'Amos',
+                'es' => 'Amós',
+                'fr' => 'Amos',
+                'pt' => 'Amos',
+            ],
+            'Obadiah' => [
+                'en' => 'Obadiah',
+                'es' => 'Abdías',
+                'fr' => 'Obadiah',
+                'pt' => 'Obadiah',
+            ],
+            'Jonah' => [
+                'en' => 'Jonah',
+                'es' => 'Jonás',
+                'fr' => 'Jonah',
+                'pt' => 'Jonah',
+            ],
+            'Micah' => [
+                'en' => 'Micah',
+                'es' => 'Miquéas',
+                'fr' => 'Micah',
+                'pt' => 'Micah',
+            ],
+            'Nahum' => [
+                'en' => 'Nahum',
+                'es' => 'Nahúm',
+                'fr' => 'Nahum',
+                'pt' => 'Nahum',
+            ],
+            'Habakkuk' => [
+                'en' => 'Habakkuk',
+                'es' => 'Habacuc',
+                'fr' => 'Habakkuk',
+                'pt' => 'Habakkuk',
+            ],
+            'Zephaniah' => [
+                'en' => 'Zephaniah',
+                'es' => 'Sofonías',
+                'fr' => 'Zephaniah',
+                'pt' => 'Zephaniah',
+            ],
+            'Haggai' => [
+                'en' => 'Haggai',
+                'es' => 'Hageo',
+                'fr' => 'Haggai',
+                'pt' => 'Haggai',
+            ],
+            'Zechariah' => [
+                'en' => 'Zechariah',
+                'es' => 'Zacarías',
+                'fr' => 'Zechariah',
+                'pt' => 'Zechariah',
+            ],
+            'Malachi' => [
+                'en' => 'Malachi',
+                'es' => 'Malaquías',
+                'fr' => 'Malachi',
+                'pt' => 'Malachi',
+            ],
+            'Matthew' => [
+                'en' => 'Matthew',
+                'es' => 'Mateo',
+                'fr' => 'Matthew',
+                'pt' => 'Matthew',
+            ],
+            'Mark' => [
+                'en' => 'Mark',
+                'es' => 'Marcos',
+                'fr' => 'Mark',
+                'pt' => 'Mark',
+            ],
+            'Luke' => [
+                'en' => 'Luke',
+                'es' => 'Lucas',
+                'fr' => 'Luke',
+                'pt' => 'Luke',
+            ],
+            'John' => [
+                'en' => 'John',
+                'es' => 'Juan',
+                'fr' => 'John',
+                'pt' => 'John',
+            ],
+            'Acts' => [
+                'en' => 'Acts',
+                'es' => 'Hechos',
+                'fr' => 'Acts',
+                'pt' => 'Acts',
+            ],
+            'Romans' => [
+                'en' => 'Romans',
+                'es' => 'Romanos',
+                'fr' => 'Romans',
+                'pt' => 'Romans',
+            ],
+            '1 Corinthians' => [
+                'en' => '1 Corinthians',
+                'es' => '1 Corintios',
+                'fr' => '1 Corinthians',
+                'pt' => '1 Corinthians',
+            ],
+            '2 Corinthians' => [
+                'en' => '2 Corinthians',
+                'es' => '2 Corintios',
+                'fr' => '2 Corinthians',
+                'pt' => '2 Corinthians',
+            ],
+            'Galatians' => [
+                'en' => 'Galatians',
+                'es' => 'Gálatas',
+                'fr' => 'Galatians',
+                'pt' => 'Galatians',
+            ],
+            'Ephesians' => [
+                'en' => 'Ephesians',
+                'es' => 'Efesios',
+                'fr' => 'Ephesians',
+                'pt' => 'Ephesians',
+            ],
+            'Philippians' => [
+                'en' => 'Philippians',
+                'es' => 'Filipenses',
+                'fr' => 'Philippians',
+                'pt' => 'Philippians',
+            ],
+            'Colossians' => [
+                'en' => 'Colossians',
+                'es' => 'Colosenses',
+                'fr' => 'Colossians',
+                'pt' => 'Colossians',
+            ],
+            '1 Thessalonians' => [
+                'en' => '1 Thessalonians',
+                'es' => '1 Tesalonicenses',
+                'fr' => '1 Thessalonians',
+                'pt' => '1 Thessalonians',
+            ],
+            '2 Thessalonians' => [
+                'en' => '2 Thessalonians',
+                'es' => '2 Tesalonicenses',
+                'fr' => '2 Thessalonians',
+                'pt' => '2 Thessalonians',
+            ],
+            '1 Timothy' => [
+                'en' => '1 Timothy',
+                'es' => '1 Timoteo',
+                'fr' => '1 Timothy',
+                'pt' => '1 Timothy',
+            ],
+            '2 Timothy' => [
+                'en' => '2 Timothy',
+                'es' => '2 Timoteo',
+                'fr' => '2 Timothy',
+                'pt' => '2 Timothy',
+            ],
+            'Titus' => [
+                'en' => 'Titus',
+                'es' => 'Tito',
+                'fr' => 'Titus',
+                'pt' => 'Titus',
+            ],
+            'Philemon' => [
+                'en' => 'Philemon',
+                'es' => 'Filemón',
+                'fr' => 'Philemon',
+                'pt' => 'Philemon',
+            ],
+            'Hebrews' => [
+                'en' => 'Hebrews',
+                'es' => 'Hebreos',
+                'fr' => 'Hebrews',
+                'pt' => 'Hebrews',
+            ],
+            'James' => [
+                'en' => 'James',
+                'es' => 'Santiago',
+                'fr' => 'James',
+                'pt' => 'James',
+            ],
+            '1 Peter' => [
+                'en' => '1 Peter',
+                'es' => '1 Pedro',
+                'fr' => '1 Peter',
+                'pt' => '1 Peter',
+            ],
+            '2 Peter' => [
+                'en' => '2 Peter',
+                'es' => '2 Pedro',
+                'fr' => '2 Peter',
+                'pt' => '2 Peter',
+            ],
+            '1 John' => [
+                'en' => '1 John',
+                'es' => '1 Juan',
+                'fr' => '1 John',
+                'pt' => '1 John',
+            ],
+            '2 John' => [
+                'en' => '2 John',
+                'es' => '2 Juan',
+                'fr' => '2 John',
+                'pt' => '2 John',
+            ],
+            '3 John' => [
+                'en' => '3 John',
+                'es' => '3 Juan',
+                'fr' => '3 John',
+                'pt' => '3 John',
+            ],
+            'Jude' => [
+                'en' => 'Jude',
+                'es' => 'Judas',
+                'fr' => 'Jude',
+                'pt' => 'Jude',
+            ],
+            'Revelation' => [
+                'en' => 'Revelation',
+                'es' => 'Apocalipsis',
+                'fr' => 'Revelation',
+                'pt' => 'Revelation',
+            ],
+        ];
+        return $books[$string][$language];
     }
 
     public function insert_child_prayer_point( $wp_rest_params ) {
