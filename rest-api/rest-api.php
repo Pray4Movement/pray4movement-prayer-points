@@ -13,6 +13,8 @@ class Pray4Movement_Prayer_Points_Endpoints
         self::register_get_prayer_libraries_endpoint();
         self::register_get_prayer_points_by_tag_endpoint();
         self::register_set_location_and_people_group_endpoint();
+        self::register_save_child_prayer_point();
+        self::register_save_tags();
     }
 
     private function get_namespace() {
@@ -126,11 +128,11 @@ class Pray4Movement_Prayer_Points_Endpoints
         if ( isset( $params['library_id'] ) ) {
             $library_ids = self::validate_library_ids_string( $params['library_id'] );
             $library_ids = explode( ',', $library_ids );
-            return self::get_full_prayer_points_from_library_id( $library_ids );
+            return self::get_full_prayer_points( $library_ids );
         }
     }
 
-    private function get_full_prayer_points_from_library_id( $library_id ) {
+    private function get_full_prayer_points( $library_id ) {
         global $wpdb;
         return $wpdb->get_results(
             $wpdb->prepare(
@@ -278,6 +280,132 @@ class Pray4Movement_Prayer_Points_Endpoints
         return $wpdb->query(
             $wpdb->prepare( "INSERT INTO `{$wpdb->prefix}dt_prayer_points_meta` ( meta_key, meta_value ) VALUES ( %s, %s )", $meta_key, $meta_value )
         );
+    }
+
+    private function register_save_child_prayer_point() {
+        register_rest_route(
+            $this->get_namespace(), 'save_child_prayer_point/(?P<parent_prayer_point_id>\d+)/(?P<library_id>\d+)/(?P<title>.+)/(?P<content>.+)', [
+                'methods' => 'POST',
+                'callback' => [ $this, 'endpoint_for_save_child_prayer_point' ],
+                // 'permission_callback' => function( WP_REST_Request $request ) {
+                //     return $this->has_permission();
+                // }
+            ]
+        );
+    }
+
+    public function endpoint_for_save_child_prayer_point( WP_REST_Request $request ) {
+        $params = $request->get_params();
+        if ( !isset( $params['parent_prayer_point_id'] ) && !isset( $params['library_id'] ) && !isset( $params['title'] ) && !isset( $params['content'] ) ) {
+            return new WP_Error( __METHOD__, 'Missing parameters.' );
+        }
+        if ( self::prayer_point_exists( $params['parent_prayer_point_id'], $params['library_id'] ) ) {
+            self::update_child_prayer_point( $params );
+            return;
+        }
+        self::insert_child_prayer_point( $params );
+        return;
+    }
+
+    public function update_child_prayer_point( $wp_rest_params ) {
+        $parent_prayer_point = self::get_prayer_point( $wp_rest_params['parent_prayer_point_id'] );
+        global $wpdb;
+        $wpdb->update(
+            $wpdb->prefix.'dt_prayer_points',
+            [
+                'title' => urldecode( $wp_rest_params['title'] ),
+                'content' => urldecode( $wp_rest_params['content'] ),
+                'book' => $parent_prayer_point['book'],
+                'verse' => $parent_prayer_point['verse'],
+                'reference' => $parent_prayer_point['reference'],
+                'hash' => md5( urldecode( $wp_rest_params['content'] ) ),
+                'status' => 'unpublished',
+            ],
+            [
+                'library_id' => $wp_rest_params['library_id'],
+                'parent_id' => $wp_rest_params['parent_prayer_point_id'],
+            ]
+        );
+        return;
+    }
+
+    public function insert_child_prayer_point( $wp_rest_params ) {
+        $parent_prayer_point = self::get_prayer_point( $wp_rest_params['parent_prayer_point_id'] );
+        error_log( var_dump( $parent_prayer_point ) );
+        return;
+        global $wpdb;
+        $wpdb->insert(
+            $wpdb->prefix.'dt_prayer_points',
+            [
+                'library_id' => $wp_rest_params['library_id'],
+                'parent_id' => $wp_rest_params['parent_prayer_point_id'],
+                'title' => urldecode( $wp_rest_params['title'] ),
+                'content' => urldecode( $wp_rest_params['content'] ),
+                'hash' => md5( urldecode( $wp_rest_params['content'] ) ),
+                'status' => 'unpublished',
+            ],
+            [ '%d', '%d', '%s', '%s', '%s', '%s' ]
+        );
+        return;
+    }
+
+    private function prayer_point_exists( $parent_prayer_point_id, $library_id ) {
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare( "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` WHERE `parent_id` = %d AND `library_id` = %d;", $parent_prayer_point_id, $library_id )
+        );
+    }
+
+    public function get_prayer_point( $prayer_id ) {
+        global $wpdb;
+        return $wpdb->get_row(
+            $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points` WHERE id = %d;", $prayer_id ), ARRAY_A
+        );
+    }
+
+    private function register_save_tags() {
+        register_rest_route(
+            $this->get_namespace(), 'save_tags/(?P<prayer_id>\d+)/(?P<tags>.+)', [
+                'methods' => 'POST',
+                'callback' => [ $this, 'endpoint_for_save_tags' ],
+                // 'permission_callback' => function( WP_REST_Request $request ) {
+                //     return $this->has_permission();
+                // }
+            ]
+        );
+    }
+
+    public function endpoint_for_save_tags( WP_REST_Request $request ) {
+        $params = $request->get_params();
+        $tags = self::sanitize_tags( $params['tags'] );
+        self::insert_all_tags( $tags );
+        return;
+    }
+
+    public function sanitize_tags( $raw_tags ) {
+        $tags = sanitize_text_field( wp_unslash( strtolower( $raw_tags ) ) );
+        $tags = explode( ',', $tags );
+        $tags = array_map( 'trim', $tags );
+        return array_filter( $tags );
+    }
+
+    public function insert_all_tags( $prayer_id, $tags ) {
+        global $wpdb;
+        if ( is_string( $tags ) ) {
+            $tags = [ $tags ];
+        }
+        foreach ( $tags as $tag ) {
+            $wpdb->insert(
+                $wpdb->prefix.'dt_prayer_points_meta',
+                [
+                    'prayer_id' => $prayer_id,
+                    'meta_key' => 'tags',
+                    'meta_value' => $tag
+                ],
+                [ '%d', '%s', '%s' ]
+            );
+        }
+        return;
     }
 
     private static $_instance = null;

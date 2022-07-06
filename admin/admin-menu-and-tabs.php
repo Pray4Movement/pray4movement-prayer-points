@@ -128,6 +128,80 @@ class Pray4Movement_Prayer_Points_Utilities {
         return 'data:image/svg+xml;base64,PHN2ZyBpZD0ic3ZnIiB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIiB2aWV3Qm94PSIwLCAwLCA0MDAsNDAwIj48ZyBpZD0ic3ZnZyI+PHBhdGggaWQ9InBhdGgwIiBkPSJNMjE5LjcxNiAxOS4yNDggQyAxMzkuNDUzIDMzLjcwNyw5Ni42MDggMTI3LjA1OSwxMzcuODU3IDE5Ny42MDAgTCAxNDEuNjAwIDIwNC4wMDAgMTU3LjExOSAyMDMuNTQzIEwgMTcyLjYzOCAyMDMuMDg2IDE2NC4yNDIgMTkwLjc0MyBDIDEyMS40OTUgMTI3LjkwMSwxNjUuMDQwIDQ0LjU0OSwyNDAuODAwIDQ0LjIwMCBDIDMyMS4xODkgNDMuODI4LDM2NC43NzIgMTM1LjA0OCwzMTQuMjM4IDE5Ny45MDggTCAzMTAuMTMyIDIwMy4wMTYgMzE2LjEwNyAyMDEuMzY2IEMgMzE5LjM5NCAyMDAuNDU5LDMyNS4wMzQgMjAwLjA5NywzMjguNjQyIDIwMC41NjIgQyAzMzIuMjQ5IDIwMS4wMjcsMzM2Ljk0OCAyMDEuNjMxLDMzOS4wODQgMjAxLjkwNCBDIDM0Ny45NDYgMjAzLjAzNiwzNjEuNjAwIDE2NC44MTcsMzYxLjYwMCAxMzguODc3IEMgMzYxLjYwMCA2My4zMjQsMjkzLjU0OSA1Ljk0NywyMTkuNzE2IDE5LjI0OCBNMjI4LjgwMCA4NS42MDAgTCAyMjguODAwIDk3LjYwMCAyMTEuMjAwIDk3LjYwMCBMIDE5My42MDAgOTcuNjAwIDE5My42MDAgMTExLjIwMCBMIDE5My42MDAgMTI0LjgwMCAyMTEuMjAwIDEyNC44MDAgTCAyMjguODAwIDEyNC44MDAgMjI4LjgwMCAxNjEuNjAwIEwgMjI4LjgwMCAxOTguNDAwIDI0Mi40MDAgMTk4LjQwMCBMIDI1Ni4wMDAgMTk4LjQwMCAyNTYuMDAwIDE2MS42MDAgTCAyNTYuMDAwIDEyNC44MDAgMjcyLjgwMCAxMjQuODAwIEwgMjg5LjYwMCAxMjQuODAwIDI4OS42MDAgMTExLjIwMCBMIDI4OS42MDAgOTcuNjAwIDI3Mi44MDAgOTcuNjAwIEwgMjU2LjAwMCA5Ny42MDAgMjU2LjAwMCA4NS42MDAgTCAyNTYuMDAwIDczLjYwMCAyNDIuNDAwIDczLjYwMCBMIDIyOC44MDAgNzMuNjAwIDIyOC44MDAgODUuNjAwIE0yOTcuNjIzIDIyNy43MTkgQyAyNjkuMjU3IDIzNi43MTgsMjcwLjU4MSAyMzUuNzkxLDI2OC4wMTggMjQ4LjQ0MCBDIDI2NC41ODUgMjY1LjM4NiwyNDkuMDY4IDI3MS45NjQsMTk5LjIwMCAyNzcuNjEzIEMgMTY0LjE5NiAyODEuNTc4LDE1OC40MDAgMjgwLjUyMiwxNTguNDAwIDI3MC4xODAgQyAxNTguNDAwIDI2MS45OTIsMTYwLjc2MyAyNjEuMDA3LDE4NC44MDAgMjU5LjE3MyBDIDIzNy4zNjAgMjU1LjE2NSwyNTIuNjcyIDI0OS4yNTYsMjQ4Ljk0OCAyMzQuNDIwIEMgMjQ2LjgwNCAyMjUuODc3LDI0My4xNTIgMjI1LjEwNCwxOTcuODE0IDIyMy42MDcgQyAxNTEuNTM3IDIyMi4wNzksMTQ1LjMyNSAyMjIuNDQzLDEzNS45NDYgMjI3LjIyOCBDIDEyOC43MjcgMjMwLjkxMCw2My45NDIgMjc4LjM2Myw2NC4xMDQgMjc5Ljg0OSBDIDY0LjE2MSAyODAuMzcyLDc5LjY3OCAyOTIuMTg3LDk4LjU4NyAzMDYuMTA1IEwgMTMyLjk2NiAzMzEuNDEwIDE3MC4wODMgMzM0LjczMyBDIDIxMS41ODMgMzM4LjQ1MCwyMTkuMzkzIDMzNy44NjMsMjMxLjA4MyAzMzAuMTUxIEMgMjQyLjQ2MCAzMjIuNjQ2LDMzNS44MzQgMjQ3Ljk3OCwzMzguMzY5IDI0NC4zNTggQyAzNDMuNjgxIDIzNi43NzUsMzM5LjY1NiAyMjMuOTg4LDMzMS4wMTAgMjIwLjk3MyBDIDMyNC42MDUgMjE4Ljc0MSwzMjguMjMyIDIxOC4wMDgsMjk3LjYyMyAyMjcuNzE5IE0zNy4yMDAgMzA4LjM0MCBDIDI0LjgwMSAzMjQuNjk5LDIzLjUyNiAzMjguNzcxLDI5LjIwMCAzMzMuODg5IEMgNDIuOTY5IDM0Ni4zMDgsODYuODgzIDM3Ni4yMjYsOTAuMTQyIDM3NS40MDggQyA5My4yNzggMzc0LjYyMSwxMTIuMjYwIDM1MC45NTMsMTE0LjU1OCAzNDQuOTY2IEMgMTE1LjA0MiAzNDMuNzA1LDEwNC4zMDMgMzM0LjYzNCw4Ni44NzQgMzIxLjU4MiBDIDcxLjIxMyAzMDkuODU1LDU2LjI0MCAyOTguNjM0LDUzLjYwMCAyOTYuNjQ4IEwgNDguODAwIDI5My4wMzYgMzcuMjAwIDMwOC4zNDAgIiBzdHJva2U9Im5vbmUiIGZpbGw9IiMwMDAwMDAiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PC9wYXRoPjwvZz48L3N2Zz4=';
     }
 
+    public static function display_bible_book_dropdown() {
+        ?>
+        <select name="prayer_reference_book" id="prayer_reference_book">
+            <option value="">(No Reference)</option>
+            <option value="Genesis">Genesis</option>
+            <option value="Exodus">Exodus</option>
+            <option value="Leviticus">Leviticus</option>
+            <option value="Numbers">Numbers</option>
+            <option value="Deuteronomy">Deuteronomy</option>
+            <option value="Joshua">Joshua</option>
+            <option value="Judges">Judges</option>
+            <option value="Ruth">Ruth</option>
+            <option value="1 Samuel">1 Samuel</option>
+            <option value="2 Samuel">2 Samuel</option>
+            <option value="1 Kings">1 Kings</option>
+            <option value="2 Kings">2 Kings</option>
+            <option value="1 Chronicles">1 Chronicles</option>
+            <option value="2 Chronicles">2 Chronicles</option>
+            <option value="Ezra">Ezra</option>
+            <option value="Nehemiah">Nehemiah</option>
+            <option value="Esther">Esther</option>
+            <option value="Job">Job</option>
+            <option value="Psalm">Psalm</option>
+            <option value="Proverbs">Proverbs</option>
+            <option value="Ecclesiastes">Ecclesiastes</option>
+            <option value="Song of Solomon">Song of Solomon</option>
+            <option value="Isaiah">Isaiah</option>
+            <option value="Jeremiah">Jeremiah</option>
+            <option value="Lamentations">Lamentations</option>
+            <option value="Ezekiel">Ezekiel</option>
+            <option value="Daniel">Daniel</option>
+            <option value="Hosea">Hosea</option>
+            <option value="Joel">Joel</option>
+            <option value="Amos">Amos</option>
+            <option value="Obadiah">Obadiah</option>
+            <option value="Jonah">Jonah</option>
+            <option value="Micah">Micah</option>
+            <option value="Nahum">Nahum</option>
+            <option value="Habakkuk">Habakkuk</option>
+            <option value="Zephaniah">Zephaniah</option>
+            <option value="Haggai">Haggai</option>
+            <option value="Zechariah">Zechariah</option>
+            <option value="Malachi">Malachi</option>
+            <option value="Matthew">Matthew</option>
+            <option value="Mark">Mark</option>
+            <option value="Luke">Luke</option>
+            <option value="John">John</option>
+            <option value="Acts">Acts</option>
+            <option value="Romans">Romans</option>
+            <option value="1 Corinthians">1 Corinthians</option>
+            <option value="2 Corinthians">2 Corinthians</option>
+            <option value="Galatians">Galatians</option>
+            <option value="Ephesians">Ephesians</option>
+            <option value="Philippians">Philippians</option>
+            <option value="Colossians">Colossians</option>
+            <option value="1 Thessalonians">1 Thessalonians</option>
+            <option value="2 Thessalonians">2 Thessalonians</option>
+            <option value="1 Timothy">1 Timothy</option>
+            <option value="2 Timothy">2 Timothy</option>
+            <option value="Titus">Titus</option>
+            <option value="Philemon">Philemon</option>
+            <option value="Hebrews">Hebrews</option>
+            <option value="James">James</option>
+            <option value="1 Peter">1 Peter</option>
+            <option value="2 Peter">2 Peter</option>
+            <option value="1 John">1 John</option>
+            <option value="2 John">2 John</option>
+            <option value="3 John">3 John</option>
+            <option value="Jude">Jude</option>
+            <option value="Revelation">Revelation</option>
+        </select>
+        <?php
+    }
+
     public static function get_languages() {
         $languages = [
             'en' => [
@@ -138,7 +212,7 @@ class Pray4Movement_Prayer_Points_Utilities {
             'es' => [
                 'code' => 'es',
                 'name' => __( 'Spanish', 'pray4movement-prayer-points' ),
-                'flag' => '🇲🇽'
+                'flag' => '🇪🇸'
                 ],
             'fr' => [
                 'code' => 'fr',
@@ -170,19 +244,19 @@ class Pray4Movement_Prayer_Points_Utilities {
         return;
     }
 
+    public static function get_library_translation_links( $library_id ) {
+        global $wpdb;
+        return $wpdb->get_results(
+            $wpdb->prepare( "SELECT `id`, `language` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE parent_id = %d", $library_id ), ARRAY_A
+        );
+    }
+
     public static function display_library_translation_links( $library_id ) {
         $child_libraries = self::get_library_translation_links( $library_id );
         foreach ( $child_libraries as $library ) {
             ?><a href="?page=pray4movement_prayer_points&view_library=<?php echo esc_attr( $library['id'] ); ?>"><?php self::display_language_flag( $library['language'] ) ?></a>
             <?php
         }
-    }
-
-    public static function get_library_translation_links( $library_id ) {
-        global $wpdb;
-        return $wpdb->get_results(
-            $wpdb->prepare( "SELECT `id`, `language` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE parent_id = %d", $library_id ), ARRAY_A
-        );
     }
 
     public static function display_parent_libraries_dropdown() {
@@ -201,6 +275,22 @@ class Pray4Movement_Prayer_Points_Utilities {
         <?php
     }
 
+    public static function get_child_prayer_point_from_parent( $parent_prayer_point_id ) {
+        global $wpdb;
+        return $wpdb->get_row(
+            $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points` WHERE parent_id = %d ORDER BY id DESC LIMIT 1;", $parent_prayer_point_id ),
+        ARRAY_A );
+    }
+
+    public static function get_translation( $string, $language ) {
+        global $locale;
+        $old_locale = $locale;
+        $locale = $language;
+        $string = __( $string, 'pray4movement_prayer_points' );
+        $locale = $old_locale;
+        return;
+    }
+
     public static function admin_notice( string $notice, string $type ) {
         ?>
         <div class="notice notice-<?php echo esc_attr( $type ); ?> is-dismissible">
@@ -211,15 +301,28 @@ class Pray4Movement_Prayer_Points_Utilities {
 
     public static function get_prayer_library( $library_id ) {
         global $wpdb;
-        $library = $wpdb->get_row(
+        return $wpdb->get_row(
             $wpdb->prepare(
                 "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d;", $library_id
             ), ARRAY_A
         );
-        return $library;
     }
 
-    public static function get_lib_prayer_points( $library_id ) {
+    public static function get_parent_library_id_from_child_id( $child_library_id ) {
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare( "SELECT parent_id FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d;", $child_library_id )
+        );
+    }
+
+    public static function library_is_parent( $library_id ) {
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare( "SELECT ISNULL(parent_id) FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d;", $library_id )
+        );
+    }
+
+    public static function get_prayer_points( $library_id ) {
         global $wpdb;
         return $wpdb->get_results(
             $wpdb->prepare(
@@ -255,6 +358,30 @@ class Pray4Movement_Prayer_Points_Utilities {
         );
     }
 
+    public static function get_full_prayer_points( $library_id ) {
+        global $wpdb;
+        return $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT
+                    pp.id AS `id`,
+                    pp.title AS `title`,
+                    pp.content AS `content`,
+                    (SELECT IFNULL( GROUP_CONCAT(meta_value), '' ) FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = pp.id) AS 'tags',
+                    IFNULL( pp.reference, '' ) AS 'reference',
+                    IFNULL( pp.book, '' ) AS 'book',
+                    IFNULL( pp.verse, '' ) AS 'verse',
+                    pp.status AS 'status',
+                    pl.id AS 'library_id',
+                    pl.name AS 'library_name'
+                FROM `{$wpdb->prefix}dt_prayer_points` pp
+                INNER JOIN `{$wpdb->prefix}dt_prayer_points_lib` pl
+                ON pl.id = pp.library_id
+                WHERE pp.library_id = %d
+                ORDER BY pp.library_id ASC;", $library_id
+            ), ARRAY_A
+        );
+    }
+
     public static function get_prayer_point( $prayer_id ) {
         $prayer = self::get_prayer_content( $prayer_id );
         $prayer['tags'] = self::get_prayer_tags( $prayer_id );
@@ -275,12 +402,11 @@ class Pray4Movement_Prayer_Points_Utilities {
             return;
         }
         global $wpdb;
-        $prayer_point = $wpdb->get_row(
+        return $wpdb->get_row(
             $wpdb->prepare(
                 "SELECT * FROM `{$wpdb->prefix}dt_prayer_points` WHERE id = %d;", $prayer_id
             ), ARRAY_A
         );
-        return $prayer_point;
     }
 
     public static function get_prayer_tags( $prayer_id ) {
@@ -359,6 +485,10 @@ class Pray4Movement_Prayer_Points_Utilities {
 
     public static function insert_prayer_library( $library ) {
         global $wpdb;
+        if ( self::is_existing_library_key( $library['key'] ) ) {
+            self::admin_notice( __( 'A Prayer Library with that name already exists. Please choose a different name.', 'pray4movement_prayer_points' ), 'error' );
+            return;
+        }
         $test = $wpdb->insert(
             $wpdb->prefix.'dt_prayer_points_lib',
             [
@@ -376,6 +506,13 @@ class Pray4Movement_Prayer_Points_Utilities {
             return;
         }
         self::admin_notice( __( 'Prayer Library created successfully!', 'pray4movement_prayer_points' ), 'success' );
+    }
+
+    private static function is_existing_library_key( $library_key ) {
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare( "SELECT `key` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `key` = %s;", $library_key )
+        );
     }
 
     public static function insert_prayer_point( $prayer ) {
@@ -700,11 +837,15 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         if ( !isset( $_POST['library_name'] ) || !isset( $_POST['library_desc'] ) || !isset( $_POST['library_lang'] ) || !isset( $_POST['library_parent_id'] ) || !isset( $_POST['library_icon'] ) ) {
             return;
         }
+        $library_parent_id = null;
+        if ( $_POST['library_parent_id'] > 0 ) {
+            $library_parent_id = sanitize_text_field( wp_unslash( $_POST['library_parent_id'] ) );
+        }
         $library = [
             'name' => sanitize_text_field( wp_unslash( $_POST['library_name'] ) ),
             'desc' => sanitize_text_field( wp_unslash( $_POST['library_desc'] ) ),
             'language' => sanitize_text_field( wp_unslash( $_POST['library_lang'] ) ),
-            'parent_id' => sanitize_text_field( wp_unslash( $_POST['library_parent_id'] ) ),
+            'parent_id' => $library_parent_id,
             'icon' => sanitize_text_field( wp_unslash( $_POST['library_icon'] ) ),
         ];
         $library['key'] = Pray4Movement_Prayer_Points_Utilities::generate_key_from_string( $library['name'] );
@@ -940,156 +1081,23 @@ class Pray4Movement_Prayer_Points_View_Library {
             Pray4Movement_Prayer_Points_Utilities::admin_notice( 'Prayer Library ID does not exist.', 'error' );
             return;
         }
-        $library = Pray4Movement_Prayer_Points_Utilities::get_prayer_library( $library_id );
-        ?>
-        <table class="widefat striped">
-            <thead>
-                <tr>
-                    <?php if ( !empty( $library ) ) : ?>
-                        <th colspan="6"><?php echo esc_html( $library['name'] ); ?></th>
-                    <?php endif; ?>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th>#</th>    
-                    <th>Title</th>
-                    <th>Reference</th>
-                    <th>Content</th>
-                    <th>Tags</th>
-                    <th>Actions</th>
-                </tr>
-                <?php self::display_prayer_points( $library['id'] ); ?>
-            </tbody>
-        </table>
-        <br>
-        <form method="POST">
-            <?php
-            wp_nonce_field( 'add_prayer_point', 'add_prayer_point_nonce' );
-            Pray4Movement_Prayer_Points_Utilities::check_user_can( 'publish_posts', false );
-            ?>
 
-            <table class="widefat striped">
-                <thead>
-                    <tr>
-                        <th colspan="3"><?php esc_html_e( 'Add Prayer Point', 'pray4movement_prayer_points' ); ?></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>
-                            <?php esc_html_e( 'Title', 'pray4movement_prayer_points' ); ?> (*)
-                        </td>
-                        <td>
-                            <input type="text" name="prayer_title" size="50" required>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <?php esc_html_e( 'Reference', 'pray4movement_prayer_points' ); ?>
-                        </td>
-                        <td>
-                            <select name="prayer_reference_book">
-                                <option value="">(No Reference)</option>
-                                <option value="Genesis">Genesis</option>
-                                <option value="Exodus">Exodus</option>
-                                <option value="Leviticus">Leviticus</option>
-                                <option value="Numbers">Numbers</option>
-                                <option value="Deuteronomy">Deuteronomy</option>
-                                <option value="Joshua">Joshua</option>
-                                <option value="Judges">Judges</option>
-                                <option value="Ruth">Ruth</option>
-                                <option value="1 Samuel">1 Samuel</option>
-                                <option value="2 Samuel">2 Samuel</option>
-                                <option value="1 Kings">1 Kings</option>
-                                <option value="2 Kings">2 Kings</option>
-                                <option value="1 Chronicles">1 Chronicles</option>
-                                <option value="2 Chronicles">2 Chronicles</option>
-                                <option value="Ezra">Ezra</option>
-                                <option value="Nehemiah">Nehemiah</option>
-                                <option value="Esther">Esther</option>
-                                <option value="Job">Job</option>
-                                <option value="Psalm">Psalm</option>
-                                <option value="Proverbs">Proverbs</option>
-                                <option value="Ecclesiastes">Ecclesiastes</option>
-                                <option value="Song of Solomon">Song of Solomon</option>
-                                <option value="Isaiah">Isaiah</option>
-                                <option value="Jeremiah">Jeremiah</option>
-                                <option value="Lamentations">Lamentations</option>
-                                <option value="Ezekiel">Ezekiel</option>
-                                <option value="Daniel">Daniel</option>
-                                <option value="Hosea">Hosea</option>
-                                <option value="Joel">Joel</option>
-                                <option value="Amos">Amos</option>
-                                <option value="Obadiah">Obadiah</option>
-                                <option value="Jonah">Jonah</option>
-                                <option value="Micah">Micah</option>
-                                <option value="Nahum">Nahum</option>
-                                <option value="Habakkuk">Habakkuk</option>
-                                <option value="Zephaniah">Zephaniah</option>
-                                <option value="Haggai">Haggai</option>
-                                <option value="Zechariah">Zechariah</option>
-                                <option value="Malachi">Malachi</option>
-                                <option value="Matthew">Matthew</option>
-                                <option value="Mark">Mark</option>
-                                <option value="Luke">Luke</option>
-                                <option value="John">John</option>
-                                <option value="Acts">Acts</option>
-                                <option value="Romans">Romans</option>
-                                <option value="1 Corinthians">1 Corinthians</option>
-                                <option value="2 Corinthians">2 Corinthians</option>
-                                <option value="Galatians">Galatians</option>
-                                <option value="Ephesians">Ephesians</option>
-                                <option value="Philippians">Philippians</option>
-                                <option value="Colossians">Colossians</option>
-                                <option value="1 Thessalonians">1 Thessalonians</option>
-                                <option value="2 Thessalonians">2 Thessalonians</option>
-                                <option value="1 Timothy">1 Timothy</option>
-                                <option value="2 Timothy">2 Timothy</option>
-                                <option value="Titus">Titus</option>
-                                <option value="Philemon">Philemon</option>
-                                <option value="Hebrews">Hebrews</option>
-                                <option value="James">James</option>
-                                <option value="1 Peter">1 Peter</option>
-                                <option value="2 Peter">2 Peter</option>
-                                <option value="1 John">1 John</option>
-                                <option value="2 John">2 John</option>
-                                <option value="3 John">3 John</option>
-                                <option value="Jude">Jude</option>
-                                <option value="Revelation">Revelation</option>
-                            </select>
-                            <input type="text" name="prayer_reference_verse" size="30">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <?php esc_html_e( 'Content', 'pray4movement_prayer_points' ); ?> (*)
-                        </td>
-                        <td>
-                            <textarea name="prayer_content" rows="10" cols="50" required></textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <?php esc_html_e( 'Tags', 'pray4movement_prayer_points' ); ?>
-                        </td>
-                        <td>
-                            <input type="text" name="prayer_tags" size="50">
-                        </td>
-                    </tr>
-                    <tr style="display:none;">
-                        <td></td>
-                        <td><input type="hidden" name="prayer_library_id" value="<?php echo esc_html( $library['id'] ); ?>"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <button class="button" type="post"><?php esc_html_e( 'Add', 'pray4movement_prayer_points' ); ?></button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
-        <?php
+        if ( Pray4Movement_Prayer_Points_Utilities::library_is_parent( $library_id ) ) {
+            self::show_parent_library( $library_id );
+            return;
+        }
+        self::show_child_library( $library_id );
+        return;
+    }
+
+    public function show_parent_library( $library_id ) {
+        $library = Pray4Movement_Prayer_Points_Utilities::get_prayer_library( $library_id );
+        self::display_prayer_points_for_parent_library( $library['id'] );
+    }
+
+    public function show_child_library( $library_id ) {
+        $library = Pray4Movement_Prayer_Points_Utilities::get_prayer_library( $library_id );
+        self::display_prayer_points_for_child_library( $library['id'] );
     }
 
     public function process_add_prayer_point() {
@@ -1188,17 +1196,34 @@ class Pray4Movement_Prayer_Points_View_Library {
         return;
     }
 
-    private function display_prayer_points( $library_id ) {
-        $prayer_points = Pray4Movement_Prayer_Points_Utilities::get_lib_prayer_points( $library_id );
-        if ( !$prayer_points ) : ?>
+    private static function display_prayer_points_for_parent_library( $library_id ) {
+        $prayer_points = Pray4Movement_Prayer_Points_Utilities::get_prayer_points( $library_id );
+        ?>
+        <table class="widefat striped">
+            <thead>
+                <tr>
+                    <?php if ( !empty( $library ) ) : ?>
+                        <th colspan="6"><?php echo esc_html( $library['name'] ); ?></th>
+                    <?php endif; ?>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th>#</th>    
+                    <th>Title</th>
+                    <th>Reference</th>
+                    <th>Content</th>
+                    <th>Tags</th>
+                    <th>Actions</th>
+                </tr>
+        <?php if ( !$prayer_points ) : ?>
             <tr>
                 <td colspan="6">
                     <i><?php esc_html_e( 'This Prayer Library is currently empty.', 'pray4movement_prayer_points' ); ?></i>
                 </td>
             </tr>
             <?php
-            return;
-            endif;
+        endif;
 
         foreach ( $prayer_points as $prayer ) :
             $prayer['tags'] = Pray4Movement_Prayer_Points_Utilities::get_prayer_tags( $prayer['id'] );
@@ -1238,6 +1263,66 @@ class Pray4Movement_Prayer_Points_View_Library {
                     </td>
                 </tr>
         <?php endforeach; ?>
+            </tbody>
+        </table>
+        <br>
+        <form method="POST">
+            <?php
+            wp_nonce_field( 'add_prayer_point', 'add_prayer_point_nonce' );
+            Pray4Movement_Prayer_Points_Utilities::check_user_can( 'publish_posts', false );
+            ?>
+            <table class="widefat striped">
+                <thead>
+                    <tr>
+                        <th colspan="3"><?php esc_html_e( 'Add Prayer Point', 'pray4movement_prayer_points' ); ?></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <?php esc_html_e( 'Title', 'pray4movement_prayer_points' ); ?> (*)
+                        </td>
+                        <td>
+                            <input type="text" name="prayer_title" size="50" required>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <?php esc_html_e( 'Reference', 'pray4movement_prayer_points' ); ?>
+                        </td>
+                        <td>
+                            <?php Pray4Movement_Prayer_Points_Utilities::display_bible_book_dropdown(); ?>
+                            <input type="text" name="prayer_reference_verse" size="30">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <?php esc_html_e( 'Content', 'pray4movement_prayer_points' ); ?> (*)
+                        </td>
+                        <td>
+                            <textarea name="prayer_content" rows="10" cols="50" required></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <?php esc_html_e( 'Tags', 'pray4movement_prayer_points' ); ?>
+                        </td>
+                        <td>
+                            <input type="text" name="prayer_tags" size="50">
+                        </td>
+                    </tr>
+                    <tr style="display:none;">
+                        <td></td>
+                        <td><input type="hidden" name="prayer_library_id" value="<?php echo esc_html( $library_id ); ?>"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <button class="button" type="post"><?php esc_html_e( 'Add', 'pray4movement_prayer_points' ); ?></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
         <script>
             jQuery( '.delete_prayer' ).on( 'click', function () {
                 var prayer_title = jQuery( this ).data('title');
@@ -1264,6 +1349,115 @@ class Pray4Movement_Prayer_Points_View_Library {
                         </div>
                     `;
                     jQuery('#post-body-content').prepend(admin_notice);
+            }
+        </script>
+        <?php
+    }
+
+    private function display_prayer_points_for_child_library( $child_library_id ) {
+        $child_library = Pray4Movement_Prayer_Points_Utilities::get_prayer_library( $child_library_id );
+        $parent_library_id = Pray4Movement_Prayer_Points_Utilities::get_parent_library_id_from_child_id( $child_library_id );
+        $parent_prayer_points = Pray4Movement_Prayer_Points_Utilities::get_full_prayer_points( $parent_library_id );
+        ?>
+        <input type="hidden" id="child-library-id" value="<?php echo esc_attr( $child_library_id ); ?>">
+        <table class="widefat striped">
+            <thead>
+                <tr>
+                    <th><?php echo esc_html( $child_library['name'] ); ?></th>
+                    <th><?php esc_html_e( 'Original', 'pray4movement-prayer-points' ); ?></th>
+                    <th><?php esc_html_e( 'Translation', 'pray4movement-prayer-points' ); ?></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ( $parent_prayer_points as $parent_prayer_point ): ?>
+                    <?php
+                        $child_prayer_point = Pray4Movement_Prayer_Points_Utilities::get_child_prayer_point_from_parent( $parent_prayer_point['id'] );
+                    ?>
+                    <tr>
+                        <td>
+                            <?php esc_html_e( 'Title', 'pray4movement-prayer-points' ); ?>
+                        </td>
+                        <td>
+                            <?php echo esc_html( $parent_prayer_point['title'] ); ?>
+                        </td>
+                        <td>
+                            <input type="text" id="title-<?php echo esc_attr( $parent_prayer_point['id'] ); ?>" value="<?php if ( !empty( $child_prayer_point['title'] ) ) { echo esc_html( $child_prayer_point['title'] ); } ?>">
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <?php esc_html_e( 'Content', 'pray4movement-prayer-points' ); ?>
+                        </td>
+                        <td>
+                            <?php echo esc_html( $parent_prayer_point['content'] ); ?>
+                        </td>
+                        <td>
+                            <textarea id="content-<?php echo esc_attr( $parent_prayer_point['id'] ); ?>"><?php if ( !empty( $child_prayer_point['content'] ) ) { echo esc_html( $child_prayer_point['content'] ); } ?></textarea>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <?php esc_html_e( 'Reference', 'pray4movement_prayer_points' ); ?>
+                        </td>
+                        <td>
+                            <?php echo esc_html( $parent_prayer_point['reference'] ); ?>
+                        </td>
+                        <td>
+                            <?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::get_translation( $parent_prayer_point['reference'], $child_library['language'] ) ); ?>
+                        </td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <?php esc_html_e( 'Tags', 'pray4movement-prayer-points' ); ?>
+                        </td>
+                        <td>
+                            <?php echo esc_html( str_replace( ',', ', ', $parent_prayer_point['tags'] ) ); ?><br>
+                        </td>
+                        <td>
+                            <input type="text" id="tags-<?php echo esc_attr( $parent_prayer_point['id'] ); ?>">
+                        </td>
+                        <td>
+                            <button class="button" onclick="saveChildPrayerPoint(<?php echo esc_attr( $parent_prayer_point['id'] ); ?>);"><?php esc_html_e( 'Save', 'pray4movement-prayer-points' ); ?></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4">
+                            <hr>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+        <script>
+            function saveChildPrayerPoint( parentPrayerPointId ) {
+                var title = jQuery(`#title-${parentPrayerPointId}`)[0].value;
+                var content = jQuery(`#content-${parentPrayerPointId}`)[0].value;
+                var child_library_id = jQuery('#child-library-id')[0].value;
+                // var tags = jQuery(`#tags-${parentPrayerPointId}`)[0].value;
+                jQuery.ajax( {
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/save_child_prayer_point/${parentPrayerPointId}/${child_library_id}/${title}/${content}`,
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
+                        },
+                        success: save_prayer_point_success(),
+                    } );
+            }
+            
+            function save_prayer_point_success() {
+                let admin_notice = `
+                    <div class="notice notice-success is-dismissible">
+                        <p><?php esc_html_e( 'Prayer Point updated successfully!', 'pray4movement-prayer-points' ); ?></p>
+                    </div>
+                `;
+                jQuery('#poststuff').prepend(admin_notice);
             }
         </script>
         <?php
@@ -1338,75 +1532,7 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
                     <?php esc_html_e( 'Reference', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
-                    <select name="prayer_reference_book" id="prayer_reference_book">
-                        <option value="">(No Reference)</option>
-                        <option value="Genesis">Genesis</option>
-                        <option value="Exodus">Exodus</option>
-                        <option value="Leviticus">Leviticus</option>
-                        <option value="Numbers">Numbers</option>
-                        <option value="Deuteronomy">Deuteronomy</option>
-                        <option value="Joshua">Joshua</option>
-                        <option value="Judges">Judges</option>
-                        <option value="Ruth">Ruth</option>
-                        <option value="1 Samuel">1 Samuel</option>
-                        <option value="2 Samuel">2 Samuel</option>
-                        <option value="1 Kings">1 Kings</option>
-                        <option value="2 Kings">2 Kings</option>
-                        <option value="1 Chronicles">1 Chronicles</option>
-                        <option value="2 Chronicles">2 Chronicles</option>
-                        <option value="Ezra">Ezra</option>
-                        <option value="Nehemiah">Nehemiah</option>
-                        <option value="Esther">Esther</option>
-                        <option value="Job">Job</option>
-                        <option value="Psalm">Psalm</option>
-                        <option value="Proverbs">Proverbs</option>
-                        <option value="Ecclesiastes">Ecclesiastes</option>
-                        <option value="Song of Solomon">Song of Solomon</option>
-                        <option value="Isaiah">Isaiah</option>
-                        <option value="Jeremiah">Jeremiah</option>
-                        <option value="Lamentations">Lamentations</option>
-                        <option value="Ezekiel">Ezekiel</option>
-                        <option value="Daniel">Daniel</option>
-                        <option value="Hosea">Hosea</option>
-                        <option value="Joel">Joel</option>
-                        <option value="Amos">Amos</option>
-                        <option value="Obadiah">Obadiah</option>
-                        <option value="Jonah">Jonah</option>
-                        <option value="Micah">Micah</option>
-                        <option value="Nahum">Nahum</option>
-                        <option value="Habakkuk">Habakkuk</option>
-                        <option value="Zephaniah">Zephaniah</option>
-                        <option value="Haggai">Haggai</option>
-                        <option value="Zechariah">Zechariah</option>
-                        <option value="Malachi">Malachi</option>
-                        <option value="Matthew">Matthew</option>
-                        <option value="Mark">Mark</option>
-                        <option value="Luke">Luke</option>
-                        <option value="John">John</option>
-                        <option value="Acts">Acts</option>
-                        <option value="Romans">Romans</option>
-                        <option value="1 Corinthians">1 Corinthians</option>
-                        <option value="2 Corinthians">2 Corinthians</option>
-                        <option value="Galatians">Galatians</option>
-                        <option value="Ephesians">Ephesians</option>
-                        <option value="Philippians">Philippians</option>
-                        <option value="Colossians">Colossians</option>
-                        <option value="1 Thessalonians">1 Thessalonians</option>
-                        <option value="2 Thessalonians">2 Thessalonians</option>
-                        <option value="1 Timothy">1 Timothy</option>
-                        <option value="2 Timothy">2 Timothy</option>
-                        <option value="Titus">Titus</option>
-                        <option value="Philemon">Philemon</option>
-                        <option value="Hebrews">Hebrews</option>
-                        <option value="James">James</option>
-                        <option value="1 Peter">1 Peter</option>
-                        <option value="2 Peter">2 Peter</option>
-                        <option value="1 John">1 John</option>
-                        <option value="2 John">2 John</option>
-                        <option value="3 John">3 John</option>
-                        <option value="Jude">Jude</option>
-                        <option value="Revelation">Revelation</option>
-                    </select>
+                    <?php Pray4Movement_Prayer_Points_Utilities::display_bible_book_dropdown(); ?>
                     <input type="text" name="prayer_reference_verse" size="30" value="<?php echo esc_html( $prayer['verse'] ); ?>">
                 </td>
             </tr>
@@ -1759,7 +1885,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
     }
 
     public function main_prayer_points_column() {
-        $prayer_libraries = Pray4Movement_Prayer_Points_Utilities::get_parent_prayer_libraries();
+        $prayer_libraries = Pray4Movement_Prayer_Points_Utilities::get_prayer_libraries();
         if ( empty( $prayer_libraries ) ) {
             ?>
             <p>
