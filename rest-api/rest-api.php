@@ -287,9 +287,9 @@ class Pray4Movement_Prayer_Points_Endpoints
             $this->get_namespace(), 'save_child_prayer_point/(?P<parent_prayer_point_id>\d+)/(?P<library_id>\d+)/(?P<title>.+)/(?P<content>.+)', [
                 'methods' => 'POST',
                 'callback' => [ $this, 'endpoint_for_save_child_prayer_point' ],
-                // 'permission_callback' => function( WP_REST_Request $request ) {
-                //     return $this->has_permission();
-                // }
+                'permission_callback' => function( WP_REST_Request $request ) {
+                    return $this->has_permission();
+                }
             ]
         );
     }
