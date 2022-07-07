@@ -1853,7 +1853,19 @@ class Pray4Movement_Prayer_Points_View_Library {
         <?php endforeach; ?>
         <script>
             function saveChildPrayerPoint( parentPrayerPointId ) {
-                var title = jQuery(`#title-${parentPrayerPointId}`)[0].value;
+                var titleInputBox = jQuery(`#title-${parentPrayerPointId}`);
+                var contentInputBox = jQuery(`#content-${parentPrayerPointId}`);
+                titleInputBox.attr('style', 'border: 1px solid black;');
+                contentInputBox.attr('style', 'border: 1px solid black;');
+                if ( titleInputBox[0].value === '' ) {
+                    titleInputBox.attr('style', 'border: 1px solid red;');
+                    return;
+                }
+                if ( contentInputBox[0].value === '' ) {
+                    contentInputBox.attr('style', 'border: 1px solid red;');
+                    return;
+                }
+                var title = titleInputBox[0].value;
                 var content = jQuery(`#content-${parentPrayerPointId}`)[0].value;
                 var child_library_id = jQuery('#child-library-id')[0].value;
                 jQuery.ajax( {
