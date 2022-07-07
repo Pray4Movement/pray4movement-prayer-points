@@ -226,6 +226,20 @@ class Pray4Movement_Prayer_Points_Utilities {
         ];
         return $languages;
     }
+
+    public static function display_translation_flags( $parent_library_id, $child_library_id ) {
+        $languages = self::get_languages();
+        $flag_from = $languages[self::get_language_from_library( $parent_library_id )]['flag'];
+        $flag_to = $languages[self::get_language_from_library( $child_library_id )]['flag'];
+        echo esc_html( "$flag_from → $flag_to" );
+    }
+
+    public static function get_language_from_library( $library_id ) {
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare( "SELECT `language` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `id` = %d;", $library_id )
+        );
+    }
     public static function display_languages_dropdown() {
         $languages = self::get_languages();
         ?>
@@ -1750,14 +1764,17 @@ class Pray4Movement_Prayer_Points_View_Library {
         $child_library = Pray4Movement_Prayer_Points_Utilities::get_prayer_library( $child_library_id );
         $parent_library_id = Pray4Movement_Prayer_Points_Utilities::get_parent_library_id_from_child_id( $child_library_id );
         $parent_prayer_points = Pray4Movement_Prayer_Points_Utilities::get_full_prayer_points( $parent_library_id );
+        $languages = Pray4Movement_Prayer_Points_Utilities::get_languages();
         ?>
         <input type="hidden" id="child-library-id" value="<?php echo esc_attr( $child_library_id ); ?>">
         <?php foreach ( $parent_prayer_points as $parent_prayer_point ): ?>
         <table class="widefat striped">
             <thead>
                 <tr>
-                    <th colspan="3">#<?php echo esc_html( $parent_prayer_point['id'] ); ?></th>
-                    <th style="text-align:right;"><a href="admin.php?page=pray4movement_prayer_points&edit_prayer=<?php echo esc_attr( $parent_prayer_point['id'] ); ?>"><?php echo esc_html( 'edit', 'pray4movement_prayer_points' ); ?></a></th>
+                    <th colspan="4">#<?php echo esc_html( $parent_prayer_point['id'] ); ?></th>
+                    <th style="text-align:right;">
+                        <?php Pray4Movement_Prayer_Points_Utilities::display_translation_flags( $parent_library_id, $child_library_id ); ?>
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -1768,7 +1785,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                     <td>
                         <b><?php esc_html_e( 'Title', 'pray4movement-prayer-points' ); ?></b>
                     </td>
-                    <td style="width:30%;">
+                    <td  colspan="2" style="width:30%;">
                         <?php echo esc_html( $parent_prayer_point['title'] ); ?>
                     </td>
                     <td>
@@ -1781,7 +1798,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                     <td>
                         <b><?php esc_html_e( 'Content', 'pray4movement-prayer-points' ); ?></b>
                     </td>
-                    <td>
+                    <td colspan="2">
                         <?php echo esc_html( $parent_prayer_point['content'] ); ?>
                     </td>
                     <td>
@@ -1793,7 +1810,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                     <td>
                         <b><?php esc_html_e( 'Reference', 'pray4movement_prayer_points' ); ?></b>
                     </td>
-                    <td>
+                    <td colspan="2">
                         <?php echo esc_html( $parent_prayer_point['reference'] ); ?>
                     </td>
                     <td>
@@ -1808,16 +1825,14 @@ class Pray4Movement_Prayer_Points_View_Library {
                     <td>
                         <?php echo esc_html( str_replace( ',', ', ', $parent_prayer_point['tags'] ) ); ?><br>
                     </td>
+                    <td style="text-align: right;">
+                        <a href="admin.php?page=pray4movement_prayer_points&edit_prayer=<?php echo esc_attr( $parent_prayer_point['id'] ); ?>"><?php echo esc_html( 'edit', 'pray4movement_prayer_points' ); ?></a>
+                    </td>
                     <td>
                         <input type="text" id="tags-<?php echo esc_attr( $parent_prayer_point['id'] ); ?>" size="35">
                     </td>
-                    <td>
+                    <td style="text-align: right;">
                         <button class="button" onclick="saveChildPrayerPoint(<?php echo esc_attr( $parent_prayer_point['id'] ); ?>);"><?php esc_html_e( 'Save', 'pray4movement-prayer-points' ); ?></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="4">
-                        <hr>
                     </td>
                 </tr>
             </tbody>
