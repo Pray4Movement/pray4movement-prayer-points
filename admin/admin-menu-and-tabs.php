@@ -272,6 +272,20 @@ class Pray4Movement_Prayer_Points_Utilities {
         }
     }
 
+    public static function display_tags( $parent_prayer_id, $language ) {
+        $child_prayer_point = self::get_child_prayer_point_from_parent_id( $parent_prayer_id, $language );
+        if ( !isset( $child_prayer_point['id'] ) || is_null( $child_prayer_point['id'] ) ) {
+            return;
+        }
+        $prayer_id = $child_prayer_point['id'];
+
+        global $wpdb;
+        $result = $wpdb->get_var(
+            $wpdb->prepare( "SELECT GROUP_CONCAT( meta_value ) AS `tags` FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE `prayer_id` = %s;", $prayer_id )
+        );
+            echo esc_html( str_replace( ',', ', ', $result ) );
+    }
+
     public static function display_parent_libraries_dropdown() {
         $prayer_libraries = self::get_parent_prayer_libraries();
         ?>
@@ -288,10 +302,10 @@ class Pray4Movement_Prayer_Points_Utilities {
         <?php
     }
 
-    public static function get_child_prayer_point_from_parent( $parent_prayer_point_id ) {
+    public static function get_child_prayer_point_from_parent_id( $parent_prayer_id, $language ) {
         global $wpdb;
         return $wpdb->get_row(
-            $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points` WHERE parent_id = %d ORDER BY id DESC LIMIT 1;", $parent_prayer_point_id ),
+            $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points` WHERE `parent_id` = %d AND `language` = %s ORDER BY id DESC LIMIT 1;", $parent_prayer_id, $language ),
         ARRAY_A );
     }
 
@@ -1765,14 +1779,13 @@ class Pray4Movement_Prayer_Points_View_Library {
         $child_library = Pray4Movement_Prayer_Points_Utilities::get_prayer_library( $child_library_id );
         $parent_library_id = Pray4Movement_Prayer_Points_Utilities::get_parent_library_id_from_child_id( $child_library_id );
         $parent_prayer_points = Pray4Movement_Prayer_Points_Utilities::get_full_prayer_points( $parent_library_id );
-        $languages = Pray4Movement_Prayer_Points_Utilities::get_languages();
         ?>
         <input type="hidden" id="child-library-id" value="<?php echo esc_attr( $child_library_id ); ?>">
         <?php foreach ( $parent_prayer_points as $parent_prayer_point ): ?>
         <table class="widefat striped">
             <thead>
                 <tr>
-                    <th colspan="4">#<?php echo esc_html( $parent_prayer_point['id'] ); ?></th>
+                    <th colspan="2">#<?php echo esc_html( $parent_prayer_point['id'] ); ?></th>
                     <th style="text-align:right;">
                         <?php Pray4Movement_Prayer_Points_Utilities::display_translation_flags( $parent_library_id, $child_library_id ); ?>
                     </th>
@@ -1780,44 +1793,40 @@ class Pray4Movement_Prayer_Points_View_Library {
             </thead>
             <tbody>
                 <?php
-                    $child_prayer_point = Pray4Movement_Prayer_Points_Utilities::get_child_prayer_point_from_parent( $parent_prayer_point['id'] );
+                    $child_prayer_point = Pray4Movement_Prayer_Points_Utilities::get_child_prayer_point_from_parent_id( $parent_prayer_point['id'], $child_library['language'] );
                 ?>
                 <tr>
                     <td>
                         <b><?php esc_html_e( 'Title', 'pray4movement-prayer-points' ); ?></b>
                     </td>
-                    <td  colspan="2" style="width:30%;">
+                    <td style="width:30%;">
                         <?php echo esc_html( $parent_prayer_point['title'] ); ?>
                     </td>
                     <td>
                         <input type="text" id="title-<?php echo esc_attr( $parent_prayer_point['id'] ); ?>" size="35" value="<?php if ( !empty( $child_prayer_point['title'] ) ) { echo esc_html( $child_prayer_point['title'] ); } ?>">
-                    </td>
-                    <td>
                     </td>
                 </tr>
                 <tr>
                     <td>
                         <b><?php esc_html_e( 'Content', 'pray4movement-prayer-points' ); ?></b>
                     </td>
-                    <td colspan="2">
+                    <td>
                         <?php echo esc_html( $parent_prayer_point['content'] ); ?>
                     </td>
                     <td>
                         <textarea id="content-<?php echo esc_attr( $parent_prayer_point['id'] ); ?>" cols="35" rows="6"><?php if ( !empty( $child_prayer_point['content'] ) ) { echo esc_html( $child_prayer_point['content'] ); } ?></textarea>
                     </td>
-                    <td></td>
                 </tr>
                 <tr>
                     <td>
                         <b><?php esc_html_e( 'Reference', 'pray4movement_prayer_points' ); ?></b>
                     </td>
-                    <td colspan="2">
+                    <td>
                         <?php echo esc_html( $parent_prayer_point['reference'] ); ?>
                     </td>
                     <td>
                         <?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::get_book_translation( $parent_prayer_point['book'], $child_library['language'] ) ); ?> <?php echo esc_html( $parent_prayer_point['verse'] ); ?>
                     </td>
-                    <td></td>
                 </tr>
                 <tr>
                     <td>
@@ -1826,11 +1835,13 @@ class Pray4Movement_Prayer_Points_View_Library {
                     <td>
                         <?php echo esc_html( str_replace( ',', ', ', $parent_prayer_point['tags'] ) ); ?><br>
                     </td>
-                    <td style="text-align: right;">
-                        <a href="admin.php?page=pray4movement_prayer_points&edit_prayer=<?php echo esc_attr( $parent_prayer_point['id'] ); ?>"><?php echo esc_html( 'edit', 'pray4movement_prayer_points' ); ?></a>
-                    </td>
                     <td>
-                        <input type="text" id="tags-<?php echo esc_attr( $parent_prayer_point['id'] ); ?>" size="35">
+                        <input type="text" id="tags-<?php echo esc_attr( $parent_prayer_point['id'] ); ?>" size="35" value="<?php Pray4Movement_Prayer_Points_Utilities::display_tags( $parent_prayer_point['id'], $child_library['language'] ); ?>">
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: left;" colspan="2">
+                        <a href="admin.php?page=pray4movement_prayer_points&edit_prayer=<?php echo esc_attr( $parent_prayer_point['id'] ); ?>"><?php echo esc_html( 'edit', 'pray4movement_prayer_points' ); ?></a>
                     </td>
                     <td style="text-align: right;">
                         <button class="button" onclick="saveChildPrayerPoint(<?php echo esc_attr( $parent_prayer_point['id'] ); ?>);"><?php esc_html_e( 'Save', 'pray4movement-prayer-points' ); ?></button>
@@ -1853,25 +1864,28 @@ class Pray4Movement_Prayer_Points_View_Library {
                         beforeSend: function(xhr) {
                             xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
                         },
-                        success: save_prayer_point_success(),
+                        success: savePrayerPointSuccess(),
                 } );
             }
 
             function saveChildPrayerPointTags( parentPrayerPointId ) {
                 var tags = jQuery(`#tags-${parentPrayerPointId}`)[0].value;
-                jQuery.ajax( {
-                        type: 'POST',
-                        contentType: 'application/json; charset=utf-8',
-                        dataType: 'json',
-                        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/save_tags/${prayer_id}/${tags}`,
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
-                        },
-                        success: save_prayer_point_success(),
-                } );
+                if ( tags != '' ) {
+                    var libraryLanguage = '<?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::get_language_from_library( $child_library_id ) ); ?>';
+                    jQuery.ajax( {
+                            type: 'POST',
+                            contentType: 'application/json; charset=utf-8',
+                            dataType: 'json',
+                            url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/save_child_prayer_point_tags/${parentPrayerPointId}/${libraryLanguage}/${tags}`,
+                            beforeSend: function(xhr) {
+                                xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
+                            },
+                            success: savePrayerPointSuccess(),
+                    } );
+                }
             }
             
-            function save_prayer_point_success() {
+            function savePrayerPointSuccess() {
                 let admin_notice = `
                     <div class="notice notice-success is-dismissible">
                         <p><?php esc_html_e( 'Prayer Point updated successfully!', 'pray4movement-prayer-points' ); ?></p>
