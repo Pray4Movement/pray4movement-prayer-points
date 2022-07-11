@@ -59,6 +59,7 @@ function getFlag(language) {
 }
 
 function loadPrayerPoints() {
+    removeHeaderBlock();
     displayLocalizationInputs();
 
     var prayerPointsTable = `
@@ -119,6 +120,8 @@ function loadPrayerPoints() {
                     </tr>`;
                 jQuery('.p4m-prayer-points-table').append(row);
             });
+            jQuery('.p4m-localization-box').before(`<h2 class="p4m-library-name">${p4mPrayerPoints.libraryName}</h2>`);
+            jQuery('.p4m-localization-box').after(`<span class="export-buttons"><a href="javascript:downloadCSV(${p4mPrayerPoints.libraryId}, '${p4mPrayerPoints.libraryKey}');">csv</a></span>`);
         },
     });
 }
@@ -138,7 +141,7 @@ function displayLocalizationInputs() {
             <label>People Group: </label><input type="text" id="p4m-localization-people-group" placeholder="people">
         </div>
         <div>
-            <a class="btn btn-common btn-rm" id="update-prayer-points" href="javascript:updateLocalization();">Update</a>
+            <a class="button p4m-localization-box-button" id="update-prayer-points" href="javascript:updateLocalization();">Update</a>
         </div>
     </div>`;
     jQuery('#p4m-content').append(localizationInputs);
@@ -168,7 +171,12 @@ function displayLocalizationDownload( libraryID, libraryName, libraryKey ) {
     jQuery('#p4m-content').append(localizationInputs);
 }
 
+function removeHeaderBlock() {
+    jQuery('.wp-block-cover alignfull').remove();
+}
+
 function loadPrayerPointsByTag() {
+    removeHeaderBlock();
     var prayerPointsTable = `
     <table class="p4m-prayer-points-table">
         <tr id="p4m-library-spinner">
