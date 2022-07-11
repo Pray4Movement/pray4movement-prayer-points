@@ -30,8 +30,11 @@ function show_prayer_points() {
     }
 
     $library_id = sanitize_text_field( wp_unslash( $_GET['library_id'] ) );
+    $library = get_prayer_library( $library_id );
     $params = [
-        'libraryId' => $library_id,
+        'libraryId' => $library['id'],
+        'libraryKey' => $library['key'],
+        'libraryName' => $library['name'],
         'nonce' => wp_create_nonce( 'wp_rest' ),
     ];
     wp_enqueue_script( 'p4m-prayer-points-scripts', trailingslashit( plugin_dir_url( __FILE__ ) ) . '../assets/p4m-prayer-points-functions.js', [], filemtime( plugin_dir_path( __FILE__ ) . '../assets/p4m-prayer-points-functions.js' ) );
@@ -90,4 +93,11 @@ function show_prayer_libraries_inline() {
         });
     </script>
     <?php
+}
+
+function get_prayer_library( $library_id ) {
+    global $wpdb;
+    return $wpdb->get_row(
+        $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `id` = %d;", $library_id ), ARRAY_A
+    );
 }
