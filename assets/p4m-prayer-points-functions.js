@@ -1,4 +1,5 @@
 function loadLibraries() {
+    jQuery('#p4m-table-heading').text('Prayer Libraries');
     var librariesTable = `
     <table class="p4m-libraries-table">
         <tr id="p4m-library-spinner">

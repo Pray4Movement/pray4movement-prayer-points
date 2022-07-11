@@ -2,7 +2,15 @@
 add_shortcode( 'p4m_prayer_libraries', 'p4m_prayer_libraries' );
 
 function p4m_prayer_libraries() {
-    add_action( 'wp_enqueue_scripts', 'p4m_prayer_points_enqueue_scripts' );
+    ?>
+    <script src="<?php echo esc_attr( trailingslashit( plugin_dir_url( __FILE__ ) ) . '../assets/jquery-3.6.0.min.js' ); ?>"></script>
+    <link rel="stylesheet" href="<?php echo esc_attr( trailingslashit( plugin_dir_url( __FILE__ ) ) . '../assets/p4m-prayer-points-styles.css' ); ?>">
+    <?php
+    // function p4m_prayer_points_enqueue_scripts() {
+    //     wp_enqueue_script( 'jquery', trailingslashit( plugin_dir_url( __FILE__ ) ) . '../assets/jquery-3.6.0.min.js', [], filemtime( plugin_dir_path( __FILE__ ) . '../assets/jquery-3.6.0.min.js' ) );
+    //     wp_enqueue_style( 'p4m-prayer-points-style', trailingslashit( plugin_dir_url( __FILE__ ) ) . '../assets/p4m-prayer-points-styles.css', [], filemtime( plugin_dir_path( __FILE__ ) . '../assets/p4m-prayer-points-styles.css' ) );
+    // }
+    // add_action( 'wp_enqueue_scripts', 'p4m_prayer_points_enqueue_scripts' );
     if ( isset( $_GET['library_id'] ) ) {
         show_prayer_points();
         return;
@@ -12,15 +20,8 @@ function p4m_prayer_libraries() {
         show_prayer_points_by_tag();
         return;
     }
-
     show_prayer_libraries();
     return;
-}
-
-function p4m_prayer_points_enqueue_scripts( $params ) {
-    wp_enqueue_style( 'gantari', 'https://fonts.googleapis.com/css2?family=Gantari', [], 'Gantari' );
-    wp_enqueue_style( 'p4m-prayer-points-style', trailingslashit( plugin_dir_url( __FILE__ ) ) . '../assets/p4m-prayer-points-styles.css', [], filemtime( plugin_dir_path( __FILE__ ) . '../assets/p4m-prayer-points-styles.css' ) );
-    wp_enqueue_script( 'jquery', 'https://code.jquery.com/jquery-3.6.0.min.js', [], '3.6.0' );
 }
 
 function show_prayer_points() {
