@@ -135,10 +135,10 @@ function displayLocalizationInputs() {
             Localize these prayer points below.
         </div>
         <div>
-            <label>Location: </label> <input type="text" id="p4m-localization-location" placeholder="the world">
+            <label class="p4m-localization-box-label">Location:</label> <input type="text" id="p4m-localization-location" placeholder="the world">
         </div>
         <div>
-            <label>People Group: </label><input type="text" id="p4m-localization-people-group" placeholder="people">
+            <label class="p4m-localization-box-label">People Group:</label><input type="text" id="p4m-localization-people-group" placeholder="people">
         </div>
         <div>
             <a class="button p4m-localization-box-button" id="update-prayer-points" href="javascript:updateLocalization();">Update</a>
@@ -158,13 +158,13 @@ function displayLocalizationDownload( libraryID, libraryName, libraryKey ) {
                 '${libraryName}'
             </div>
             <div>
-                <label>Location: </label> <input type="text" id="p4m-localization-location" placeholder="the world" value="">
+                <label class="p4m-localization-box-label">Location:</label> <input type="text" id="p4m-localization-location" placeholder="the world">
             </div>
             <div>
-                <label>People Group: </label><input type="text" id="p4m-localization-people-group" placeholder="people" value="">
+                <label class="p4m-localization-box-label">People Group:</label><input type="text" id="p4m-localization-people-group" placeholder="people">
             </div>
-            <div class="p4m-modal-download-button">
-                <a id="update-prayer-points" href="javascript:downloadCSV(${libraryID}, '${libraryKey}');">Download</a>
+            <div>
+                <a class="button p4m-localization-box-button" id="update-prayer-points" href="javascript:downloadCSV(${libraryID}, '${libraryKey}');">Download</a>
             </div>
         </div>
     </div>`;
