@@ -223,7 +223,7 @@ class Pray4Movement_Prayer_Points_Endpoints
 
     public function endpoint_for_get_prayer_libraries( WP_REST_Request $request ) {
         global $wpdb;
-        return $wpdb->get_results( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib`;", ARRAY_A );
+        return $wpdb->get_results( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib` ORDER BY `id`, `parent_id`;", ARRAY_A );
     }
 
     private function register_get_prayer_points_by_tag_endpoint() {
