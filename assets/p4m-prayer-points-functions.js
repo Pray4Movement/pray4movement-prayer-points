@@ -40,14 +40,8 @@ function loadLibraries() {
                             <td><a href="javascript:displayLocalizationDownload(${library['id']}, '${library['name']}', '${library['key']}')">csv</a></td>
                         </tr>`);
                 } else {
-                    jQuery(`#p4m-row-parent-id-${library['parent_id']}`).append(`<a href="?child_library_id=${library['id']}">` + getFlag(library['language']) + `</a>`);
+                    jQuery(`#p4m-row-parent-id-${library['parent_id']}`).append(`<a href="?library_id=${library['id']}">` + getFlag(library['language']) + `</a>`);
                 }
-                        //     <tr>
-                        //     <td><a href="?library_id=${library['id']}">${library['name']}</a></td>
-                        //     <td>${library['description']}</td>
-                        //     <td></td>
-                        //     <td><a href="javascript:displayLocalizationDownload(${library['id']}, '${library['name']}', '${library['key']}')">csv</a></td>
-                        // </tr>`);
             });
         },
     });
