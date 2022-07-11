@@ -18,21 +18,44 @@ function loadLibraries() {
             xhr.setRequestHeader('X-WP-Nonce', p4mPrayerPoints.nonce );
         },
         success: function(response) {
+            jQuery('#p4m-library-spinner').remove();
             jQuery('.p4m-libraries-table').append(`
                 <tr>
                     <th>Name</th>
+                    <th>Description</th>
+                    <th>Languages</th>
                     <th>Download</th>
                 </tr>`);
             response.forEach( function(library){
-                jQuery('#p4m-library-spinner').remove();
-                jQuery('.p4m-libraries-table').append(`
-                    <tr>
-                        <td><a href="?library_id=${library['id']}">${library['name']}</a></td>
-                        <td><a href="javascript:displayLocalizationDownload(${library['id']}, '${library['name']}', '${library['key']}')">csv</a></td>
-                    </tr>`);
+                var isParent = true;
+                if ( library['parent_id'] > 0 ) {
+                    isParent = false;
+                }
+                if ( isParent ) {
+                    jQuery('.p4m-libraries-table').append(`
+                        <tr>
+                            <td><a href="?library_id=${library['id']}">${library['name']}</a></td>
+                            <td>${library['description']}</td>
+                            <td id="p4m-row-parent-id-${library['id']}"></td>
+                            <td><a href="javascript:displayLocalizationDownload(${library['id']}, '${library['name']}', '${library['key']}')">csv</a></td>
+                        </tr>`);
+                } else {
+                    jQuery(`#p4m-row-parent-id-${library['parent_id']}`).append(`<a href="?library_id=${library['id']}">` + getFlag(library['language']) + `</a>`);
+                }
             });
         },
     });
+}
+
+function getFlag(language) {
+    var flags = {
+        'en':'🇺🇸',
+        'es':'🇪🇸',
+        'fr':'🇫🇷',
+        'pt':'🇧🇷',
+
+    };
+    return flags[language];
 }
 
 function loadPrayerPoints() {
