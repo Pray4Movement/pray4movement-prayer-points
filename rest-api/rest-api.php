@@ -11,6 +11,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         self::register_get_prayer_points_endpoint();
         self::register_get_replaced_prayer_points_endpoint();
         self::register_get_prayer_libraries_endpoint();
+        self::register_get_prayer_libraries_by_language_endpoint();
         self::register_get_prayer_points_by_tag_endpoint();
         self::register_set_location_and_people_group_endpoint();
         self::register_save_child_prayer_point();
@@ -215,7 +216,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         register_rest_route(
             $this->get_namespace(), '/get_prayer_libraries', [
                 'methods' => 'POST',
-                'callback' => [ $this , 'endpoint_for_get_prayer_libraries' ],
+                'callback' => [ $this, 'endpoint_for_get_prayer_libraries' ],
                 'permission_callback' => '__return_true',
             ]
         );
@@ -225,6 +226,24 @@ class Pray4Movement_Prayer_Points_Endpoints
         global $wpdb;
         return $wpdb->get_results( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib` ORDER BY `id`, `parent_id`;", ARRAY_A );
     }
+
+    private function register_get_prayer_libraries_by_language_endpoint() {
+        register_rest_route(
+            $this->get_namespace(), '/get_prayer_libraries_by_language/(?P<language>.+)', [
+                'methods' => 'POST',
+                'callback' => [ $this, 'endpoint_for_get_prayer_libraries_by_language' ],
+                'permission_callback' => '__return_true',
+            ]
+        );
+    }
+
+    public function endpoint_for_get_prayer_libraries_by_language( WP_REST_Request $request ) {
+        $params = $request->get_params();
+        global $wpdb;
+        return $wpdb->get_results(
+            $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `language` = %s;", $params['language'] ), ARRAY_A
+        );
+    }    
 
     private function register_get_prayer_points_by_tag_endpoint() {
         register_rest_route(
