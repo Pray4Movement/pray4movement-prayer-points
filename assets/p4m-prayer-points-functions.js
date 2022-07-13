@@ -106,7 +106,7 @@ function changeLanguage(currentElement) {
         window.location['href'] = '?lang=' + language;
         return;
     }
-    window.location['href'] = '..';
+    window.location['href'] = '.';
 }
 
 function getFlag(language) {
