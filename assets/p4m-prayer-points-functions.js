@@ -2,6 +2,17 @@ function loadLibraries() {
     jQuery('#p4m-table-heading').text('Prayer Libraries');
     var librariesTable = `
     <table class="p4m-libraries-table">
+        <tr class="p4m-translate-row">
+            <td colspan="4">
+                <select id="languages_dropdown" onchange="javascript:changeLanguage(this);">
+                    <option value="all">All Languages</option>
+                    <option value="en">🇺🇸 English</option>
+                    <option value="es">🇪🇸 Spanish</option>
+                    <option value="fr">🇫🇷 French</option>
+                    <option value="pt">🇧🇷 Portuguese</option>
+                </select>
+            </td>
+        </tr>
         <tr id="p4m-library-spinner">
             <td colspan="2">
                 <i>loading...</i>
@@ -9,13 +20,25 @@ function loadLibraries() {
         </tr>
     </table>`;
     jQuery('#p4m-content').append(librariesTable);
+    var language = '';
+    try {
+        language = new RegExp('lang\?=(.+?)$').exec(window.location['href'])[1];
+    }catch(error){}
+    if ( language !== '' ) {
+        get_libraries_by_language(language);
+        return;
+    }
+    get_parent_libraries();
+}
+
+function get_parent_libraries() {
     jQuery.ajax({
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         url: window.location.origin + '/wp-json/pray4movement-prayer-points/v1/get_prayer_libraries',
         beforeSend: function(xhr) {
-            xhr.setRequestHeader('X-WP-Nonce', p4mPrayerPoints.nonce );
+            xhr.setRequestHeader('X-WP-Nonce', p4mPrayerPoints.nonce);
         },
         success: function(response) {
             jQuery('#p4m-library-spinner').remove();
@@ -45,6 +68,45 @@ function loadLibraries() {
             });
         },
     });
+}
+
+function get_libraries_by_language( language ) {
+    jQuery.ajax({
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/get_prayer_libraries_by_language/${language}`, //foobar softcode language variable
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-WP-Nonce', p4mPrayerPoints.nonce);
+        },
+        success: function(response) {
+            jQuery('#p4m-library-spinner').remove();
+            jQuery('.p4m-libraries-table').append(`
+                <tr>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Download</th>
+                </tr>`);
+            response.forEach( function(library){
+            jQuery('.p4m-libraries-table').append(`
+                <tr>
+                    <td><a href="?library_id=${library['id']}">${library['name']}</a></td>
+                    <td>${library['description']}</td>
+                    <td><a href="javascript:displayLocalizationDownload(${library['id']}, '${library['name']}', '${library['key']}')">csv</a></td>
+                </tr>`);
+            jQuery(`#languages_dropdown option[value="${language}"]`).attr("selected", "selected");
+            });
+        },
+    });
+}
+
+function changeLanguage(currentElement) {
+    var language = currentElement.value;
+    if ( language !== 'all' ) {
+        window.location['href'] = '?lang=' + language;
+        return;
+    }
+    window.location['href'] = '..';
 }
 
 function getFlag(language) {
