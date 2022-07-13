@@ -569,7 +569,7 @@ class Pray4Movement_Prayer_Points_Utilities {
     }
 
     public static function sanitize_tags( $raw_tags ) {
-        $tags = sanitize_text_field( wp_unslash( strtolower( $raw_tags ) ) );
+        $tags = sanitize_text_field( wp_unslash( urldecode( strtolower( $raw_tags ) ) ) );
         $tags = explode( ',', $tags );
         $tags = array_map( 'trim', $tags );
         return array_filter( $tags );
