@@ -244,6 +244,7 @@ class Pray4Movement_Prayer_Points_Utilities {
         $languages = self::get_languages();
         ?>
         <select name="library_lang" id="library_lang">
+            <option hidden>- <?php echo esc_html( 'Select Language', 'pray4movement_prayer_points' ); ?> -</option>
             <?php foreach ( $languages as $key => $value ): ?>
             <option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $languages[$key]['flag'] ); ?> <?php echo esc_html( $languages[$key]['name'] ); ?></option>
             <?php endforeach; ?>
@@ -270,6 +271,13 @@ class Pray4Movement_Prayer_Points_Utilities {
             ?><a href="?page=pray4movement_prayer_points&view_library=<?php echo esc_attr( $library['id'] ); ?>"><?php self::display_language_flag( $library['language'] ) ?></a>
             <?php
         }
+    }
+
+    public static function get_libraries_by_language( $language ) {
+        global $wpdb;
+        return $wpdb->get_results(
+            $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `language` = %s;", $language )
+        );
     }
 
     public static function display_tags( $parent_prayer_id, $language ) {
@@ -1150,7 +1158,8 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         <table class="widefat striped">
             <thead>
                 <tr>
-                    <th colspan="6"><?php esc_html_e( 'Prayer Libraries', 'pray4movement_prayer_points' ); ?></th>
+                    <th colspan="5"><?php esc_html_e( 'Prayer Libraries', 'pray4movement_prayer_points' ); ?></th>
+                    <th><?php Pray4Movement_Prayer_Points_Utilities::display_languages_dropdown(); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -1254,6 +1263,10 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                     `;
                 jQuery('.nav-tab-wrapper').before(admin_notice);
             }
+
+            jQuery('#library_lang').on('change', function(){
+                window.location['href'] = '/wp-admin/admin.php?page=pray4movement_prayer_points&lang=' + this.value;
+            });
         </script>
         <?php
     }
