@@ -1577,7 +1577,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                         beforeSend: function(xhr) {
                             xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
                         },
-                        success: savePrayerPointSuccess(),
+                        success: saveChildPrayerPointTags(parentPrayerPointId),
                 } );
             }
 
