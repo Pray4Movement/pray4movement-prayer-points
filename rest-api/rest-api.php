@@ -243,7 +243,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         return $wpdb->get_results(
             $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `language` = %s;", $params['language'] ), ARRAY_A
         );
-    }    
+    }
 
     private function register_get_prayer_points_by_tag_endpoint() {
         register_rest_route(
