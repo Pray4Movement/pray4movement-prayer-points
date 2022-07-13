@@ -336,12 +336,12 @@ class Pray4Movement_Prayer_Points_Endpoints
         $wpdb->update(
             $wpdb->prefix.'dt_prayer_points',
             [
-                'title' => urldecode( $wp_rest_params['title'] ),
-                'content' => urldecode( $wp_rest_params['content'] ),
+                'title' => urldecode( wp_unslash( $wp_rest_params['title'] ) ),
+                'content' => urldecode( wp_unslash( $wp_rest_params['content'] ) ),
                 'book' => $translated_book,
                 'verse' => $parent_prayer_point['verse'],
                 'reference' => $translated_reference,
-                'hash' => md5( urldecode( $wp_rest_params['content'] ) ),
+                'hash' => md5( urldecode( wp_unslash( $wp_rest_params['content'] ) ) ),
                 'language' => $child_library_language,
                 'status' => 'unpublished',
             ],
@@ -771,12 +771,13 @@ class Pray4Movement_Prayer_Points_Endpoints
             [
                 'library_id' => $wp_rest_params['library_id'],
                 'parent_id' => $parent_prayer_point['id'],
-                'title' => urldecode( $wp_rest_params['title'] ),
-                'content' => urldecode( $wp_rest_params['content'] ),
-                'hash' => md5( urldecode( $wp_rest_params['content'] ) ),
+                'title' => urldecode( wp_unslash( $wp_rest_params['title'] ) ),
+                'content' => urldecode( wp_unslash( $wp_rest_params['content'] ) ),
+                'hash' => md5( urldecode( wp_unslash( $wp_rest_params['content'] ) ) ),
+                'language' => self::get_library_language( $wp_rest_params['library_id'] ),
                 'status' => 'unpublished',
             ],
-            [ '%d', '%d', '%s', '%s', '%s', '%s' ]
+            [ '%d', '%d', '%s', '%s', '%s', '%s', '%s' ]
         );
     }
 
