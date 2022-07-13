@@ -244,6 +244,7 @@ class Pray4Movement_Prayer_Points_Utilities {
         $languages = self::get_languages();
         ?>
         <select name="library_lang" id="library_lang">
+            <option hidden>- <?php echo esc_html( 'Select Language', 'pray4movement_prayer_points' ); ?> -</option>
             <?php foreach ( $languages as $key => $value ): ?>
             <option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $languages[$key]['flag'] ); ?> <?php echo esc_html( $languages[$key]['name'] ); ?></option>
             <?php endforeach; ?>
@@ -270,6 +271,21 @@ class Pray4Movement_Prayer_Points_Utilities {
             ?><a href="?page=pray4movement_prayer_points&view_library=<?php echo esc_attr( $library['id'] ); ?>"><?php self::display_language_flag( $library['language'] ) ?></a>
             <?php
         }
+    }
+
+    public static function get_libraries_by_language( $language ) {
+        global $wpdb;
+        return $wpdb->get_results(
+            $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `language` = %s;", $language ), ARRAY_A
+        );
+    }
+
+    public static function change_language_dropdown_selected_value( $language ) {
+        ?>
+        <script>
+            jQuery('#library_lang option[value="<?php echo esc_html( $language ); ?>"]').attr("selected", "selected");
+        </script>
+        <?php
     }
 
     public static function display_tags( $parent_prayer_id, $language ) {
@@ -1150,7 +1166,8 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         <table class="widefat striped">
             <thead>
                 <tr>
-                    <th colspan="6"><?php esc_html_e( 'Prayer Libraries', 'pray4movement_prayer_points' ); ?></th>
+                    <th colspan="5"><?php esc_html_e( 'Prayer Libraries', 'pray4movement_prayer_points' ); ?></th>
+                    <th><?php Pray4Movement_Prayer_Points_Utilities::display_languages_dropdown(); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -1164,6 +1181,11 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                 </tr>
                 <?php
                 $prayer_libraries = Pray4Movement_Prayer_Points_Utilities::get_parent_prayer_libraries();
+                if ( isset( $_GET['lang'] ) ) {
+                    $language = sanitize_text_field( wp_unslash( $_GET['lang'] ) );
+                    $prayer_libraries = Pray4Movement_Prayer_Points_Utilities::get_libraries_by_language( $language );
+                    Pray4Movement_Prayer_Points_Utilities::change_language_dropdown_selected_value( $language );
+                }
                 $this->display_prayer_libraries( $prayer_libraries );
                 ?>
             </tbody>
@@ -1254,6 +1276,10 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                     `;
                 jQuery('.nav-tab-wrapper').before(admin_notice);
             }
+
+            jQuery('#library_lang').on('change', function(){
+                window.location['href'] = '/wp-admin/admin.php?page=pray4movement_prayer_points&lang=' + this.value;
+            });
         </script>
         <?php
     }
@@ -1283,10 +1309,8 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
     public function display_prayer_libraries( $prayer_libraries ) {
         foreach ( $prayer_libraries as $library ) :
             $prayer_icon = Pray4Movement_Prayer_Points_Utilities::get_default_prayer_library_icon();
-            if ( isset( $library['icon'] ) ) {
-                if ( $library['icon'] !== '' ) {
+            if ( isset( $library['icon'] ) && $library['icon'] !== '' ) {
                     $prayer_icon = $library['icon'];
-                }
             }
             ?>
         <tr id="delete-library-<?php echo esc_html( $library['id'] ); ?>">
@@ -1396,10 +1420,8 @@ class Pray4Movement_Prayer_Points_Edit_Library {
                 </tbody>
             </table>
         </form>
-        <script>
-            jQuery('#library_lang option[value="<?php echo esc_html( $library['language'] ); ?>"]').attr("selected", "selected");
-        </script>
         <?php
+        Pray4Movement_Prayer_Points_Utilities::change_language_dropdown_selected_value( $library['language'] );
     }
 
     private function check_library_id_is_set() {
@@ -2024,7 +2046,6 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         <script>
             jQuery('#prayer_reference_book option[value="<?php echo esc_html( $prayer['book'] ); ?>"]').attr("selected", "selected");
         </script>
-        
         <?php
     }
 
