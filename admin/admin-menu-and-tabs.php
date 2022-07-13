@@ -1573,7 +1573,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                         type: 'POST',
                         contentType: 'application/json; charset=utf-8',
                         dataType: 'json',
-                        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/save_child_prayer_point/${parentPrayerPointId}/${child_library_id}/${title}/${content}`,
+                        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/save_child_prayer_point/${parentPrayerPointId}/${child_library_id}/${title}/${content}/`,
                         beforeSend: function(xhr) {
                             xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
                         },
