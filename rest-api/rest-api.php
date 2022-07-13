@@ -362,6 +362,7 @@ class Pray4Movement_Prayer_Points_Endpoints
 
     private function get_book_translation( $string, $language ) {
         $books = [
+            null                => [ 'en'  => null,                'es'   => null,               'fr'    => null,                             'pt'  => null,],
             'Genesis'           => [ 'en'  => 'Genesis',           'es'   => 'Génesis',          'fr'    => 'Genèse',                         'pt'  => 'Gênesis',],
             'Exodus'            => [ 'en'  => 'Exodus',            'es'   => 'Éxodo',            'fr'    => 'Exode',                          'pt'  => 'Êxodo', ],
             'Leviticus'         => [ 'en'  => 'Leviticus',         'es'   => 'Levítico',         'fr'    => 'Lévitique',                      'pt'  => 'Levítico', ],
@@ -474,7 +475,7 @@ class Pray4Movement_Prayer_Points_Endpoints
 
     private function register_save_child_prayer_point_tags() {
         register_rest_route(
-            $this->get_namespace(), 'save_child_prayer_point_tags/(?P<parent_prayer_id>\d+)/(?P<language>.+)/(?P<tags>.+)', [
+            $this->get_namespace(), 'save_child_prayer_point_tags/(?P<parent_prayer_id>\d+)/(?P<language>.+)/(?P<tags>.*)', [
                 'methods' => 'POST',
                 'callback' => [ $this, 'endpoint_for_save_child_prayer_point_tags' ],
                 'permission_callback' => function( WP_REST_Request $request ) {
@@ -486,13 +487,16 @@ class Pray4Movement_Prayer_Points_Endpoints
 
     public function endpoint_for_save_child_prayer_point_tags( WP_REST_Request $request ) {
         $params = $request->get_params();
-        if ( !isset( $params['parent_prayer_id'] ) || !isset( $params['language'] ) || !isset( $params['tags'] ) ) {
+        if ( !isset( $params['parent_prayer_id'] ) || !isset( $params['language'] ) ) {
             return new WP_Error( __METHOD__, 'Missing parameters.' );
         }
         $prayer_id = self::get_translated_prayer_point_id( $params['parent_prayer_id'], $params['language'] );
         self::delete_all_tags( $prayer_id );
-        $tags = self::sanitize_tags( $params['tags'] );
-        self::insert_all_tags( $prayer_id, $tags );
+        error_log( $params['tags'] );
+        if ( urldecode( $params['tags'] ) !== '{null_tags}' ) {
+            $tags = self::sanitize_tags( $params['tags'] );
+            self::insert_all_tags( $prayer_id, $tags );
+        }
         return;
     }
 
@@ -522,15 +526,17 @@ class Pray4Movement_Prayer_Points_Endpoints
             $tags = [ $tags ];
         }
         foreach ( $tags as $tag ) {
-            $wpdb->insert(
-                $wpdb->prefix.'dt_prayer_points_meta',
-                [
-                    'prayer_id' => $prayer_id,
-                    'meta_key' => 'tags',
-                    'meta_value' => $tag
-                ],
-                [ '%d', '%s', '%s' ]
-            );
+            if ( $tag !== '' ) {
+                $wpdb->insert(
+                    $wpdb->prefix.'dt_prayer_points_meta',
+                    [
+                        'prayer_id' => $prayer_id,
+                        'meta_key' => 'tags',
+                        'meta_value' => $tag
+                    ],
+                    [ '%d', '%s', '%s' ]
+                );
+            }
         }
         return;
     }

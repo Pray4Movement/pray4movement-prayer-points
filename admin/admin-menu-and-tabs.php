@@ -327,6 +327,7 @@ class Pray4Movement_Prayer_Points_Utilities {
 
     public static function get_book_translation( $string, $language ) {
         $books = [
+            null                => [ 'en'  => null,                'es'   => null,               'fr'    => null,                             'pt'  => null,],
             'Genesis'           => [ 'en'  => 'Genesis',           'es'   => 'Génesis',          'fr'    => 'Genèse',                         'pt'  => 'Gênesis',],
             'Exodus'            => [ 'en'  => 'Exodus',            'es'   => 'Éxodo',            'fr'    => 'Exode',                          'pt'  => 'Êxodo', ],
             'Leviticus'         => [ 'en'  => 'Leviticus',         'es'   => 'Levítico',         'fr'    => 'Lévitique',                      'pt'  => 'Levítico', ],
@@ -1583,19 +1584,20 @@ class Pray4Movement_Prayer_Points_View_Library {
 
             function saveChildPrayerPointTags( parentPrayerPointId ) {
                 var tags = jQuery(`#tags-${parentPrayerPointId}`)[0].value;
-                if ( tags != '' ) {
-                    var libraryLanguage = '<?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::get_language_from_library( $child_library_id ) ); ?>';
-                    jQuery.ajax( {
-                            type: 'POST',
-                            contentType: 'application/json; charset=utf-8',
-                            dataType: 'json',
-                            url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/save_child_prayer_point_tags/${parentPrayerPointId}/${libraryLanguage}/${tags}`,
-                            beforeSend: function(xhr) {
-                                xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
-                            },
-                            success: savePrayerPointSuccess(),
-                    } );
+                if (!tags ) {
+                    tags = '{null_tags}'
                 }
+                var libraryLanguage = '<?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::get_language_from_library( $child_library_id ) ); ?>';
+                jQuery.ajax( {
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/save_child_prayer_point_tags/${parentPrayerPointId}/${libraryLanguage}/${tags}`,
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
+                        },
+                        success: savePrayerPointSuccess(),
+                } );
             }
             
             function savePrayerPointSuccess() {
