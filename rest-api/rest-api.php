@@ -492,7 +492,6 @@ class Pray4Movement_Prayer_Points_Endpoints
         }
         $prayer_id = self::get_translated_prayer_point_id( $params['parent_prayer_id'], $params['language'] );
         self::delete_all_tags( $prayer_id );
-        error_log( $params['tags'] );
         if ( urldecode( $params['tags'] ) !== '{null_tags}' ) {
             $tags = self::sanitize_tags( $params['tags'] );
             self::insert_all_tags( $prayer_id, $tags );
