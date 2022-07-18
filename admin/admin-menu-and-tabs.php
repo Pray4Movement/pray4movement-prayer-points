@@ -12,12 +12,12 @@ class Pray4Movement_Prayer_Points_Menu {
             self::$_instance = new self();
         }
         return self::$_instance;
-    } // End instance()
+    }
 
     public function __construct() {
         add_action( "admin_menu", array( $this, "register_menu" ) );
         $this->page_title = __( "Pray4Movement Prayer Points", 'pray4movement-prayer-points' );
-    } // End __construct()
+    }
 
     public function register_menu() {
         $this->page_title = __( "Pray4Movement Prayer Points", 'pray4movement-prayer-points' );
@@ -108,8 +108,6 @@ class Pray4Movement_Prayer_Points_Menu {
         }
     }
 }
-
-Pray4Movement_Prayer_Points_Menu::instance();
 
 class Pray4Movement_Prayer_Points_Utilities {
     public static function check_user_can( $permission, $verbose = true ) {
@@ -250,6 +248,22 @@ class Pray4Movement_Prayer_Points_Utilities {
             <?php endforeach; ?>
         </select>
         <?php
+    }
+
+    public static function display_library_icon( $library_id ) {
+        $icon = self::get_default_prayer_library_icon( $library_id );
+        $library_icon = self::get_library_icon( $library_id );
+        if ( $library_icon ) {
+            $icon = $library_icon;
+        }
+        echo esc_html( $icon );
+    }
+
+    public static function get_library_icon( $library_id ) {
+        global $wpdb;
+        return $wpdb->get_var(
+            $wpdb->prepare( "SELECT `icon` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `id` = %d;", $library_id )
+        );
     }
     public static function display_language_flag( $lang_code ) {
         $languages = self::get_languages();
@@ -1142,13 +1156,6 @@ class Pray4Movement_Prayer_Points_Edit_Library {
         Pray4Movement_Prayer_Points_Utilities::change_language_dropdown_selected_value( $library['language'] );
     }
 
-    private function check_library_id_is_set() {
-        if ( !isset( $_GET['edit_library'] ) || empty( $_GET['edit_library'] ) ) {
-            Pray4Movement_Prayer_Points_Utilities::admin_notice( 'Invalid Prayer Library ID', 'error' );
-            return false;
-        }
-    }
-
     public function right_edit_library_column() {
         ?>
         <table class="widefat">
@@ -1381,7 +1388,7 @@ class Pray4Movement_Prayer_Points_View_Library {
             <tr>
                 <td>
                     <h1>
-                        <?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::display_language_flag( $library['language'] ) ); ?>
+                        <img src="<?php Pray4Movement_Prayer_Points_Utilities::display_library_icon( $library['id'] ) ?>" width="35px">
                         <?php echo esc_html( $library['name'] ); ?>
                     </h1>
                 </td>
@@ -1396,7 +1403,8 @@ class Pray4Movement_Prayer_Points_View_Library {
             <thead>
                 <tr>
                     <?php if ( !empty( $library ) ) : ?>
-                        <th colspan="6"><?php echo esc_html( $library['name'] ); ?></th>
+                        <th colspan="5"><?php echo esc_html( $library['name'] ); ?></th>
+                        <th style="text-align: right;"><?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::display_language_flag( $library['language'] ) ); ?></th>
                     <?php endif; ?>
                 </tr>
             </thead>
@@ -1555,7 +1563,7 @@ class Pray4Movement_Prayer_Points_View_Library {
             <tr>
                 <td>
                     <h1>
-                        <?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::display_language_flag( $child_library['language'] ) ); ?>
+                        <img src="<?php Pray4Movement_Prayer_Points_Utilities::display_library_icon( $child_library['id'] ) ?>" width="35px">
                         <?php echo esc_html( $child_library['name'] ); ?>
                     </h1>
                 </td>
