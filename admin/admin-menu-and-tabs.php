@@ -33,6 +33,7 @@ class Pray4Movement_Prayer_Points_Menu {
         $this->check_view_library_tab();
         $this->check_edit_library_tab();
         $this->check_edit_prayer_tab();
+        $this->check_localize_prayers_tab();
         $tab = $this->get_sanitized_tab();
         $this->display_html_for_tab( $tab );
     }
@@ -61,6 +62,14 @@ class Pray4Movement_Prayer_Points_Menu {
         }
     }
 
+    private function check_localize_prayers_tab() {
+        if ( isset( $_GET['localize'] ) ) {
+            $object = new Pray4Movement_Prayer_Points_Localize_Prayers();
+            $object->content();
+            die();
+        }
+    }
+
     private function get_sanitized_tab() {
         $tab = 'explore';
         if ( isset( $_GET['tab'] ) ) {
@@ -79,6 +88,7 @@ class Pray4Movement_Prayer_Points_Menu {
                 class="nav-tab <?php echo esc_html( ( $tab == 'explore' || !isset( $tab ) ) ? 'nav-tab-active' : '' ); ?>"><?php echo esc_html( 'Explore', 'pray4movement_prayer_points' ); ?></a>
                 <a href="<?php echo esc_attr( $link ) . 'import' ?>" class="nav-tab <?php echo esc_html( ( $tab == 'import' ) ? 'nav-tab-active' : '' ); ?>"><?php echo esc_html( 'Import', 'pray4movement_prayer_points' ); ?></a>
                 <a href="<?php echo esc_attr( $link ) . 'export' ?>" class="nav-tab <?php echo esc_html( ( $tab == 'export' ) ? 'nav-tab-active' : '' ); ?>"><?php echo esc_html( 'Export', 'pray4movement_prayer_points' ); ?></a>
+                <a href="<?php echo esc_attr( $link ) . 'localize' ?>" class="nav-tab <?php echo esc_html( ( $tab == 'localize' ) ? 'nav-tab-active' : '' ); ?>"><?php echo esc_html( 'Localize', 'pray4movement_prayer_points' ); ?></a>
             </h2>
             <?php $this->show_content_for_tab( $tab ); ?>
         </div>
@@ -101,6 +111,10 @@ class Pray4Movement_Prayer_Points_Menu {
                 break;
             case 'export':
                 $object = new Pray4Movement_Prayer_Points_Tab_Export();
+                $object->content();
+                break;
+            case 'localize':
+                $object = new Pray4Movement_Prayer_Points_Localize_Prayers();
                 $object->content();
                 break;
             default:
@@ -265,11 +279,11 @@ class Pray4Movement_Prayer_Points_Utilities {
             $wpdb->prepare( "SELECT `icon` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `id` = %d;", $library_id )
         );
     }
-    public static function display_language_flag( $lang_code ) {
+
+    public static function get_language_flag( $lang_code ) {
         $languages = self::get_languages();
         $flag = $languages[$lang_code]['flag'];
-        echo esc_html( $flag );
-        return;
+        return $flag;
     }
 
     public static function get_library_translation_links( $library_id ) {
@@ -282,7 +296,7 @@ class Pray4Movement_Prayer_Points_Utilities {
     public static function display_library_translation_links( $library_id ) {
         $child_libraries = self::get_library_translation_links( $library_id );
         foreach ( $child_libraries as $library ) {
-            ?><a href="?page=pray4movement_prayer_points&view_library=<?php echo esc_attr( $library['id'] ); ?>"><?php self::display_language_flag( $library['language'] ) ?></a>
+            ?><a href="?page=pray4movement_prayer_points&view_library=<?php echo esc_attr( $library['id'] ); ?>"><?php echo esc_html( self::get_language_flag( $library['language'] ) ); ?></a>
             <?php
         }
     }
@@ -398,6 +412,37 @@ class Pray4Movement_Prayer_Points_Utilities {
                 <?php endif; ?>
         </select>
         <?php
+    }
+
+    public static function display_all_libraries_dropdown() {
+        $prayer_libraries = self::get_prayer_libraries();
+        ?>
+        <select name="library-id" id="library-id" required>
+                <option hidden>- <?php esc_html_e( 'Select a Library', 'pray4movement_prayer_points' ); ?> -</option>
+                <?php if ( empty( $prayer_libraries ) ) {
+                    ?>
+                        <option disabled><?php esc_html_e( 'No Prayer Libraries found', 'pray4movement_prayer_points' ); ?></option>
+                    </select>
+                    <?php
+                    return;
+                }
+
+                foreach ( $prayer_libraries as $library ) {
+                    $library_flag = self::get_language_flag( $library['language'] );
+                    $library_label = $library_flag . ' ' . $library['name'];
+                    if ( is_null( $library['parent_id'] ) ) {
+                        ?>
+                        <option value="<?php echo esc_attr( $library['id'] ); ?>"><?php echo esc_html( $library_label );?></option>
+                        <?php
+                        continue;
+                    }
+                    ?>
+                    <option value="<?php echo esc_attr( $library['id'] ); ?>">  - <?php echo esc_html( $library_label );?></option>
+                    <?php
+                }
+                ?>
+                </select>
+                <?php
     }
 
     public static function get_child_prayer_point_from_parent_id( $parent_prayer_id, $language ) {
@@ -547,6 +592,13 @@ class Pray4Movement_Prayer_Points_Utilities {
         );
     }
 
+    public static function get_prayer_points_localized( $library_id ) {
+        $prayer_points = self::get_prayer_points( $library_id );
+        $rules = self::get_localization_rules( $library_id );
+        $prayer_points_localized = self::apply_rules_to_prayer_points( $prayer_points, $rules );
+        return $prayer_points_localized;
+    }
+
     public static function get_full_prayer_points( $library_id ) {
         global $wpdb;
         return $wpdb->get_results(
@@ -569,6 +621,45 @@ class Pray4Movement_Prayer_Points_Utilities {
                 ORDER BY pp.library_id ASC;", $library_id
             ), ARRAY_A
         );
+    }
+
+    public static function get_rule_autoincrement() {
+        $options = get_option( 'p4m_prayer_points' );
+        if ( !isset( $options['localization_rules'] ) ) {
+            return 1;
+        }
+        $rules = $options['localization_rules'];
+        $autoincrement = $rules[array_key_last( $rules )]['id'];
+        return $autoincrement + 1;
+    }
+
+    public static function get_localization_rules( $library_id ) {
+        $options = get_option( 'p4m_prayer_points', false );
+        if ( isset( $options['localization_rules'] ) ) {
+            $output = [];
+            $rules = $options['localization_rules'];
+            foreach ( $rules as $rule ) {
+                if ( $rule['library_id'] === $library_id ) {
+                    $output[] = $rule;
+                }
+            }
+            return $output;
+        }
+        return false;
+    }
+
+    public static function apply_rules_to_prayer_points( $prayer_points, $rules ) {
+        $prayer_points_localized = [];
+        foreach ( $prayer_points as $prayer_point ) {
+            $prayer_point_localized = $prayer_point;
+            if ( $rules ) {
+                foreach ( $rules as $rule ) {
+                    $prayer_point_localized = str_replace( $rule['from'], $rule['to'], $prayer_point_localized );
+                }
+            }
+            $prayer_points_localized[] = $prayer_point_localized;
+        }
+        return $prayer_points_localized;
     }
 
     public static function get_prayer_point( $prayer_id ) {
@@ -909,8 +1000,6 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                     <div id="postbox-container-1" class="postbox-container">
                         <?php Pray4Movement_Prayer_Points_Utilities::localize_prayers_column(); ?>
                     </div>
-                    <div id="postbox-container-2" class="postbox-container">
-                    </div>
                 </div>
             </div>
         </div>
@@ -949,7 +1038,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         </table>
         <br>
         <?php Pray4Movement_Prayer_Points_Utilities::check_user_can( 'publish_posts', false ); ?>
-        <form method="POST">
+        <form method="post">
             <?php wp_nonce_field( 'add_library', 'add_library_nonce' ); ?>
             <table class="widefat striped">
                 <thead>
@@ -1073,8 +1162,6 @@ class Pray4Movement_Prayer_Points_Edit_Library {
                     <div id="postbox-container-1" class="postbox-container">
                         <?php $this->right_edit_library_column(); ?>
                     </div>
-                    <div id="postbox-container-2" class="postbox-container">
-                    </div>
                 </div>
             </div>
         </div>
@@ -1093,7 +1180,7 @@ class Pray4Movement_Prayer_Points_Edit_Library {
         <p>
             <a href="/wp-admin/admin.php?page=pray4movement_prayer_points"><?php esc_html_e( '<< Back to Prayer Libraries', 'pray4movement_prayer_points' ); ?></a>
         </p>
-        <form method="POST">
+        <form method="post">
             <?php wp_nonce_field( 'edit_library', 'edit_library_nonce' ); ?>
             <table class="widefat striped">
                 <thead>
@@ -1243,8 +1330,6 @@ class Pray4Movement_Prayer_Points_View_Library {
                     <div id="postbox-container-1" class="postbox-container">
                         <?php Pray4Movement_Prayer_Points_Utilities::localize_prayers_column(); ?>
                     </div>
-                    <div id="postbox-container-2" class="postbox-container">
-                    </div>
                 </div>
             </div>
         </div>
@@ -1382,7 +1467,7 @@ class Pray4Movement_Prayer_Points_View_Library {
 
     private static function display_prayer_points_for_parent_library( $library_id ) {
         $library = Pray4Movement_Prayer_Points_Utilities::get_prayer_library( $library_id );
-        $prayer_points = Pray4Movement_Prayer_Points_Utilities::get_prayer_points( $library_id );
+        $prayer_points = Pray4Movement_Prayer_Points_Utilities::get_prayer_points_localized( $library_id );
         ?>
         <table style="width: 100%">
             <tr>
@@ -1404,7 +1489,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                 <tr>
                     <?php if ( !empty( $library ) ) : ?>
                         <th colspan="5"><?php echo esc_html( $library['name'] ); ?></th>
-                        <th style="text-align: right;"><?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::display_language_flag( $library['language'] ) ); ?></th>
+                        <th style="text-align: right;"><?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::get_language_flag( $library['language'] ) ); ?></th>
                     <?php endif; ?>
                 </tr>
             </thead>
@@ -1467,7 +1552,7 @@ class Pray4Movement_Prayer_Points_View_Library {
             </tbody>
         </table>
         <br>
-        <form method="POST">
+        <form method="post">
             <?php
             wp_nonce_field( 'add_prayer_point', 'add_prayer_point_nonce' );
             Pray4Movement_Prayer_Points_Utilities::check_user_can( 'publish_posts', false );
@@ -1733,8 +1818,6 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
                     <div id="postbox-container-1" class="postbox-container">
                         <?php $this->right_edit_prayer_column(); ?>
                     </div>
-                    <div id="postbox-container-2" class="postbox-container">
-                    </div>
                 </div>
             </div>
         </div>
@@ -1750,7 +1833,7 @@ class Pray4Movement_Prayer_Points_Edit_Prayer {
         $prayer_id = sanitize_text_field( wp_unslash( $_GET['edit_prayer'] ) );
         $prayer = Pray4Movement_Prayer_Points_Utilities::get_prayer_point( $prayer_id );
         ?>
-        <form method="POST">
+        <form method="post">
         <?php wp_nonce_field( 'edit_prayer_point', 'edit_prayer_point_nonce' ); ?>
         <table class="widefat striped">
             <thead>
@@ -1845,8 +1928,6 @@ class Pray4Movement_Prayer_Points_Tab_Import {
                     <div id="postbox-container-1" class="postbox-container">
                         <?php $this->right_prayer_points_import_column(); ?>
                     </div>
-                    <div id="postbox-container-2" class="postbox-container">
-                    </div>
                 </div>
             </div>
         </div>
@@ -1856,7 +1937,7 @@ class Pray4Movement_Prayer_Points_Tab_Import {
     public function main_prayer_points_import_column() {
         $this->check_for_import_prayer_nonce();
         ?>
-        <form method="POST" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data">
             <?php wp_nonce_field( 'import_prayer_points', 'import_prayer_points_nonce' ); ?>
             <table class="widefat striped">
                 <thead>
@@ -2118,8 +2199,6 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                     <div id="postbox-container-1" class="postbox-container">
                         <?php Pray4Movement_Prayer_Points_Utilities::localize_prayers_column(); ?>
                     </div>
-                    <div id="postbox-container-2" class="postbox-container">
-                    </div>
                 </div>
             </div>
         </div>
@@ -2191,7 +2270,7 @@ class Pray4Movement_Prayer_Points_Tab_Export {
                         type: 'POST',
                         contentType: 'application/json; charset=utf-8',
                         dataType: 'json',
-                        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/get_prayer_points/${libraryId}`,
+                        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/get_prayer_points_localized/${libraryId}`,
                         beforeSend: function(xhr) {
                             xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
                         },
@@ -2236,5 +2315,128 @@ class Pray4Movement_Prayer_Points_Tab_Export {
             });
         </script>
         <?php
+    }
+}
+
+class Pray4Movement_Prayer_Points_Localize_Prayers {
+    public function content() {
+        ?>
+        <div class="wrap">
+            <div id="poststuff">
+                <div id="post-body" class="metabox-holder">
+                    <div id="post-body-content">
+                        <?php $this->main_localization_column(); ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
+    }
+
+    private function main_localization_column() {
+        $this->process_new_localization_rule();
+        ?>
+        <table class="widefat striped">
+            <thead>
+                <h1><?php echo esc_html( 'Replacement Rules', 'pray4movement_prayer_points' ); ?></h1>
+                <tr>
+                    <th><?php echo esc_html( 'From', 'pray4movement_prayer_points' ); ?></th>
+                    <th><?php echo esc_html( 'To', 'pray4movement_prayer_points' ); ?></th>
+                    <th><?php echo esc_html( 'Actions', 'pray4movement_prayer_points' ); ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php self::display_localization_rules(); ?>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td><button class="button"><?php echo esc_html( 'Add rule', 'pray4movement_prayer_points' ); ?></button></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <form method="post">
+            <?php wp_nonce_field( 'new_localization_rule', 'new_localization_rule_nonce' ); ?>
+            <table class="widefat" style="margin-top:12px;">
+                <thead>
+                    <tr>
+                        <th colspan="3">New Rule</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="3">
+                            <input type="text" name="new-rule-from" placeholder="<?php echo esc_attr( 'from', 'pray4movement_prayer_points' ); ?>">
+                            <input type="text" name="new-rule-to" placeholder="<?php echo esc_attr( 'to', 'pray4movement_prayer_points' ); ?>">
+                            <?php Pray4Movement_Prayer_Points_Utilities::display_all_libraries_dropdown(); ?>
+                            <button class="button"><?php echo esc_html( 'Save', 'pray4movement_prayer_points' ); ?></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        <?php
+    }
+
+    private static function display_localization_rules() {
+        $options = get_option( 'p4m_prayer_points', false );
+
+        if ( !$options || !$options['localization_rules'] ) : ?>
+            <tr>
+                <td colspan="3"><i><?php echo esc_html( 'No localization rules yet', 'pray4movement_prayer_points' ); ?></i></td>
+            </tr>
+            <?php
+            return;
+            endif;
+            $rules = $options['localization_rules'];
+
+        foreach ( $rules as $rule ) :
+            $library = Pray4Movement_Prayer_Points_Utilities::get_prayer_library( $rule['library_id'] );
+            if ( !isset( $previous_library_id ) || $library['id'] !== $previous_library_id ) : ?>
+                <tr>
+                    <th colspan="3"><b><?php echo esc_html( $library['name'] ); ?></b> <?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::get_language_flag( $library['language'] ) ); ?></th>
+                </tr>
+                <?php
+                $previous_library_id = $library['id'];
+                endif; ?>
+            <tr id="p4m-localization-rule-<?php echo esc_attr( $library['id'] ); ?>">
+                <td></td>
+                <td><?php echo esc_html( $rule['from'] ); ?> → <?php echo esc_html( $rule['to'] ); ?></td>
+                <td><a href="#" onclick="javascript:deleteLocalizationRule(<?php echo esc_attr( $rule['id'] ); ?>);" style="color:#b32d2e;">Delete</a></td>
+            </tr>
+            <?php endforeach;
+    }
+
+    private static function process_new_localization_rule() {
+        if ( !isset( $_POST['new_localization_rule_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['new_localization_rule_nonce'] ), 'new_localization_rule' ) ) {
+            return;
+        }
+
+        if ( !isset( $_POST['new-rule-from'] ) || !isset( $_POST['new-rule-to'] ) || !isset( $_POST['library-id'] ) ) {
+            return;
+        }
+
+        $rule = [
+            'id' => Pray4Movement_Prayer_Points_Utilities::get_rule_autoincrement(),
+            'library_id' => sanitize_text_field( wp_unslash( $_POST['library-id'] ) ),
+            'from' => sanitize_text_field( wp_unslash( $_POST['new-rule-from'] ) ),
+            'to' => sanitize_text_field( wp_unslash( $_POST['new-rule-to'] ) ),
+        ];
+        error_log( print_r( $rule, true ) );
+
+        self::save_localization_rule( $rule );
+    }
+
+    private static function save_localization_rule( $rule ) {
+        $options = get_option( 'p4m_prayer_points', false );
+
+        if ( !$options || !$options['localization_rules'] ) {
+            $options['localization_rules'] = [ $rule ];
+            add_option( 'p4m_prayer_points', $options );
+            return;
+        }
+        $options['localization_rules'][] = $rule;
+        update_option( 'p4m_prayer_points', $options );
+        return;
     }
 }
