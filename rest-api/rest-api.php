@@ -137,18 +137,10 @@ class Pray4Movement_Prayer_Points_Endpoints
     }
 
     private function delete_localization_rule( $rule_id ) {
-        $options = get_option( 'p4m_prayer_points' );
-        if ( !$options['localization_rules'] ) {
-            return;
-        }
-
-        foreach ( $options['localization_rules'] as $key => $value ) {
-            if ( $options['localization_rules'][$key]['id'] == $rule_id ) {
-                unset( $options['localization_rules'][$key] );
-                update_option( 'p4m_prayer_points', $options );
-                return;
-            }
-        }
+        global $wpdb;
+        $wpdb->query(
+            $wpdb->prepare( "DELETE FROM `{$wpdb->prefix}dt_prayer_points_localization` WHERE `rule_id` = %d;", $rule_id )
+        );
         return;
     }
 

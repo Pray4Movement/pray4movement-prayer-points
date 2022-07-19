@@ -633,19 +633,10 @@ class Pray4Movement_Prayer_Points_Utilities {
         return $autoincrement + 1;
     }
 
-    public static function get_localization_rules( $library_id ) {
-        $options = get_option( 'p4m_prayer_points', false );
-        if ( isset( $options['localization_rules'] ) ) {
-            $output = [];
-            $rules = $options['localization_rules'];
-            foreach ( $rules as $rule ) {
-                if ( $rule['library_id'] === $library_id ) {
-                    $output[] = $rule;
-                }
-            }
-            return $output;
-        }
-        return false;
+    public static function get_localization_rules() {
+        global $wpdb;
+        return $wpdb->get_results(
+        $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_localization` WHERE `user_id` = %d ORDER BY library_id ASC;", get_current_user_id() ), ARRAY_A );
     }
 
     public static function apply_rules_to_prayer_points( $prayer_points, $rules ) {
@@ -2405,30 +2396,28 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
     }
 
     private static function display_localization_rules() {
-        $options = get_option( 'p4m_prayer_points', false );
-
-        if ( !$options || !$options['localization_rules'] ) : ?>
+        $rules = Pray4Movement_Prayer_Points_Utilities::get_localization_rules();
+        if ( !$rules ) : ?>
             <tr>
                 <td colspan="3"><i><?php echo esc_html( 'No localization rules yet', 'pray4movement_prayer_points' ); ?></i></td>
             </tr>
             <?php
             return;
             endif;
-            $rules = $options['localization_rules'];
 
         foreach ( $rules as $rule ) :
             $library = Pray4Movement_Prayer_Points_Utilities::get_prayer_library( $rule['library_id'] );
-            if ( !isset( $previous_library_id ) || $library['id'] !== $previous_library_id ) : ?>
+            if ( !isset( $current_library ) || $library['id'] !== $current_library ) : ?>
                 <tr>
                     <th colspan="3"><b><?php echo esc_html( $library['name'] ); ?></b> <?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::get_language_flag( $library['language'] ) ); ?></th>
                 </tr>
                 <?php
-                $previous_library_id = $library['id'];
-                endif; ?>
-            <tr id="p4m-localization-rule-<?php echo esc_attr( $rule['id'] ); ?>">
+                $current_library = $library['id'];
+            endif; ?>
+            <tr id="p4m-localization-rule-<?php echo esc_attr( $rule['rule_id'] ); ?>">
                 <td></td>
-                <td><?php echo esc_html( $rule['from'] ); ?> → <?php echo esc_html( $rule['to'] ); ?></td>
-                <td><a href="#" onclick="javascript:deleteLocalizationRule(<?php echo esc_attr( $rule['id'] ); ?>);" style="color:#b32d2e;">Delete</a></td>
+                <td><?php echo esc_html( $rule['replace_from'] ); ?> → <?php echo esc_html( $rule['replace_to'] ); ?></td>
+                <td><a href="#" onclick="javascript:deleteLocalizationRule(<?php echo esc_attr( $rule['rule_id'] ); ?>);" style="color:#b32d2e;">Delete</a></td>
             </tr>
             <?php endforeach;
     }
@@ -2443,31 +2432,35 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
         }
 
         $rule = [
-            'id' => Pray4Movement_Prayer_Points_Utilities::get_rule_autoincrement(),
             'library_id' => sanitize_text_field( wp_unslash( $_POST['library-id'] ) ),
-            'from' => sanitize_text_field( wp_unslash( $_POST['new-rule-from'] ) ),
-            'to' => sanitize_text_field( wp_unslash( $_POST['new-rule-to'] ) ),
+            'replace_from' => sanitize_text_field( wp_unslash( $_POST['new-rule-from'] ) ),
+            'replace_to' => sanitize_text_field( wp_unslash( $_POST['new-rule-to'] ) ),
         ];
-        error_log( print_r( $rule, true ) );
 
         self::save_localization_rule( $rule );
     }
 
     private static function save_localization_rule( $rule ) {
-        $options = get_option( 'p4m_prayer_points', false );
+        if ( get_current_user_id() === 0 ) {
+            self::admin_notice( __( 'You must log in to add new localization rules', 'pray4movement_prayer_points' ), 'error' );
+            return;
+        }
 
-        if ( !$options ) {
-            $options['localization_rules'] = [ $rule ];
-            add_option( 'p4m_prayer_points', $options );
+        global $wpdb;
+        $test = $wpdb->insert(
+            $wpdb->prefix.'dt_prayer_points_localization',
+            [
+                'library_id' => $rule['library_id'],
+                'user_id' => get_current_user_id(),
+                'replace_from' => $rule['replace_from'],
+                'replace_to' => $rule['replace_to'],
+            ],
+            [ '%d', '%d', '%s', '%s' ]
+        );
+        if ( !$test ) {
+            Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Could not add new localization rule to table', 'pray4movement_prayer_points' ), 'error' );
             return;
         }
-        if ( !$options['localization_rules'] || empty( $options['localization_rules'] ) ) {
-            $options['localization_rules'] = [ $rule ];
-            update_option( 'p4m_prayer_points', $options );
-            return;
-        }
-        $options['localization_rules'][] = $rule;
-        update_option( 'p4m_prayer_points', $options );
-        return;
+        Pray4Movement_Prayer_Points_Utilities::admin_notice( __( 'Localization rule created successfully!', 'pray4movement_prayer_points' ), 'success' );
     }
 }

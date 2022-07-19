@@ -80,6 +80,7 @@ class Pray4Movement_Prayer_Points {
         self::create_prayer_points_table_if_not_exist();
         self::create_prayer_points_library_table_if_not_exist();
         self::create_prayer_points_meta_table_if_not_exist();
+        self::create_prayer_points_localization_table_if_not_exist();
     }
 
     private static function create_prayer_points_table_if_not_exist() {
@@ -102,7 +103,7 @@ class Pray4Movement_Prayer_Points {
             ) $charset_collate;" //@phpcs:ignore
         );
         if ( !$test ) {
-            throw new Exception( 'Could not create table dt_prayer_points' );
+            throw new Exception( 'Could not create table ' . $wpdb->prefix . 'dt_prayer_points' );
         }
     }
 
@@ -124,7 +125,7 @@ class Pray4Movement_Prayer_Points {
             ) $charset_collate;" //@phpcs:ignore
         );
         if ( !$test ) {
-            throw new Exception( 'Could not create table dt_prayer_points_lib' );
+            throw new Exception( 'Could not create table ' . $wpdb->prefix . 'dt_prayer_points_lib' );
         }
     }
 
@@ -141,7 +142,25 @@ class Pray4Movement_Prayer_Points {
             ) $charset_collate;" //@phpcs:ignore
         );
         if ( !$test ) {
-            throw new Exception( 'Could not create table dt_prayer_points_meta' );
+            throw new Exception( 'Could not create table ' . $wpdb->prefix . 'dt_prayer_points_meta' );
+        }
+    }
+
+    private static function create_prayer_points_localization_table_if_not_exist() {
+        global $wpdb;
+        $charset_collate = $wpdb->get_charset_collate();
+        $test = $wpdb->query(
+            "CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}dt_prayer_points_localization` (
+                `rule_id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+                `library_id` BIGINT(20) UNSIGNED NOT NULL,
+                `user_id` BIGINT(20) UNSIGNED NOT NULL,
+                `replace_from` varchar(255) NOT NULL,
+                `replace_to` varchar(255) NOT NULL,
+                PRIMARY KEY (`rule_id`)
+            ) $charset_collate;" //@phpcs:ignore
+        );
+        if ( !$test ) {
+            throw new Exception( 'Could not create table ' . $wpdb->prefix . 'dt_prayer_points_localization' );
         }
     }
 
