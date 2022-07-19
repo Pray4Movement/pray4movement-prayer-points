@@ -1403,6 +1403,10 @@ class Pray4Movement_Prayer_Points_View_Library {
     }
 
     public static function process_edit_prayer_point() {
+        if ( !isset( $_POST['edit_prayer_point_nonce'] ) || !wp_verify_nonce( sanitize_key( $_POST['edit_prayer_point_nonce'] ), 'edit_prayer_point' ) ) {
+            $prayer = Pray4Movement_Prayer_Points_Utilities::get_prayer_point_from_url_param();
+            return $prayer;
+        }
         $prayer = Pray4Movement_Prayer_Points_Utilities::get_prayer_point_from_url_param();
         $prayer = self::get_edited_prayer_post_data();
         Pray4Movement_Prayer_Points_Utilities::update_prayer_point( $prayer );
