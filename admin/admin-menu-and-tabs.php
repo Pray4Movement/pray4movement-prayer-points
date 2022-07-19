@@ -623,16 +623,6 @@ class Pray4Movement_Prayer_Points_Utilities {
         );
     }
 
-    public static function get_rule_autoincrement() {
-        $options = get_option( 'p4m_prayer_points' );
-        if ( !isset( $options['localization_rules'] ) || empty( $options['localization_rules'] ) ) {
-            return 1;
-        }
-        $rules = $options['localization_rules'];
-        $autoincrement = $rules[array_key_last( $rules )]['id'];
-        return $autoincrement + 1;
-    }
-
     public static function get_localization_rules() {
         global $wpdb;
         return $wpdb->get_results(
@@ -645,7 +635,7 @@ class Pray4Movement_Prayer_Points_Utilities {
             $prayer_point_localized = $prayer_point;
             if ( $rules ) {
                 foreach ( $rules as $rule ) {
-                    $prayer_point_localized = str_replace( $rule['from'], $rule['to'], $prayer_point_localized );
+                    $prayer_point_localized = str_replace( $rule['replace_from'], $rule['replace_to'], $prayer_point_localized );
                 }
             }
             $prayer_points_localized[] = $prayer_point_localized;
