@@ -137,18 +137,10 @@ class Pray4Movement_Prayer_Points_Endpoints
     }
 
     private function delete_localization_rule( $rule_id ) {
-        $options = get_option( 'p4m_prayer_points' );
-        if ( !$options['localization_rules'] ) {
-            return;
-        }
-
-        foreach ( $options['localization_rules'] as $key => $value ) {
-            if ( $options['localization_rules'][$key]['id'] == $rule_id ) {
-                unset( $options['localization_rules'][$key] );
-                update_option( 'p4m_prayer_points', $options );
-                return;
-            }
-        }
+        global $wpdb;
+        $wpdb->query(
+            $wpdb->prepare( "DELETE FROM `{$wpdb->prefix}dt_prayer_points_localization` WHERE `rule_id` = %d;", $rule_id )
+        );
         return;
     }
 
@@ -216,8 +208,8 @@ class Pray4Movement_Prayer_Points_Endpoints
         foreach ( $prayer_points as $prayer_point ) {
             $rules = self::get_localization_rules( $prayer_point['library_id'] );
             foreach ( $rules as $rule ) {
-                $prayer_point['title'] = str_replace( $rule['from'], $rule['to'], $prayer_point['title'] );
-                $prayer_point['content'] = str_replace( $rule['from'], $rule['to'], $prayer_point['content'] );
+                $prayer_point['title'] = str_replace( $rule['replace_from'], $rule['replace_to'], $prayer_point['title'] );
+                $prayer_point['content'] = str_replace( $rule['replace_from'], $rule['replace_to'], $prayer_point['content'] );
             }
             $prayer_points_localized[] = $prayer_point;
         }
@@ -225,18 +217,12 @@ class Pray4Movement_Prayer_Points_Endpoints
     }
 
     private function get_localization_rules( $library_id ) {
-        $options = get_option( 'p4m_prayer_points', false );
-        if ( isset( $options['localization_rules'] ) ) {
-            $output = [];
-            $rules = $options['localization_rules'];
-            foreach ( $rules as $rule ) {
-                if ( $rule['library_id'] === $library_id ) {
-                    $output[] = $rule;
-                }
-            }
-            return $output;
+        if ( !get_current_user_id() ) {
+            return;
         }
-        return false;
+        global $wpdb;
+        return $wpdb->get_results(
+        $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_localization` WHERE `library_id` = %d AND `user_id` = %d ORDER BY `library_id` ASC;", $library_id, get_current_user_id() ), ARRAY_A );
     }
 
     private function apply_rules_to_prayer_points( $prayer_points, $rules ) {
