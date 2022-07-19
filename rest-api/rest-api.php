@@ -8,7 +8,9 @@ class Pray4Movement_Prayer_Points_Endpoints
     public function add_api_routes() {
         self::register_delete_prayer_library_endpoint();
         self::register_delete_prayer_point_endpoint();
+        self::register_delete_localization_rule_endpoint();
         self::register_get_prayer_points_endpoint();
+        self::register_get_prayer_points_localized_endpoint();
         self::register_get_replaced_prayer_points_endpoint();
         self::register_get_prayer_libraries_endpoint();
         self::register_get_prayer_libraries_by_language_endpoint();
@@ -114,6 +116,42 @@ class Pray4Movement_Prayer_Points_Endpoints
         }
     }
 
+    private function register_delete_localization_rule_endpoint() {
+        register_rest_route(
+            $this->get_namespace(), '/delete_localization_rule/(?P<rule_id>\d+)', [
+                'methods'  => 'POST',
+                'callback' => [ $this, 'endpoint_for_delete_localization_rule' ],
+                'permission_callback' => function( WP_REST_Request $request ) {
+                    return $this->has_permission();
+                },
+            ]
+        );
+    }
+
+    public function endpoint_for_delete_localization_rule( WP_REST_Request $request ) {
+        $params = $request->get_params();
+        if ( isset( $params['rule_id'] ) ) {
+            $rule_id = sanitize_text_field( wp_unslash( $params['rule_id'] ) );
+            self::delete_localization_rule( $rule_id );
+        }
+    }
+
+    private function delete_localization_rule( $rule_id ) {
+        $options = get_option( 'p4m_prayer_points' );
+        if ( !$options['localization_rules'] ) {
+            return;
+        }
+
+        foreach ( $options['localization_rules'] as $key => $value ) {
+            if ( $options['localization_rules'][$key]['id'] == $rule_id ) {
+                unset( $options['localization_rules'][$key] );
+                update_option( 'p4m_prayer_points', $options );
+                return;
+            }
+        }
+        return;
+    }
+
     private function register_get_prayer_points_endpoint() {
         register_rest_route(
             $this->get_namespace(), '/get_prayer_points/(?P<library_id>\d*[,\d+]*)', [
@@ -155,6 +193,69 @@ class Pray4Movement_Prayer_Points_Endpoints
                 ORDER BY pp.library_id ASC;", $library_id
             ), ARRAY_A
         );
+    }
+
+    private function register_get_prayer_points_localized_endpoint() {
+        register_rest_route(
+            $this->get_namespace(), '/get_prayer_points_localized/(?P<library_id>\d*[,\d+]*)', [
+                'methods' => 'POST',
+                'callback' => [ $this , 'endpoint_for_get_prayer_points_localized' ],
+                'permission_callback' => '__return_true',
+            ]
+        );
+    }
+
+    public function endpoint_for_get_prayer_points_localized( WP_REST_Request $request ) {
+        $params = $request->get_params();
+        if ( isset( $params['library_id'] ) ) {
+            $library_ids = self::validate_library_ids_string( $params['library_id'] );
+            $library_ids = explode( ',', $library_ids );
+            $prayer_points = self::get_full_prayer_points_localized( $library_ids );
+        }
+        $prayer_points_localized = [];
+        foreach ( $prayer_points as $prayer_point ) {
+            $rules = self::get_localization_rules( $prayer_point['library_id'] );
+            foreach ( $rules as $rule ) {
+                $prayer_point['title'] = str_replace( $rule['from'], $rule['to'], $prayer_point['title'] );
+                $prayer_point['content'] = str_replace( $rule['from'], $rule['to'], $prayer_point['content'] );
+            }
+            $prayer_points_localized[] = $prayer_point;
+        }
+        return $prayer_points_localized;
+    }
+
+    private function get_localization_rules( $library_id ) {
+        $options = get_option( 'p4m_prayer_points', false );
+        if ( isset( $options['localization_rules'] ) ) {
+            $output = [];
+            $rules = $options['localization_rules'];
+            foreach ( $rules as $rule ) {
+                if ( $rule['library_id'] === $library_id ) {
+                    $output[] = $rule;
+                }
+            }
+            return $output;
+        }
+        return false;
+    }
+
+    private function apply_rules_to_prayer_points( $prayer_points, $rules ) {
+        $prayer_points_localized = [];
+        foreach ( $prayer_points as $prayer_point ) {
+            $prayer_point_localized = $prayer_point;
+            foreach ( $rules as $rule ) {
+                $prayer_point_localized = str_replace( $rule['from'], $rule['to'], $prayer_point_localized );
+            }
+            $prayer_points_localized[] = $prayer_point_localized;
+        }
+        return $prayer_points_localized;
+    }
+
+    public function get_full_prayer_points_localized( $library_id ) {
+        $prayer_points = self::get_full_prayer_points( $library_id );
+        $rules = self::get_localization_rules( $library_id );
+        $prayer_points_localized = self::apply_rules_to_prayer_points( $prayer_points, $rules );
+        return $prayer_points_localized;
     }
 
     private function register_get_replaced_prayer_points_endpoint() {
