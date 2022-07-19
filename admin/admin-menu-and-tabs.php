@@ -255,8 +255,8 @@ class Pray4Movement_Prayer_Points_Utilities {
     public static function display_languages_dropdown() {
         $languages = self::get_languages();
         ?>
-        <select name="language-dropdown" id="language-dropdown">
-            <option value="none" hidden>- <?php echo esc_html( 'Select Language', 'pray4movement_prayer_points' ); ?> -</option>
+        <select name="language-dropdown" id="language-dropdown" required>
+            <option value="" hidden>- <?php echo esc_html( 'Select Language', 'pray4movement_prayer_points' ); ?> -</option>
             <?php foreach ( $languages as $key => $value ): ?>
             <option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $languages[$key]['flag'] ); ?> <?php echo esc_html( $languages[$key]['name'] ); ?></option>
             <?php endforeach; ?>
@@ -400,8 +400,8 @@ class Pray4Movement_Prayer_Points_Utilities {
     public static function display_parent_libraries_dropdown() {
         $prayer_libraries = self::get_parent_prayer_libraries();
         ?>
-        <select name="library_parent_id" id="library_parent_id" required>
-                <option hidden>- <?php esc_html_e( 'Parent Library', 'pray4movement_prayer_points' ); ?> -</option>
+        <select name="library_parent_id" id="library_parent_id">
+                <option hidden value="">- <?php esc_html_e( 'Parent Library', 'pray4movement_prayer_points' ); ?> -</option>
                 <option value="none"><?php esc_html_e( '-- none --', 'pray4movement_prayer_points' ); ?></option>
                 <?php if ( empty( $prayer_libraries ) ) : ?>
                     <option disabled><?php esc_html_e( 'No Prayer Libraries found', 'pray4movement_prayer_points' ); ?></option>
@@ -417,8 +417,8 @@ class Pray4Movement_Prayer_Points_Utilities {
     public static function display_all_libraries_dropdown() {
         $prayer_libraries = self::get_prayer_libraries();
         ?>
-        <select name="library-id" id="library-id" required>
-                <option hidden>- <?php esc_html_e( 'Select a Library', 'pray4movement_prayer_points' ); ?> -</option>
+        <select name="library-id" id="library-id" required="required">
+                <option hidden value="">- <?php esc_html_e( 'Select a Library', 'pray4movement_prayer_points' ); ?> -</option>
                 <?php if ( empty( $prayer_libraries ) ) {
                     ?>
                         <option disabled><?php esc_html_e( 'No Prayer Libraries found', 'pray4movement_prayer_points' ); ?></option>
@@ -625,7 +625,7 @@ class Pray4Movement_Prayer_Points_Utilities {
 
     public static function get_rule_autoincrement() {
         $options = get_option( 'p4m_prayer_points' );
-        if ( !isset( $options['localization_rules'] ) ) {
+        if ( !isset( $options['localization_rules'] ) || empty( $options['localization_rules'] ) ) {
             return 1;
         }
         $rules = $options['localization_rules'];
@@ -1052,7 +1052,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                     <?php esc_html_e( 'Name', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
-                    <input type="text" name="library_name">
+                    <input type="text" name="library_name" required>
                 </td>
             </tr>
             <tr>
@@ -1194,7 +1194,7 @@ class Pray4Movement_Prayer_Points_Edit_Library {
                     <?php esc_html_e( 'Name', 'pray4movement_prayer_points' ); ?>
                 </td>
                 <td>
-                    <input type="text" name="library_name" size="50" value="<?php echo esc_attr( $library['name'] ); ?>">
+                    <input type="text" name="library_name" size="50" value="<?php echo esc_attr( $library['name'] ); ?>" required>
                 </td>
             </tr>
             <tr>
@@ -2338,20 +2338,15 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
         ?>
         <table class="widefat striped">
             <thead>
-                <h1><?php echo esc_html( 'Replacement Rules', 'pray4movement_prayer_points' ); ?></h1>
+                <h1><?php echo esc_html( 'Localization Rules', 'pray4movement_prayer_points' ); ?></h1>
                 <tr>
-                    <th><?php echo esc_html( 'From', 'pray4movement_prayer_points' ); ?></th>
-                    <th><?php echo esc_html( 'To', 'pray4movement_prayer_points' ); ?></th>
+                    <th><?php echo esc_html( 'Library', 'pray4movement_prayer_points' ); ?></th>
+                    <th><?php echo esc_html( 'Rule', 'pray4movement_prayer_points' ); ?></th>
                     <th><?php echo esc_html( 'Actions', 'pray4movement_prayer_points' ); ?></th>
                 </tr>
             </thead>
             <tbody>
                 <?php self::display_localization_rules(); ?>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td><button class="button"><?php echo esc_html( 'Add rule', 'pray4movement_prayer_points' ); ?></button></td>
-                </tr>
             </tbody>
         </table>
 
@@ -2366,8 +2361,8 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
                 <tbody>
                     <tr>
                         <td colspan="3">
-                            <input type="text" name="new-rule-from" placeholder="<?php echo esc_attr( 'from', 'pray4movement_prayer_points' ); ?>">
-                            <input type="text" name="new-rule-to" placeholder="<?php echo esc_attr( 'to', 'pray4movement_prayer_points' ); ?>">
+                            <input type="text" name="new-rule-from" placeholder="<?php echo esc_attr( 'from', 'pray4movement_prayer_points' ); ?>" required>
+                            <input type="text" name="new-rule-to" placeholder="<?php echo esc_attr( 'to', 'pray4movement_prayer_points' ); ?>" required>
                             <?php Pray4Movement_Prayer_Points_Utilities::display_all_libraries_dropdown(); ?>
                             <button class="button"><?php echo esc_html( 'Save', 'pray4movement_prayer_points' ); ?></button>
                         </td>
@@ -2457,9 +2452,14 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
     private static function save_localization_rule( $rule ) {
         $options = get_option( 'p4m_prayer_points', false );
 
-        if ( !$options || !$options['localization_rules'] ) {
+        if ( !$options ) {
             $options['localization_rules'] = [ $rule ];
             add_option( 'p4m_prayer_points', $options );
+            return;
+        }
+        if ( !$options['localization_rules'] || empty( $options['localization_rules'] ) ) {
+            $options['localization_rules'] = [ $rule ];
+            update_option( 'p4m_prayer_points', $options );
             return;
         }
         $options['localization_rules'][] = $rule;
