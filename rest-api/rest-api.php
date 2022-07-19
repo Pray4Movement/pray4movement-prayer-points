@@ -8,6 +8,7 @@ class Pray4Movement_Prayer_Points_Endpoints
     public function add_api_routes() {
         self::register_delete_prayer_library_endpoint();
         self::register_delete_prayer_point_endpoint();
+        self::register_delete_localization_rule_endpoint();
         self::register_get_prayer_points_endpoint();
         self::register_get_prayer_points_localized_endpoint();
         self::register_get_replaced_prayer_points_endpoint();
@@ -113,6 +114,42 @@ class Pray4Movement_Prayer_Points_Endpoints
         if ( isset( $params['prayer_id'] ) ) {
             self::delete_prayer_point( $params['prayer_id'] );
         }
+    }
+
+    private function register_delete_localization_rule_endpoint() {
+        register_rest_route(
+            $this->get_namespace(), '/delete_localization_rule/(?P<rule_id>\d+)', [
+                'methods'  => 'POST',
+                'callback' => [ $this, 'endpoint_for_delete_localization_rule' ],
+                'permission_callback' => function( WP_REST_Request $request ) {
+                    return $this->has_permission();
+                },
+            ]
+        );
+    }
+
+    public function endpoint_for_delete_localization_rule( WP_REST_Request $request ) {
+        $params = $request->get_params();
+        if ( isset( $params['rule_id'] ) ) {
+            $rule_id = sanitize_text_field( wp_unslash( $params['rule_id'] ) );
+            self::delete_localization_rule( $rule_id );
+        }
+    }
+
+    private function delete_localization_rule( $rule_id ) {
+        $options = get_option( 'p4m_prayer_points' );
+        if ( !$options['localization_rules'] ) {
+            return;
+        }
+
+        foreach ( $options['localization_rules'] as $key => $value ) {
+            if ( $options['localization_rules'][$key]['id'] == $rule_id ) {
+                unset( $options['localization_rules'][$key] );
+                update_option( 'p4m_prayer_points', $options );
+                return;
+            }
+        }
+        return;
     }
 
     private function register_get_prayer_points_endpoint() {

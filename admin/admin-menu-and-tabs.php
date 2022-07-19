@@ -2375,6 +2375,33 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
                 </tbody>
             </table>
         </form>
+        <script>
+            function deleteLocalizationRule(ruleId) {
+                if(confirm(`Delete localization rule?`)) {
+                    jQuery.ajax({
+                        type: 'POST',
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        url: window.location.origin + '/wp-json/pray4movement-prayer-points/v1/delete_localization_rule/' + ruleId,
+                        beforeSend: function(xhr) {
+                            xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
+                        },
+                        success: deleteLocalizationRuleSuccess(ruleId),
+                    });
+                }
+            }
+
+            function deleteLocalizationRuleSuccess(ruleId) {
+                jQuery( '#p4m-localization-rule-' + ruleId ).remove();
+                    let adminNotice = `
+                        <div class="notice notice-success is-dismissible">
+                            <p>Localization rule deleted successfully!</p>
+                        </div>
+                    `;
+                jQuery('.nav-tab-wrapper').before(adminNotice);
+            }
+        </script>
+        </script>
         <?php
     }
 
@@ -2399,7 +2426,7 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
                 <?php
                 $previous_library_id = $library['id'];
                 endif; ?>
-            <tr id="p4m-localization-rule-<?php echo esc_attr( $library['id'] ); ?>">
+            <tr id="p4m-localization-rule-<?php echo esc_attr( $rule['id'] ); ?>">
                 <td></td>
                 <td><?php echo esc_html( $rule['from'] ); ?> → <?php echo esc_html( $rule['to'] ); ?></td>
                 <td><a href="#" onclick="javascript:deleteLocalizationRule(<?php echo esc_attr( $rule['id'] ); ?>);" style="color:#b32d2e;">Delete</a></td>
