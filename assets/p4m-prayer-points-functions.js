@@ -57,13 +57,16 @@ function get_parent_libraries() {
                 if ( isParent ) {
                     jQuery('.p4m-libraries-table').append(`
                         <tr>
-                            <td><a href="?library_id=${library['id']}">${library['name']}</a></td>
+                            <td><a href="?view_library_id=${library['id']}">${library['name']}</a></td>
                             <td>${library['description']}</td>
                             <td id="p4m-row-parent-id-${library['id']}"></td>
-                            <td><a href="javascript:displayLocalizationDownload(${library['id']}, '${library['name']}', '${library['key']}')">csv</a></td>
+                            <td>
+                                <a href="?download_library_id=${library['id']}">download</a>
+                                <a href="javascript:displayLocalizationDownload(${library['id']}, '${library['name']}', '${library['key']}')">csv</a>
+                            </td>
                         </tr>`);
                 } else {
-                    jQuery(`#p4m-row-parent-id-${library['parent_id']}`).append(`<a href="?library_id=${library['id']}">` + getFlag(library['language']) + `</a>`);
+                    jQuery(`#p4m-row-parent-id-${library['parent_id']}`).append(`<a href="?view_library_id=${library['id']}">` + getFlag(library['language']) + `</a>`);
                 }
             });
         },
@@ -75,7 +78,7 @@ function get_libraries_by_language( language ) {
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/get_prayer_libraries_by_language/${language}`, //foobar softcode language variable
+        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/get_prayer_libraries_by_language/${language}`,
         beforeSend: function(xhr) {
             xhr.setRequestHeader('X-WP-Nonce', p4mPrayerPoints.nonce);
         },
@@ -90,7 +93,7 @@ function get_libraries_by_language( language ) {
             response.forEach( function(library){
             jQuery('.p4m-libraries-table').append(`
                 <tr>
-                    <td><a href="?library_id=${library['id']}">${library['name']}</a></td>
+                    <td><a href="?view_library_id=${library['id']}">${library['name']}</a></td>
                     <td>${library['description']}</td>
                     <td><a href="javascript:displayLocalizationDownload(${library['id']}, '${library['name']}', '${library['key']}')">csv</a></td>
                 </tr>`);
@@ -234,7 +237,7 @@ function displayLocalizationDownload( libraryID, libraryName, libraryKey ) {
 }
 
 function removeHeaderBlock() {
-    jQuery('.wp-block-cover alignfull').remove();
+    jQuery('.wp-block-cover').remove();
 }
 
 function loadPrayerPointsByTag() {
@@ -287,6 +290,55 @@ function loadPrayerPointsByTag() {
                 jQuery('.p4m-prayer-points-table').append(row);
             });
         },
+    });
+}
+
+function loadLibraryRules() {
+    removeHeaderBlock();
+    var prayerPointsTable = `
+    <table class="p4m-localization-rules-table">
+        <tr id="p4m-library-spinner">
+            <td colspan="2">
+                <i>Downloading...</i>
+            </td>
+        </tr>
+    </table>
+    <table>
+        <tr>
+            <th colspan="3">Add new rule</th>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" placeholder="from" id="new-rule-from">
+            </td>
+            <td>
+                <input type="text" placeholder="to" id="new-rule-to">
+            </td>
+            <td><a href="javascript:void(0)" onclick="javascript:addLocalizationRule();" class="button" id="add-new-rule">save</a></td>
+        </tr>
+    </table>`;
+    jQuery('#p4m-content').append(prayerPointsTable);
+    p4mPrayerPoints.rules.forEach(function(rule){
+        var exampleRow = 'No example available';
+        if (rule.example_from){
+            exampleRow = `${rule.example_from} → ${rule.example_to}`;
+        }
+        jQuery('#p4m-library-spinner').remove();
+        jQuery('.p4m-localization-rules-table').append(`
+        <tr>
+            <td>
+                <b>${rule.replace_from} → ${rule.replace_to}</b>
+                <br>
+                <i>${exampleRow}</i>
+            </td>
+            <td>
+                <input type="text" value="${rule.replace_to}">
+            </td>
+            <td>
+                <a class="button">update</a>
+            </td>
+        </tr>
+        `);
     });
 }
 
@@ -346,4 +398,36 @@ function downloadCSV( libraryId, fileName='pray4movement_prayer_library_download
             document.body.removeChild(downloadLink);
         }
     } );
+}
+
+function addLocalizationRule() {
+    var libraryId = p4mPrayerPoints.libraryId;
+    var replaceFrom = jQuery('#new-rule-from')[0].value;
+    var replaceTo = jQuery('#new-rule-to')[0].value;
+    var userId = p4mPrayerPoints.rules[0].user_id;
+    jQuery.ajax({
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/add_localization_rule/${libraryId}/${replaceFrom}/${replaceTo}/${userId}`,
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-WP-Nonce', p4mPrayerPoints.nonce);
+        },
+        complete: function() {
+            jQuery('.p4m-localization-rules-table').append(`
+                <tr>
+                    <td>
+                        <b>${replaceFrom} → ${replaceTo}</b>
+                        <br>
+                        <i>Check back for an example</i>
+                    </td>
+                    <td>
+                        <input type="text" value="${replaceTo}">
+                    </td>
+                    <td>
+                        <a class="button">update</a>
+                    </td>
+                </tr>`);
+        },
+    });
 }
