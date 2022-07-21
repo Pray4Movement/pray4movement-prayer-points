@@ -325,7 +325,7 @@ function loadLibraryRules() {
         }
         jQuery('#p4m-library-spinner').remove();
         jQuery('.p4m-localization-rules-table').append(`
-        <tr>
+        <tr id="p4m-localization-row-rule-${rule.rule_id}">
             <td>
                 <b>${rule.replace_from} → ${rule.replace_to}</b>
                 <br>
@@ -336,6 +336,7 @@ function loadLibraryRules() {
             </td>
             <td>
                 <a class="button">update</a>
+                <a class="button" href="javascript:deleteLocalizationRule(${rule.rule_id})" style="background-color:#b32d2e;">delete</a>
             </td>
         </tr>
         `);
@@ -415,7 +416,7 @@ function addLocalizationRule() {
         },
         complete: function() {
             jQuery('.p4m-localization-rules-table').append(`
-                <tr>
+                <tr id="p4m-localization-row-rule-${rule_id}">
                     <td>
                         <b>${replaceFrom} → ${replaceTo}</b>
                         <br>
@@ -428,6 +429,21 @@ function addLocalizationRule() {
                         <a class="button">update</a>
                     </td>
                 </tr>`);
+        },
+    });
+}
+
+function deleteLocalizationRule(ruleId) {
+    jQuery.ajax({
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/delete_localization_rule/${ruleId}`,
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-WP-Nonce', p4mPrayerPoints.nonce);
+        },
+        complete: function() {
+            jQuery(`#p4m-localization-row-rule-${ruleId}`).remove();
         },
     });
 }
