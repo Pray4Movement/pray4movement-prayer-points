@@ -19,6 +19,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         self::register_save_child_prayer_point_endpoint();
         self::register_save_child_prayer_point_tags_endpoint();
         self::register_add_localization_rule_endpoint();
+        self::register_update_localization_rule_endpoint();
     }
 
     private function get_namespace() {
@@ -669,6 +670,46 @@ class Pray4Movement_Prayer_Points_Endpoints
                 'user_id' => $user_id,
             ],
             [ '%d', '%s', '%s', '%d' ]
+        );
+        return true;
+    }
+
+    public function register_update_localization_rule_endpoint() {
+        register_rest_route(
+            $this->get_namespace(), '/update_localization_rule/(?P<rule_id>\d+)/(?P<replace_from>.+)/(?P<replace_to>.+)', [
+                'methods'  => 'POST',
+                'callback' => [ $this, 'endpoint_for_update_localization_rule' ],
+                'permission_callback' => function( WP_REST_Request $request ) {
+                    return $this->has_permission();
+                },
+            ]
+        );
+    }
+
+    public function endpoint_for_update_localization_rule( WP_REST_Request $request ) {
+        $params = $request->get_params();
+        if ( !isset( $params['rule_id'] ) || !isset( $params['replace_from'] ) || !isset( $params['replace_to'] ) ) {
+            return new WP_Error( __METHOD__, 'Missing parameters.' );
+        }
+        // Todo: add user_id validation
+        // if ( $params['user_id'] !== get_current_user_id() ) {
+        //     return new WP_Error( __METHOD__, 'Nice try, slick. You can\'t add rules for other users.' );
+        // }
+        self::update_localization_rule( $params['rule_id'], $params['replace_from'], $params['replace_to'] );
+        return;
+    }
+
+    public function update_localization_rule( $rule_id, $replace_from, $replace_to ) {
+        global $wpdb;
+        $wpdb->update(
+            $wpdb->prefix . 'dt_prayer_points_localization',
+            [
+                'replace_from' => $replace_from,
+                'replace_to' => $replace_to,
+            ],
+            [
+                'rule_id' => $rule_id,
+            ]
         );
         return true;
     }

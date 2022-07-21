@@ -298,14 +298,14 @@ function loadLibraryRules() {
     var prayerPointsTable = `
     <table class="p4m-localization-rules-table">
         <tr id="p4m-library-spinner">
-            <td colspan="2">
+            <td style="text-align: center;">
                 <i>Downloading...</i>
             </td>
         </tr>
     </table>
     <table>
         <tr>
-            <th colspan="3">Add new rule</th>
+            <th colspan="4">Add new rule</th>
         </tr>
         <tr>
             <td>
@@ -320,6 +320,8 @@ function loadLibraryRules() {
     jQuery('#p4m-content').append(prayerPointsTable);
     p4mPrayerPoints.rules.forEach(function(rule){
         var exampleRow = 'No example available';
+        var replaceFrom = jQuery(`#p4m-localization-replace-rule-from-${rule.rule_id}`);
+        var replaceTo = jQuery(`#p4m-localization-replace-rule-to-${rule.rule_id}`);
         if (rule.example_from){
             exampleRow = `${rule.example_from} → ${rule.example_to}`;
         }
@@ -332,11 +334,14 @@ function loadLibraryRules() {
                 <i>${exampleRow}</i>
             </td>
             <td>
-                <input type="text" value="${rule.replace_to}">
+                <input id="p4m-replace-rule-from-${rule.rule_id}" type="text" value="${rule.replace_from}">
             </td>
             <td>
-                <a class="button">update</a>
-                <a class="button" href="javascript:deleteLocalizationRule(${rule.rule_id})" style="background-color:#b32d2e;">delete</a>
+                <input type="text" id="p4m-replace-rule-to-${rule.rule_id}" value="${rule.replace_to}">
+            </td>
+            <td>
+                <a class="button" href="javascript:updateLocalizationRule(${rule.rule_id});">update</a>
+                <a href="javascript:deleteLocalizationRule(${rule.rule_id});" class="button"  style="background-color:#b32d2e;">delete</a>
             </td>
         </tr>
         `);
@@ -429,6 +434,23 @@ function addLocalizationRule() {
                         <a class="button">update</a>
                     </td>
                 </tr>`);
+        },
+    });
+}
+
+function updateLocalizationRule(ruleId) {
+    var replaceFrom = jQuery(`#p4m-replace-rule-from-${ruleId}`)[0].value;
+    var replaceTo = jQuery(`#p4m-replace-rule-to-${ruleId}`)[0].value;
+    jQuery.ajax({
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/update_localization_rule/${ruleId}/${replaceFrom}/${replaceTo}`,
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-WP-Nonce', p4mPrayerPoints.nonce);
+        },
+        complete: function() {
+            //jQuery(`#p4m-localization-row-rule-${ruleId}`).remove();
         },
     });
 }
