@@ -306,31 +306,31 @@ function loadLibraryRules() {
     jQuery('#p4m-content').append(prayerPointsTable);
     p4mPrayerPoints.rules.forEach(function(rule){
         var exampleRow = 'No example available';
-        var replaceFrom = jQuery(`#p4m-localization-replace-rule-from-${rule.rule_id}`);
-        var replaceTo = jQuery(`#p4m-localization-replace-rule-to-${rule.rule_id}`);
         if (rule.example_from){
             exampleRow = `${rule.example_from} → ${rule.example_to}`;
         }
         jQuery('#p4m-library-spinner').remove();
         jQuery('.p4m-localization-rules-table').append(`
-        <tr id="p4m-localization-row-rule-${rule.rule_id}">
+        <tr id="p4m-localization-row-rule-${rule.id}">
             <td>
                 <b>${rule.replace_from} → ${rule.replace_to}</b>
                 <br>
                 <i>${exampleRow}</i>
             </td>
-            <td>
-                <input id="p4m-replace-rule-from-${rule.rule_id}" type="text" value="${rule.replace_from}">
+            <td style="text-align:center;">
+                ${rule.replace_from} →
             </td>
             <td>
-                <input type="text" id="p4m-replace-rule-to-${rule.rule_id}" value="${rule.replace_to}">
-            </td>
-            <td>
-                <a class="button" href="javascript:updateLocalizationRule(${rule.rule_id});">update</a>
+                <input type="text" id="p4m-replace-rule-to-${rule.id}" value="${rule.replace_to}">
             </td>
         </tr>
         `);
     });
+    var prayerPointsDownloadRow = `
+    <br>
+    <a href="javascript:downloadCSV(${p4mPrayerPoints.libraryId}, '${p4mPrayerPoints.libraryKey}');" class="button">Download</a>
+    `;
+    jQuery('.p4m-localization-rules-table').append(prayerPointsDownloadRow)
 }
 
 function updateLocalization() {
@@ -341,16 +341,6 @@ function updateLocalization() {
 }
 
 function downloadCSV( libraryId, fileName='pray4movement_prayer_library_download' ) {
-    var p4mLocation = jQuery('#p4m-localization-location')[0].value;
-    var p4mPeopleGroup = jQuery('#p4m-localization-people-group')[0].value;
-    if (p4mLocation === ''){
-        p4mLocation = 'the World';
-    }
-
-    if (p4mPeopleGroup === ''){
-        p4mPeopleGroup = 'people';
-    }
-    var peopleGroup = jQuery('#p4m-localization-people-group')[0].value;
     jQuery.ajax( {
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
@@ -378,8 +368,13 @@ function downloadCSV( libraryId, fileName='pray4movement_prayer_library_download
                 output = output.slice(0,-1);
                 output += `\r\n`;
             } );
-            output = output.replace(/XXX/g, p4mLocation);
-            output = output.replace(/YYY/g, p4mPeopleGroup);
+            
+            p4mPrayerPoints.rules.forEach(function(rule) {
+                var regexRule = new RegExp(rule.replace_from, 'g');
+                var replaceTo = jQuery(`#p4m-replace-rule-to-${rule.id}`).val();
+                output = output.replace(regexRule, replaceTo);
+            });
+
             var encodedUri = encodeURI(output);
             var downloadLink = document.createElement('a');
             downloadLink.href = encodedUri;

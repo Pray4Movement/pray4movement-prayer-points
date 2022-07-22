@@ -101,9 +101,10 @@ function get_prayer_library_rules_and_examples() {
 function get_prayer_library_rules() {
     $library_id = get_library_id_from_url();
     global $wpdb;
-    return $wpdb->get_results(
-        $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_localization` WHERE `library_id` = %d AND `user_id` = %d;", $library_id, get_current_user_id() ), ARRAY_A
+    $rules = $wpdb->get_var(
+        $wpdb->prepare( "SELECT `rules` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `id` = %d;", $library_id )
     );
+    return maybe_unserialize( $rules );
 }
 
 function get_prayer_library_rule_example( $replace_from ) {
