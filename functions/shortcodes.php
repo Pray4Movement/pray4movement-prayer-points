@@ -89,6 +89,9 @@ function show_download_library_inline() {
 function get_prayer_library_rules_and_examples() {
     $rules = get_prayer_library_rules();
     $rules_with_examples = [];
+    if ( empty( $rules ) ) {
+        return false;
+    }
     foreach ( $rules as $rule ) {
         $rule['example_from'] = get_prayer_library_rule_example( $rule['replace_from'] );
         if ( $rule['example_from'] ) {
