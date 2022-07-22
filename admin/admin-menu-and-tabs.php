@@ -2467,13 +2467,9 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
     }
 
     private static function get_rule_autoincrement_by_library_id( $library_id ) {
-        global $wpdb;
-        $rules = $wpdb->get_var(
-            $wpdb->prepare( "SELECT `rules` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `id` = %d;", $library_id )
-        );
+        $rules = Pray4Movement_Prayer_Points_Utilities::get_localization_rules_by_library_id( $library_id );
         $rules = maybe_unserialize( $rules );
         $autoincrement = max( array_column( $rules, 'id' ) ) + 1;
-        error_log( 'autoincrement is now: ' . $autoincrement );
         return $autoincrement;
     }
 }
