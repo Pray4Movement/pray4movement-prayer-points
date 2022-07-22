@@ -2448,8 +2448,7 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
         }
         $rules[] = $new_rule;
         $rules = maybe_serialize( $rules );
-        error_log( print_r( $rules, true ) );
-        error_log( gettype( $rules ) );
+
         global $wpdb;
         $test = $wpdb->update(
             $wpdb->prefix.'dt_prayer_points_lib',
