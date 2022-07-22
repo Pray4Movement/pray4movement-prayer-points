@@ -2472,13 +2472,8 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
             $wpdb->prepare( "SELECT `rules` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `id` = %d;", $library_id )
         );
         $rules = maybe_unserialize( $rules );
-        $autoincrement = 0;
-        error_log( 'foo' );
-        if ( is_array( $rules ) && !empty( $rules ) ) {
-            error_log( 'getting autoinc' );
-            $autoincrement = count( $rules );
-        }
-        error_log( 'bar' );
+        $autoincrement = max( array_column( $rules, 'id' ) ) + 1;
+        error_log( 'autoincrement is now: ' . $autoincrement );
         return $autoincrement;
     }
 }
