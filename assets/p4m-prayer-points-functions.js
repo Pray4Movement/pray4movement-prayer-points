@@ -47,7 +47,7 @@ function get_parent_libraries() {
                     <th>Name</th>
                     <th>Description</th>
                     <th>Languages</th>
-                    <th>Download</th>
+                    <th>Action</th>
                 </tr>`);
             response.forEach( function(library){
                 var isParent = true;
@@ -61,8 +61,7 @@ function get_parent_libraries() {
                             <td>${library['description']}</td>
                             <td id="p4m-row-parent-id-${library['id']}"></td>
                             <td>
-                                <a href="?download_library_id=${library['id']}">download</a>
-                                <a href="javascript:displayLocalizationDownload(${library['id']}, '${library['name']}', '${library['key']}')">csv</a>
+                                <a href="?download_library_id=${library['id']}">Download</a>
                             </td>
                         </tr>`);
                 } else {
