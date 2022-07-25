@@ -594,7 +594,7 @@ class Pray4Movement_Prayer_Points_Utilities {
 
     public static function get_prayer_points_localized( $library_id ) {
         $prayer_points = self::get_prayer_points( $library_id );
-        $rules = self::get_localization_rules( $library_id );
+        $rules = self::get_localization_rules_by_library_id( $library_id );
         $prayer_points_localized = self::apply_rules_to_prayer_points( $prayer_points, $rules );
         return $prayer_points_localized;
     }
@@ -2468,7 +2468,10 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
     private static function get_rule_autoincrement_by_library_id( $library_id ) {
         $rules = Pray4Movement_Prayer_Points_Utilities::get_localization_rules_by_library_id( $library_id );
         $rules = maybe_unserialize( $rules );
-        $autoincrement = max( array_column( $rules, 'id' ) ) + 1;
+        $autoincrement = 1;
+        if ( !empty( $rules ) ) {
+            $autoincrement = max( array_column( $rules, 'id' ) ) + 1;
+        }
         return $autoincrement;
     }
 }
