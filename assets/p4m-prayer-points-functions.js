@@ -1,5 +1,5 @@
 function loadLibraries() {
-    jQuery('#p4m-table-heading').text('Prayer Libraries');
+    jQuery('#p4m-table-heading').text('Prayer Libraries').attr('class', 'p4m-library-name');
     var librariesTable = `
     <table class="p4m-libraries-table">
         <tr class="p4m-translate-row">
@@ -84,20 +84,29 @@ function get_libraries_by_language( language ) {
         },
         success: function(response) {
             jQuery('#p4m-library-spinner').remove();
+            jQuery(`#languages_dropdown option[value="${language}"]`).attr("selected", "selected");
             jQuery('.p4m-libraries-table').append(`
                 <tr>
                     <th>Name</th>
                     <th>Description</th>
                     <th>Download</th>
                 </tr>`);
+            if (jQuery.isEmptyObject(response)) {
+                jQuery('.p4m-libraries-table').append(`
+                    <tr>
+                        <td colspan="3">
+                            <i>No libraries available for this language yet.</i>
+                        </td>
+                    </tr>
+                `);
+            }
             response.forEach( function(library){
-            jQuery('.p4m-libraries-table').append(`
+                jQuery('.p4m-libraries-table').append(`
                 <tr>
                     <td><a href="?view_library_id=${library['id']}">${library['name']}</a></td>
                     <td>${library['description']}</td>
                     <td><a href="/?download_library_id=${library['id']}">Download</a></td>
                 </tr>`);
-            jQuery(`#languages_dropdown option[value="${language}"]`).attr("selected", "selected");
             });
         },
     });
