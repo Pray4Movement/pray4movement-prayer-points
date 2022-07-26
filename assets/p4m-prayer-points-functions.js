@@ -50,6 +50,7 @@ function get_parent_libraries() {
                     <th>Action</th>
                 </tr>`);
             response.forEach( function(library){
+                library['flag'] = getFlag(library['language']);
                 var isParent = true;
                 if ( library['parent_id'] > 0 ) {
                     isParent = false;
@@ -57,15 +58,19 @@ function get_parent_libraries() {
                 if ( isParent ) {
                     jQuery('.p4m-libraries-table').append(`
                         <tr>
-                            <td><a href="?view_library_id=${library['id']}">${library['name']}</a></td>
+                            <td>
+                                <a href="?view_library_id=${library['id']}">${library['name']}</a>
+                            </td>
                             <td>${library['description']}</td>
-                            <td id="p4m-row-parent-id-${library['id']}"></td>
+                            <td id="p4m-row-parent-id-${library['id']}">
+                                <a href="?view_library_id=${library['id']}">${library['flag']}</a>
+                            </td>
                             <td>
                                 <a href="?download_library_id=${library['id']}">Download</a>
                             </td>
                         </tr>`);
                 } else {
-                    jQuery(`#p4m-row-parent-id-${library['parent_id']}`).append(`<a href="?view_library_id=${library['id']}">` + getFlag(library['language']) + `</a>`);
+                    jQuery(`#p4m-row-parent-id-${library['parent_id']}`).append(`<a href="?view_library_id=${library['id']}">${library['flag']}</a>`);
                 }
             });
         },
