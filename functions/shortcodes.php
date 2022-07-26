@@ -116,7 +116,7 @@ function get_prayer_library_rule_example( $replace_from ) {
     $library_id = get_library_id_from_url();
     global $wpdb;
     return $wpdb->get_var(
-        $wpdb->prepare( "SELECT `title` FROM `{$wpdb->prefix}dt_prayer_points` WHERE `library_id` = %d AND `title` LIKE CONCAT( '%', %s, '%' ) LIMIT 1;", $library_id, $replace_from )
+        $wpdb->prepare( "SELECT `title` FROM `{$wpdb->prefix}dt_prayer_points` WHERE `library_id` = %d AND `title` LIKE CONCAT( '%', %s, '%' ) ORDER BY CHAR_LENGTH(`title`) ASC LIMIT 1;", $library_id, $replace_from )
     );
 }
 
