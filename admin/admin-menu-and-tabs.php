@@ -2432,7 +2432,7 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
         }
 
         $rule = [
-            'id' => self::get_rule_autoincrement_by_library_id( $_POST['library-id'] ),
+            'id' => self::get_rule_autoincrement_by_library_id( sanitize_text_field( wp_unslash( $_POST['library-id'] ) ) ),
             'library_id' => sanitize_text_field( wp_unslash( $_POST['library-id'] ) ),
             'replace_from' => sanitize_text_field( wp_unslash( $_POST['new-rule-from'] ) ),
             'replace_to' => sanitize_text_field( wp_unslash( $_POST['new-rule-to'] ) ),
