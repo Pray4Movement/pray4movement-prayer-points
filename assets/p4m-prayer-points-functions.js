@@ -139,7 +139,7 @@ function loadPrayerPoints() {
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
-        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/get_prayer_points/` + p4mPrayerPoints.libraryId,
+        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/get_prayer_points_localized/` + p4mPrayerPoints.libraryId,
         beforeSend: function(xhr) {
             xhr.setRequestHeader('X-WP-Nonce', p4mPrayerPoints.nonce );
         },
@@ -192,30 +192,6 @@ function loadPrayerPoints() {
                 </span>`);
         },
     });
-}
-
-function displayLocalizationDownload( libraryID, libraryName, libraryKey ) {
-    var localizationInputs = `
-    <div class="p4m-download-modal">
-        <div class="p4m-modal-box">
-            <span class="modal-close" onclick="jQuery('.p4m-download-modal').css('display', 'none');">&times;</span>
-            <div class="p4m-localization-box-title">
-                Localize the prayer points for
-                <br>
-                '${libraryName}'
-            </div>
-            <div>
-                <label class="p4m-localization-box-label">Location:</label> <input type="text" id="p4m-localization-location" placeholder="the world">
-            </div>
-            <div>
-                <label class="p4m-localization-box-label">People Group:</label><input type="text" id="p4m-localization-people-group" placeholder="people">
-            </div>
-            <div>
-                <a class="button p4m-localization-box-button" id="update-prayer-points" href="javascript:downloadCSV(${libraryID}, '${libraryKey}');">Download</a>
-            </div>
-        </div>
-    </div>`;
-    jQuery('#p4m-content').append(localizationInputs);
 }
 
 function removeHeaderBlock() {

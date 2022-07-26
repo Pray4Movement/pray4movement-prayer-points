@@ -18,8 +18,6 @@ class Pray4Movement_Prayer_Points_Endpoints
         self::register_set_location_and_people_group_endpoint();
         self::register_save_child_prayer_point_endpoint();
         self::register_save_child_prayer_point_tags_endpoint();
-        self::register_add_localization_rule_endpoint();
-        self::register_update_localization_rule_endpoint();
     }
 
     private function get_namespace() {
@@ -248,7 +246,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         foreach ( $prayer_points as $prayer_point ) {
             $prayer_point_localized = $prayer_point;
             foreach ( $rules as $rule ) {
-                $prayer_point_localized = str_replace( $rule['from'], $rule['to'], $prayer_point_localized );
+                $prayer_point_localized = str_replace( $rule['replace_from'], $rule['replace_to'], $prayer_point_localized );
             }
             $prayer_points_localized[] = $prayer_point_localized;
         }
@@ -648,78 +646,6 @@ class Pray4Movement_Prayer_Points_Endpoints
             }
         }
         return;
-    }
-
-    public function register_add_localization_rule_endpoint() {
-        register_rest_route(
-            $this->get_namespace(), '/add_localization_rule/(?P<library_id>\d+)/(?P<replace_from>.+)/(?P<replace_to>.+)/(?P<user_id>\d+)', [
-                'methods'  => 'POST',
-                'callback' => [ $this, 'endpoint_for_add_localization_rule' ],
-                'permission_callback' => function( WP_REST_Request $request ) {
-                    return $this->has_permission();
-                },
-            ]
-        );
-    }
-
-    public function endpoint_for_add_localization_rule( WP_REST_Request $request ) {
-        $params = $request->get_params();
-        if ( !isset( $params['library_id'] ) || !isset( $params['replace_from'] ) || !isset( $params['replace_to'] ) || !isset( $params['user_id'] ) ) {
-            return new WP_Error( __METHOD__, 'Missing parameters.' );
-        }
-        self::add_localization_rule( $params['library_id'], $params['replace_from'], $params['replace_to'], $params['user_id'] );
-        return;
-    }
-
-    public function add_localization_rule( $library_id, $replace_from, $replace_to, $user_id ) {
-        global $wpdb;
-        $wpdb->insert(
-            $wpdb->prefix . 'dt_prayer_points_localization',
-            [
-                'library_id' => $library_id,
-                'replace_from' => $replace_from,
-                'replace_to' => $replace_to,
-                'user_id' => $user_id,
-            ],
-            [ '%d', '%s', '%s', '%d' ]
-        );
-        return true;
-    }
-
-    public function register_update_localization_rule_endpoint() {
-        register_rest_route(
-            $this->get_namespace(), '/update_localization_rule/(?P<rule_id>\d+)/(?P<replace_from>.+)/(?P<replace_to>.+)', [
-                'methods'  => 'POST',
-                'callback' => [ $this, 'endpoint_for_update_localization_rule' ],
-                'permission_callback' => function( WP_REST_Request $request ) {
-                    return $this->has_permission();
-                },
-            ]
-        );
-    }
-
-    public function endpoint_for_update_localization_rule( WP_REST_Request $request ) {
-        $params = $request->get_params();
-        if ( !isset( $params['rule_id'] ) || !isset( $params['replace_from'] ) || !isset( $params['replace_to'] ) ) {
-            return new WP_Error( __METHOD__, 'Missing parameters.' );
-        }
-        self::update_localization_rule( $params['rule_id'], $params['replace_from'], $params['replace_to'] );
-        return;
-    }
-
-    public function update_localization_rule( $rule_id, $replace_from, $replace_to ) {
-        global $wpdb;
-        $wpdb->update(
-            $wpdb->prefix . 'dt_prayer_points_localization',
-            [
-                'replace_from' => $replace_from,
-                'replace_to' => $replace_to,
-            ],
-            [
-                'rule_id' => $rule_id,
-            ]
-        );
-        return true;
     }
 
     private static $_instance = null;
