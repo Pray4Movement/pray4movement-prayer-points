@@ -99,5 +99,10 @@
 .p4m-library-name {
     display: block;
     text-align: center;
+    font-size: 6.8rem;
     width: 95%;
+}
+.p4m-localization-rules-table {
+    width: 85%;
+    margin: auto;
 }
