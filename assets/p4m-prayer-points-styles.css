@@ -106,3 +106,9 @@
     width: 85%;
     margin: auto;
 }
+.p4m-back-link-div {
+    width:100%;
+    display:block;
+    margin:auto;
+    text-align:center;
+}

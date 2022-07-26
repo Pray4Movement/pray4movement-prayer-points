@@ -255,6 +255,16 @@ function loadPrayerPointsByTag() {
 
 function loadLibraryRules() {
     removeHeaderBlock();
+    if ( typeof p4mPrayerPoints.libraryName == 'undefined' ) {
+        jQuery('#p4m-content').prepend(`
+            <h1 class="p4m-library-name">Whoops! Library not found</h1>
+            <div class="p4m-back-link-div">
+                <a href="javascript:history.back();"><< back</a>
+            </div>
+            `);
+        return;
+    }
+    
     jQuery('#p4m-content').prepend(`<h1 class="p4m-library-name">Download - ${p4mPrayerPoints.libraryName}</h1>`);
     var prayerPointsTable = `
     <table class="p4m-localization-rules-table">
