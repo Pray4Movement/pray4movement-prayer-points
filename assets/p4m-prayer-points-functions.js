@@ -124,7 +124,6 @@ function getFlag(language) {
 
 function loadPrayerPoints() {
     removeHeaderBlock();
-    displayLocalizationInputs();
 
     var prayerPointsTable = `
     <table class="p4m-prayer-points-table">
@@ -184,31 +183,15 @@ function loadPrayerPoints() {
                     </tr>`;
                 jQuery('.p4m-prayer-points-table').append(row);
             });
-            jQuery('.p4m-localization-box').before(`<h2 class="p4m-library-name">${p4mPrayerPoints.libraryName}</h2>`);
-            jQuery('.p4m-localization-box').after(`<span class="export-buttons"><td><a href="/?download_library_id=${p4mPrayerPoints.libraryId}">Download</a></td></span>`);
+            jQuery('#p4m-content').before(`
+            <h2 class="p4m-library-name">${p4mPrayerPoints.libraryName}</h2>
+                <span class="export-buttons" style="max-width: 100%;">
+                    <div>
+                        <a href="/?download_library_id=${p4mPrayerPoints.libraryId}">Download</a>
+                    </div>
+                </span>`);
         },
     });
-}
-
-function displayLocalizationInputs() {
-    var localizationInputs = `
-    <div class="p4m-localization-box">
-        <div class="p4m-localization-box-title">
-            Hit close to home!
-            <br>
-            Localize these prayer points below.
-        </div>
-        <div>
-            <label class="p4m-localization-box-label">Location:</label> <input type="text" id="p4m-localization-location" placeholder="the world">
-        </div>
-        <div>
-            <label class="p4m-localization-box-label">People Group:</label><input type="text" id="p4m-localization-people-group" placeholder="people">
-        </div>
-        <div>
-            <a class="button p4m-localization-box-button" id="update-prayer-points" href="javascript:updateLocalization();">Update</a>
-        </div>
-    </div>`;
-    jQuery('#p4m-content').append(localizationInputs);
 }
 
 function displayLocalizationDownload( libraryID, libraryName, libraryKey ) {
@@ -303,31 +286,34 @@ function loadLibraryRules() {
         </tr>
     </table>`;
     jQuery('#p4m-content').append(prayerPointsTable);
-    p4mPrayerPoints.rules.forEach(function(rule){
-        var exampleRow = 'No example available';
-        if (rule.example_from){
-            exampleRow = `${rule.example_from} → ${rule.example_to}`;
-        }
-        jQuery('#p4m-library-spinner').remove();
-        jQuery('.p4m-localization-rules-table').append(`
-        <tr id="p4m-localization-row-rule-${rule.id}">
-            <td>
-                <b>${rule.replace_from} → ${rule.replace_to}</b>
-                <br>
-                <i>${exampleRow}</i>
-            </td>
-            <td style="text-align:center;">
-                ${rule.replace_from} →
-            </td>
-            <td>
-                <input type="text" id="p4m-replace-rule-to-${rule.id}" value="${rule.replace_to}">
-            </td>
-        </tr>
-        `);
-    });
+    jQuery('#p4m-library-spinner').remove();
+    if ( p4mPrayerPoints.rules.length !== [] ) {
+        p4mPrayerPoints.rules.forEach(function(rule){
+            var exampleRow = 'No example available';
+            if (rule.example_from){
+                exampleRow = `${rule.example_from} → ${rule.example_to}`;
+            }
+            
+            jQuery('.p4m-localization-rules-table').append(`
+            <tr id="p4m-localization-row-rule-${rule.id}">
+                <td>
+                    <b>${rule.replace_from} → ${rule.replace_to}</b>
+                    <br>
+                    <i>${exampleRow}</i>
+                </td>
+                <td style="text-align:center;">
+                    ${rule.replace_from} →
+                </td>
+                <td>
+                    <input type="text" id="p4m-replace-rule-to-${rule.id}" value="${rule.replace_to}">
+                </td>
+            </tr>
+            `);
+        });   
+    }
     var prayerPointsDownloadRow = `
     <br>
-    <a href="javascript:downloadCSV(${p4mPrayerPoints.libraryId}, '${p4mPrayerPoints.libraryKey}');" class="button">Download</a>
+    <a href="javascript:downloadCSV(${p4mPrayerPoints.libraryId}, '${p4mPrayerPoints.libraryKey}');" class="button">Download CSV</a>
     `;
     jQuery('.p4m-localization-rules-table').append(prayerPointsDownloadRow)
 }

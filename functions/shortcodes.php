@@ -54,13 +54,15 @@ function get_library_id_from_url() {
 function get_library_js_parameters() {
     $library_id = get_library_id_from_url();
     $library = get_prayer_library( $library_id );
-    $params = [
-        'libraryId' => $library['id'],
-        'libraryKey' => $library['key'],
-        'libraryName' => $library['name'],
-        'nonce' => wp_create_nonce( 'wp_rest' ),
-    ];
-    return $params;
+    if ( $library ) {
+        $params = [
+            'libraryId' => $library['id'],
+            'libraryKey' => $library['key'],
+            'libraryName' => $library['name'],
+            'nonce' => wp_create_nonce( 'wp_rest' ),
+        ];
+        return $params;
+    }
 }
 
 function show_download_library() {
