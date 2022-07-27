@@ -229,11 +229,12 @@ function loadPrayerPointsByTag() {
             xhr.setRequestHeader('X-WP-Nonce', p4mPrayerPoints.nonce );
         },
         success: function(response) {
-            jQuery('#p4m-content').prepend(`<h1 class="p4m-library-name">Tag - ${p4mPrayerPoints.tag}</h1>`);
+            jQuery('#p4m-content').prepend(`<h1 class="p4m-library-name">Tag - '${p4mPrayerPoints.tag}'</h1>`);
             jQuery('#p4m-library-spinner').remove();
-            jQuery('.p4m-prayer-points-table').append(`
+            jQuery('.p4m-library-name').after(`<span class="p4m-download-span"><a href="?download_tag=${p4mPrayerPoints.tag}" class="button">Download CSV</a></span>`);
+            jQuery('.p4m-prayer-points-table').append(`                
                 <tr>
-                    <th>Prayer Points</th> //foobar
+                    <th>Prayer Points</th>
                 <tr>`);
             response.forEach( function(prayer){
                 jQuery('#p4m-spinner-row').remove();
@@ -248,7 +249,7 @@ function loadPrayerPointsByTag() {
                         ${prayer['content']}
                         <br>
                         <br>`;
-                if ( tags.length > 1 ) {
+                if ( !jQuery.isEmptyObject( tags[0] ) ) {
                     var tagRow = `<b><i>Tags: </i></b>`;
                     tags.forEach( function(tag){ tagRow += `<a href="?prayer_tag=${tag}">${tag}</a>, `;});
                     tagRow = tagRow.slice(0,-2);
