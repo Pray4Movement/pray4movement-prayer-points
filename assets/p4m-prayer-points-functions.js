@@ -335,7 +335,6 @@ function writeLocalizationTableFromRules(rules) {
 }
 
 function downloadTagCSV( tag ) {
-    console.log(p4mPrayerPoints.nonce);
     jQuery.ajax( {
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
