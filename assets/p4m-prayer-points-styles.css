@@ -114,6 +114,8 @@
 }
 .p4m-download-span {
     display:block;
+    width: 95%;
     margin-bottom: 10px;
-    text-align: center;
+    font-family: sans-serif;
+    text-align: right;
 }

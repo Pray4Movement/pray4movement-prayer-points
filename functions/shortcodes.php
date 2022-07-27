@@ -25,6 +25,12 @@ function p4m_prayer_libraries() {
         show_prayer_points_by_tag();
         return;
     }
+
+    if ( isset( $_GET['download_tag'] ) ) {
+        show_download_tag();
+        return;
+    }
+
     show_prayer_libraries();
     return;
 }
@@ -65,13 +71,20 @@ function get_library_js_parameters() {
     }
 }
 
+function get_tag_from_url() {
+    if ( isset( $_GET['download_tag'] ) ) {
+        $tag = sanitize_text_field( wp_unslash( $_GET['download_tag'] ) );
+        return $tag;
+    }
+}
+
 function show_download_library() {
     if ( !isset( $_GET['download_library_id'] ) ) {
         return;
     }
 
     $params = get_library_js_parameters();
-    $rules = get_prayer_library_rules_and_examples();
+    $rules = get_prayer_library_rules_by_id_and_examples();
     $params['rules'] = $rules;
     wp_enqueue_script( 'p4m-prayer-points-scripts', trailingslashit( plugin_dir_url( __FILE__ ) ) . '../assets/p4m-prayer-points-functions.js', [], filemtime( plugin_dir_path( __FILE__ ) . '../assets/p4m-prayer-points-functions.js' ) );
     wp_localize_script( 'p4m-prayer-points-scripts', 'p4mPrayerPoints', $params );
@@ -82,20 +95,40 @@ function show_download_library_inline() {
     ?>
     <script>
         jQuery(document).ready(function() {
+            if ( !jQuery.isEmptyObject(p4mPrayerPoints.tag)) {
+                loadTagRules();
+                return;
+            }
             loadLibraryRules();
         });
     </script>
     <?php
 }
 
-function get_prayer_library_rules_and_examples() {
-    $rules = get_prayer_library_rules();
+function show_download_tag() {
+    if ( !isset( $_GET['download_tag'] ) ) {
+        return;
+    }
+    $params = [];
+    $tag = get_tag_from_url();
+    $tag_rules = get_tag_rules_and_examples( $tag );
+    $params['tag'] = $tag;
+    $params['rules'] = $tag_rules;
+    $params['nonce'] = wp_create_nonce( 'wp_rest' );
+    wp_enqueue_script( 'p4m-prayer-points-scripts', trailingslashit( plugin_dir_url( __FILE__ ) ) . '../assets/p4m-prayer-points-functions.js', [], filemtime( plugin_dir_path( __FILE__ ) . '../assets/p4m-prayer-points-functions.js' ) );
+    wp_localize_script( 'p4m-prayer-points-scripts', 'p4mPrayerPoints', $params );
+    add_action( 'wp_footer', 'show_download_library_inline' );
+}
+
+function get_prayer_library_rules_by_id_and_examples() {
+    $library_id = get_library_id_from_url();
+    $rules = get_prayer_library_rules_by_id( $library_id );
     $rules_with_examples = [];
     if ( empty( $rules ) ) {
         return false;
     }
     foreach ( $rules as $rule ) {
-        $rule['example_from'] = get_prayer_library_rule_example( $rule['replace_from'] );
+        $rule['example_from'] = get_prayer_library_rule_example( $library_id, $rule['replace_from'] );
         if ( $rule['example_from'] ) {
             $rule['example_to'] = str_replace( $rule['replace_from'], $rule['replace_to'], $rule['example_from'] );
         }
@@ -103,8 +136,7 @@ function get_prayer_library_rules_and_examples() {
     }
     return $rules_with_examples;
 }
-function get_prayer_library_rules() {
-    $library_id = get_library_id_from_url();
+function get_prayer_library_rules_by_id( $library_id ) {
     global $wpdb;
     $rules = $wpdb->get_var(
         $wpdb->prepare( "SELECT `rules` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `id` = %d;", $library_id )
@@ -112,12 +144,46 @@ function get_prayer_library_rules() {
     return maybe_unserialize( $rules );
 }
 
-function get_prayer_library_rule_example( $replace_from ) {
-    $library_id = get_library_id_from_url();
+function get_prayer_library_rule_example( $library_id, $replace_from ) {
     global $wpdb;
     return $wpdb->get_var(
         $wpdb->prepare( "SELECT `title` FROM `{$wpdb->prefix}dt_prayer_points` WHERE `library_id` = %d AND `title` LIKE CONCAT( '%', %s, '%' ) ORDER BY CHAR_LENGTH(`title`) ASC LIMIT 1;", $library_id, $replace_from )
     );
+}
+
+function get_tag_rules_and_examples( $tag ) {
+    $tag_rules = get_tag_rules( $tag );
+    $tag_rules_with_examples = [];
+    if ( empty( $tag_rules ) ) {
+        return false;
+    }
+    foreach ( $tag_rules as $tag_rule ) {
+        foreach ( $tag_rule as $rule ) {
+            $rule['example_from'] = get_prayer_library_rule_example( $rule['library_id'], $rule['replace_from'] );
+            $rule['example_to'] = str_replace( $rule['replace_from'], $rule['replace_to'], $rule['example_from'] );
+            $tag_rules_with_examples[] = $rule;
+        }
+    }
+    return $tag_rules_with_examples;
+}
+
+function get_tag_rules( $tag ) {
+    $tag_library_ids = get_library_ids_with_tag( $tag );
+    $tag_rules = [];
+    foreach ( $tag_library_ids as $tag_library_id ) {
+        $tag_rules[] = get_prayer_library_rules_by_id( $tag_library_id );
+    }
+    return $tag_rules;
+}
+
+function get_library_ids_with_tag( $tag ) {
+    global $wpdb;
+    return $wpdb->get_col(
+        $wpdb->prepare( "SELECT DISTINCT( pp.library_id )
+        FROM `{$wpdb->prefix}dt_prayer_points_meta` pm
+        INNER JOIN `wp_dt_prayer_points` pp
+        ON pm.prayer_id = pp.id
+        WHERE meta_value = %s;", $tag ) );
 }
 
 function show_prayer_points_inline( $library_id ) {

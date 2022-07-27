@@ -139,7 +139,6 @@ function getFlag(language) {
 
 function loadPrayerPoints() {
     removeHeaderBlock();
-
     var prayerPointsTable = `
     <table class="p4m-prayer-points-table">
         <tr id="p4m-library-spinner">
@@ -231,7 +230,7 @@ function loadPrayerPointsByTag() {
         success: function(response) {
             jQuery('#p4m-content').prepend(`<h1 class="p4m-library-name">Tag - '${p4mPrayerPoints.tag}'</h1>`);
             jQuery('#p4m-library-spinner').remove();
-            jQuery('.p4m-library-name').after(`<span class="p4m-download-span"><a href="?download_tag=${p4mPrayerPoints.tag}" class="button">Download CSV</a></span>`);
+            jQuery('.p4m-library-name').after(`<span class="p4m-download-span"><a href="?download_tag=${p4mPrayerPoints.tag}">Download</a></span>`);
             jQuery('.p4m-prayer-points-table').append(`                
                 <tr>
                     <th>Prayer Points</th>
@@ -266,7 +265,7 @@ function loadPrayerPointsByTag() {
 
 function loadLibraryRules() {
     removeHeaderBlock();
-    if ( typeof p4mPrayerPoints.libraryName == 'undefined' ) {
+    if ( jQuery.isEmptyObject(p4mPrayerPoints.libraryName )) { //foobar
         jQuery('#p4m-content').prepend(`
             <h1 class="p4m-library-name">Whoops! Library not found</h1>
             <div class="p4m-back-link-div">
@@ -277,50 +276,113 @@ function loadLibraryRules() {
     }
     
     jQuery('#p4m-content').prepend(`<h1 class="p4m-library-name">Download - ${p4mPrayerPoints.libraryName}</h1>`);
-    var prayerPointsTable = `
-    <table class="p4m-localization-rules-table">
-        <tr id="p4m-library-spinner">
-            <td style="text-align: center;">
-                <i>Downloading...</i>
-            </td>
-        </tr>
-    </table>`;
-    jQuery('#p4m-content').append(prayerPointsTable);
-    jQuery('#p4m-library-spinner').remove();
+    var prayerRulesTable = `<table class="p4m-localization-rules-table"></table>`;
+    jQuery('#p4m-content').append(prayerRulesTable);
     if ( !jQuery.isEmptyObject(p4mPrayerPoints.rules) ) {
-        p4mPrayerPoints.rules.forEach(function(rule){
-            var exampleRow = 'No example available';
-            if (rule.example_from){
-                exampleRow = `${rule.example_from} → ${rule.example_to}`;
-            }
-            jQuery('.p4m-localization-rules-table').append(`
-            <tr id="p4m-localization-row-rule-${rule.id}">
-                <td>
-                    <b>${rule.replace_from} → ${rule.replace_to}</b>
-                    <br>
-                    <i>${exampleRow}</i>
-                </td>
-                <td style="text-align:center;">
-                    ${rule.replace_from} →
-                </td>
-                <td>
-                    <input type="text" id="p4m-replace-rule-to-${rule.id}" value="${rule.replace_to}">
-                </td>
-            </tr>
-            `);
-        });   
+        writeLocalizationTableFromRules(p4mPrayerPoints.rules);  
     }
     var prayerPointsDownloadRow = `
     <tr>
         <td colspan="3">
-            <a href="javascript:downloadCSV(${p4mPrayerPoints.libraryId}, '${p4mPrayerPoints.libraryKey}');" class="button" style="display: block; margin: auto;">Download CSV</a>
+            <a href="javascript:downloadLibraryCSV(${p4mPrayerPoints.libraryId}, '${p4mPrayerPoints.libraryKey}');" class="button" style="display: block; margin: auto;">Download CSV</a>
         </td>
     </tr>
     `;
     jQuery('.p4m-localization-rules-table').append(prayerPointsDownloadRow)
 }
 
-function downloadCSV( libraryId, fileName='pray4movement_prayer_library_download' ) {
+function loadTagRules() {
+    removeHeaderBlock();
+    jQuery('#p4m-content').prepend(`<h1 class="p4m-library-name">Download Tag<br>'${p4mPrayerPoints.tag}'</h1>`);
+    var prayerPointsTable =  `<table class="p4m-localization-rules-table"></table>`;
+    jQuery('#p4m-content').append(prayerPointsTable);
+    
+    if( !jQuery.isEmptyObject(p4mPrayerPoints.tag) ) {
+        writeLocalizationTableFromRules(p4mPrayerPoints.rules);
+    }
+    var prayerPointsDownloadRow = `
+    <tr>
+        <td colspan="3">
+            <a href="javascript:downloadTagCSV('${p4mPrayerPoints.tag}');" class="button" style="display: block; margin: auto;">Download CSV</a>
+        </td>
+    </tr>
+    `;
+    jQuery('.p4m-localization-rules-table').append(prayerPointsDownloadRow)
+}
+
+function writeLocalizationTableFromRules(rules) {
+    p4mPrayerPoints.rules.forEach(function(rule){
+        var exampleRow = 'No example available';
+        if ( rule.example_from){
+            exampleRow = `${rule.example_from} → ${rule.example_to}`;
+        }
+        jQuery('.p4m-localization-rules-table').append(`
+        <tr id="p4m-localization-row-rule-${rule.id}">
+            <td>
+                <b>${rule.replace_from} → ${rule.replace_to}</b>
+                <br>
+                <i>${exampleRow}</i>
+            </td>
+            <td style="text-align:center;">
+                ${rule.replace_from} →
+            </td>
+            <td>
+                <input type="text" id="p4m-replace-rule-to-${rule.id}" value="${rule.replace_to}">
+            </td>
+        </tr>
+        `);
+    });
+}
+
+function downloadTagCSV( tag ) {
+    console.log(p4mPrayerPoints.nonce);
+    jQuery.ajax( {
+        type: 'POST',
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/get_prayer_points_by_tag/${tag}`,
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-WP-Nonce', p4mPrayerPoints.nonce );
+        },
+        success: function(response) {
+            var columnsAlreadyDisplayed = false;
+            let output = "data:text/csv;charset=utf-8,";
+                var columnNames = Object.keys(response[0]);
+                if (columnsAlreadyDisplayed){
+                    columnNames.forEach( function(column) {
+                        output += `"` + column + `",`;
+                    } )
+                    output = output.slice(0,-1);
+                    output += `\r\n`;
+                    columnsAlreadyDisplayed = true;
+                }
+                response.forEach( function(row){
+                    columnNames.forEach( function( columnName ) {
+                        output += `"${row[columnName]}",`;
+                    } )
+                output = output.slice(0,-1);
+                output += `\r\n`;
+            } );
+            
+            if ( !jQuery.isEmptyObject(p4mPrayerPoints.rules) ) {
+                p4mPrayerPoints.rules.forEach(function(rule) {
+                    var regexRule = new RegExp(rule.replace_from, 'g');
+                    var replaceTo = jQuery(`#p4m-replace-rule-to-${rule.id}`).val();
+                    output = output.replace(regexRule, replaceTo);
+                });
+            }
+            var encodedUri = encodeURI(output);
+            var downloadLink = document.createElement('a');
+            downloadLink.href = encodedUri;
+            downloadLink.download = `pray4movement_prayer_tag_${tag}.csv`;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+    });
+}
+
+function downloadLibraryCSV( libraryId, fileName='pray4movement_prayer_library_download' ) {
     jQuery.ajax( {
         type: 'POST',
         contentType: 'application/json; charset=utf-8',
@@ -356,7 +418,6 @@ function downloadCSV( libraryId, fileName='pray4movement_prayer_library_download
                     output = output.replace(regexRule, replaceTo);
                 });
             }
-
             var encodedUri = encodeURI(output);
             var downloadLink = document.createElement('a');
             downloadLink.href = encodedUri;
@@ -365,7 +426,7 @@ function downloadCSV( libraryId, fileName='pray4movement_prayer_library_download
             downloadLink.click();
             document.body.removeChild(downloadLink);
         }
-    } );
+    });
 }
 
 function updateLocalizationRule(ruleId) {
