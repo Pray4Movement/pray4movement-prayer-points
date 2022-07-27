@@ -151,6 +151,20 @@ function get_prayer_library_rule_example( $library_id, $replace_from ) {
     );
 }
 
+function get_prayer_library_rule_example_for_tag( $tag, $library_id, $replace_from ) {
+    global $wpdb;
+    return $wpdb->get_var(
+        $wpdb->prepare( "SELECT pp.title FROM `{$wpdb->prefix}dt_prayer_points` pp
+                         INNER JOIN `{$wpdb->prefix}dt_prayer_points_meta` pm
+                         ON pp.id = pm.prayer_id
+                         WHERE pp.library_id = %d
+                         AND pp.title LIKE CONCAT( '%', %s, '%' )
+                         AND pm.meta_value = %s
+                         ORDER BY CHAR_LENGTH(pp.title)
+                         ASC LIMIT 1;", $library_id, $replace_from, $tag )
+    );
+}
+
 function get_tag_rules_and_examples( $tag ) {
     $tag_rules = get_tag_rules( $tag );
     $tag_rules_with_examples = [];
@@ -158,7 +172,7 @@ function get_tag_rules_and_examples( $tag ) {
         return false;
     }
     foreach ( $tag_rules as $tag_rule ) {
-        $tag_rule['example_from'] = get_prayer_library_rule_example( $tag_rule['library_id'], $tag_rule['replace_from'] );
+        $tag_rule['example_from'] = get_prayer_library_rule_example_for_tag( $tag, $tag_rule['library_id'], $tag_rule['replace_from'] );
         $tag_rule['example_to'] = str_replace( $tag_rule['replace_from'], $tag_rule['replace_to'], $tag_rule['example_from'] );
         $tag_rules_with_examples[] = $tag_rule;
     }
