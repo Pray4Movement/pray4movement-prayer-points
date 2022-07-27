@@ -317,7 +317,7 @@ function writeLocalizationTableFromRules(rules) {
             exampleRow = `${rule.example_from} → ${rule.example_to}`;
         }
         jQuery('.p4m-localization-rules-table').append(`
-        <tr id="p4m-localization-row-rule-${rule.id}">
+        <tr id="p4m-localization-row-rule-${rule.id}_${rule.library_id}">
             <td>
                 <b>${rule.replace_from} → ${rule.replace_to}</b>
                 <br>
@@ -327,7 +327,7 @@ function writeLocalizationTableFromRules(rules) {
                 ${rule.replace_from} →
             </td>
             <td>
-                <input type="text" id="p4m-replace-rule-to-${rule.id}" value="${rule.replace_to}">
+                <input type="text" id="p4m-replace-rule-to-${rule.id}_${rule.library_id}" value="${rule.replace_to}">
             </td>
         </tr>
         `);
@@ -366,7 +366,7 @@ function downloadTagCSV( tag ) {
             if ( !jQuery.isEmptyObject(p4mPrayerPoints.rules) ) {
                 p4mPrayerPoints.rules.forEach(function(rule) {
                     var regexRule = new RegExp(rule.replace_from, 'g');
-                    var replaceTo = jQuery(`#p4m-replace-rule-to-${rule.id}`).val();
+                    var replaceTo = jQuery(`#p4m-replace-rule-to-${rule.id}_${rule.library_id}`).val();
                     output = output.replace(regexRule, replaceTo);
                 });
             }
@@ -413,7 +413,7 @@ function downloadLibraryCSV( libraryId, fileName='pray4movement_prayer_library_d
             if ( !jQuery.isEmptyObject(p4mPrayerPoints.rules) ) {
                 p4mPrayerPoints.rules.forEach(function(rule) {
                     var regexRule = new RegExp(rule.replace_from, 'g');
-                    var replaceTo = jQuery(`#p4m-replace-rule-to-${rule.id}`).val();
+                    var replaceTo = jQuery(`#p4m-replace-rule-to-${rule.id}_${rule.library_id}`).val();
                     output = output.replace(regexRule, replaceTo);
                 });
             }

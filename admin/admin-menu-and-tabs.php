@@ -1381,7 +1381,7 @@ class Pray4Movement_Prayer_Points_View_Library {
 
     private static function display_prayer_points_for_parent_library( $library_id ) {
         $library = Pray4Movement_Prayer_Points_Utilities::get_prayer_library( $library_id );
-        $prayer_points = Pray4Movement_Prayer_Points_Utilities::get_prayer_points_localized( $library_id );
+        $prayer_points = Pray4Movement_Prayer_Points_Utilities::get_prayer_points( $library_id );
         ?>
         <table style="width: 100%">
             <tr>
