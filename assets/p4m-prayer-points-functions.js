@@ -164,10 +164,6 @@ function loadPrayerPoints() {
             response.forEach( function(prayer){
                 jQuery('#p4m-spinner-row').remove();
                 var tags = prayer['tags'].split(',');
-                prayer['title'] = prayer['title'].replace(/XXX/g, '<span class="p4m-location">XXX</span>');
-                prayer['title'] = prayer['title'].replace(/YYY/g, '<span class="p4m-people-group">YYY</span>');
-                prayer['content'] = prayer['content'].replace(/XXX/g, '<span class="p4m-location">XXX</span>');
-                prayer['content'] = prayer['content'].replace(/YYY/g, '<span class="p4m-people-group">YYY</span>');
                 var row = `
                     <tr>
                     <td>
@@ -184,7 +180,7 @@ function loadPrayerPoints() {
                         </span>
                         <br>
                         <br>`;
-                if ( tags.length > 1 ) {
+                if ( !jQuery.isEmptyObject(tags[0]) ) {
                     var tagRow = `<span class="p4m-prayer-tag">tags: </span>`;
                     tags.forEach( function(tag){
                         tag = jQuery.trim(tag);
@@ -321,13 +317,6 @@ function loadLibraryRules() {
     </tr>
     `;
     jQuery('.p4m-localization-rules-table').append(prayerPointsDownloadRow)
-}
-
-function updateLocalization() {
-    var location = jQuery('#p4m-localization-location').val();
-    var people_group = jQuery('#p4m-localization-people-group').val();
-    jQuery('.p4m-location').text(location);
-    jQuery('.p4m-people-group').text(people_group);
 }
 
 function downloadCSV( libraryId, fileName='pray4movement_prayer_library_download' ) {
