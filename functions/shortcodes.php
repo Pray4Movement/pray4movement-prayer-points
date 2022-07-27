@@ -181,7 +181,7 @@ function get_library_ids_with_tag( $tag ) {
     return $wpdb->get_col(
         $wpdb->prepare( "SELECT DISTINCT( pp.library_id )
         FROM `{$wpdb->prefix}dt_prayer_points_meta` pm
-        INNER JOIN `wp_dt_prayer_points` pp
+        INNER JOIN `{$wpdb->prefix}dt_prayer_points` pp
         ON pm.prayer_id = pp.id
         WHERE meta_value = %s;", $tag ) );
 }
