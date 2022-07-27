@@ -901,73 +901,6 @@ class Pray4Movement_Prayer_Points_Utilities {
             $wpdb->prepare( "SELECT id FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d;", $library_id )
         );
     }
-
-    public static function localize_prayers_column() {
-        $location = self::get_meta_value_by_key( 'location' );
-        $people_group = self::get_meta_value_by_key( 'people_group' );
-        ?>
-        <table class="widefat">
-            <thead>
-                <tr>
-                    <th colspan="2">
-                        <?php esc_html_e( 'Localize your prayers', 'pray4movement_prayer_points' ); ?>
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td>
-                    <?php esc_html_e( 'Location:', 'pray4movement_prayer_points' ); ?>
-                </td>
-                <td>
-                    <input type="text" id="location" class="localization" value="<?php echo esc_html( $location ); ?>">
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <?php esc_html_e( 'People Group:', 'pray4movement_prayer_points' ); ?>
-                </td>
-                <td>
-                    <input type="text" id="people_group" class="localization" value="<?php echo esc_html( $people_group ); ?>">
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td style="text-align:right;">
-                    <button id="update_localization" class="button" type="post" disabled>Update</button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <br>
-        <script>
-            jQuery('.localization').on('input', function() {
-                jQuery('#update_localization').prop('disabled',false);
-            });
-
-            jQuery('#update_localization').on('click', function() {
-                var location = jQuery('#location')[0].value;
-                var people_group = jQuery('#people_group')[0].value;
-                jQuery.ajax( {
-                        type: 'POST',
-                        contentType: 'application/json; charset=utf-8',
-                        dataType: 'json',
-                        url: window.location.origin + `/wp-json/pray4movement-prayer-points/v1/set_location_and_people_group/${location}/${people_group}`,
-                        beforeSend: function(xhr) {
-                            xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
-                        },
-                        success: update_localization_success(),
-                    } );
-            });
-
-            function update_localization_success() {
-                var update_button = jQuery('#update_localization');
-                update_button.html('Updated!');
-                update_button.prop('disabled',true);
-            }
-        </script>
-        <?php
-    }
 }
 
 class Pray4Movement_Prayer_Points_Tab_Explore {
@@ -976,12 +909,9 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
         ?>
         <div class="wrap">
             <div id="poststuff">
-                <div id="post-body" class="metabox-holder columns-2">
+                <div id="post-body" class="metabox-holder columns-3">
                     <div id="post-body-content">
                         <?php $this->main_explore_column(); ?>
-                    </div>
-                    <div id="postbox-container-1" class="postbox-container">
-                        <?php Pray4Movement_Prayer_Points_Utilities::localize_prayers_column(); ?>
                     </div>
                 </div>
             </div>
@@ -1306,12 +1236,9 @@ class Pray4Movement_Prayer_Points_View_Library {
                 <p>
                     <a href="/wp-admin/admin.php?page=pray4movement_prayer_points"><?php esc_html_e( '<< Back to Prayer Libraries', 'pray4movement_prayer_points' ); ?></a>
                 </p>
-                <div id="post-body" class="metabox-holder columns-2">
+                <div id="post-body" class="metabox-holder columns-3">
                     <div id="post-body-content">
                         <?php $this->main_view_library_column(); ?>
-                    </div>
-                    <div id="postbox-container-1" class="postbox-container">
-                        <?php Pray4Movement_Prayer_Points_Utilities::localize_prayers_column(); ?>
                     </div>
                 </div>
             </div>
@@ -2179,12 +2106,9 @@ class Pray4Movement_Prayer_Points_Tab_Export {
         ?>
         <div class="wrap">
             <div id="poststuff">
-                <div id="post-body" class="metabox-holder columns-2">
+                <div id="post-body" class="metabox-holder columns-3">
                     <div id="post-body-content">
                         <?php $this->main_prayer_points_column(); ?>
-                    </div>
-                    <div id="postbox-container-1" class="postbox-container">
-                        <?php Pray4Movement_Prayer_Points_Utilities::localize_prayers_column(); ?>
                     </div>
                 </div>
             </div>
