@@ -158,22 +158,53 @@ function get_tag_rules_and_examples( $tag ) {
         return false;
     }
     foreach ( $tag_rules as $tag_rule ) {
-        foreach ( $tag_rule as $rule ) {
-            $rule['example_from'] = get_prayer_library_rule_example( $rule['library_id'], $rule['replace_from'] );
-            $rule['example_to'] = str_replace( $rule['replace_from'], $rule['replace_to'], $rule['example_from'] );
-            $tag_rules_with_examples[] = $rule;
-        }
+        $tag_rule['example_from'] = get_prayer_library_rule_example( $tag_rule['library_id'], $tag_rule['replace_from'] );
+        $tag_rule['example_to'] = str_replace( $tag_rule['replace_from'], $tag_rule['replace_to'], $tag_rule['example_from'] );
+        $tag_rules_with_examples[] = $tag_rule;
     }
     return $tag_rules_with_examples;
 }
 
 function get_tag_rules( $tag ) {
     $tag_library_ids = get_library_ids_with_tag( $tag );
+    $prayer_points_with_tag = get_prayer_points_by_tag( $tag );
     $tag_rules = [];
     foreach ( $tag_library_ids as $tag_library_id ) {
-        $tag_rules[] = get_prayer_library_rules_by_id( $tag_library_id );
+        $library_rules = get_prayer_library_rules_by_id( $tag_library_id );
+        foreach ( $library_rules as $library_rule ) {
+            foreach ( $prayer_points_with_tag as $prayer_point_with_tag ) {
+                if ( isset( $library_rule['replace_from'] ) ) {
+                    if ( rule_is_in_prayer_point( $prayer_point_with_tag, $library_rule['replace_from'] ) ) {
+                        $tag_rules[] = $library_rule;
+                        break;
+                    }
+                }
+            }
+        }
     }
     return $tag_rules;
+}
+
+function get_prayer_points_by_tag( $tag ) {
+    $tag = urldecode( $tag );
+    global $wpdb;
+    return $wpdb->get_results(
+        $wpdb->prepare( "SELECT pp.*,
+                            (SELECT GROUP_CONCAT( meta_value ) FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = pp.id) AS 'tags'
+                            FROM `{$wpdb->prefix}dt_prayer_points` pp
+                            INNER JOIN `{$wpdb->prefix}dt_prayer_points_meta` pm
+                            ON pp.id = pm.prayer_id
+                            WHERE pm.meta_key = 'tags' AND meta_value = %s;", $tag ), ARRAY_A );
+}
+
+function rule_is_in_prayer_point( $prayer_point, $rule ) {
+    if ( strpos( $prayer_point['title'], $rule ) ) {
+        return true;
+    }
+    if ( strpos( $prayer_point['content'], $rule ) ) {
+        return true;
+    }
+    return false;
 }
 
 function get_library_ids_with_tag( $tag ) {
