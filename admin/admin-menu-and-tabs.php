@@ -1293,7 +1293,7 @@ class Pray4Movement_Prayer_Points_View_Library {
         $prayer = [
             'library_id' => sanitize_text_field( wp_unslash( $_POST['prayer_library_id'] ) ),
             'title' => sanitize_text_field( wp_unslash( $_POST['prayer_title'] ) ),
-            'content' => sanitize_text_field( wp_unslash( $_POST['prayer_content'] ) ),
+            'content' => sanitize_textarea_field( wp_unslash( $_POST['prayer_content'] ) ),
             'hash' => md5( sanitize_text_field( wp_unslash( $_POST['prayer_content'] ) ) ),
             'book' => sanitize_text_field( wp_unslash( $_POST['prayer_reference_book'] ) ),
             'verse' => sanitize_text_field( wp_unslash( $_POST['prayer_reference_verse'] ) ),
@@ -1342,7 +1342,7 @@ class Pray4Movement_Prayer_Points_View_Library {
         $prayer = [
             'id' => sanitize_text_field( wp_unslash( $_POST['prayer_id'] ) ),
             'title' => sanitize_text_field( wp_unslash( $_POST['prayer_title'] ) ),
-            'content' => sanitize_text_field( wp_unslash( $_POST['prayer_content'] ) ),
+            'content' => sanitize_textarea_field( wp_unslash( $_POST['prayer_content'] ) ),
             'book' => sanitize_text_field( wp_unslash( $_POST['prayer_reference_book'] ) ),
             'verse' => sanitize_text_field( wp_unslash( $_POST['prayer_reference_verse'] ) ),
             'status' => 'unpublished',
