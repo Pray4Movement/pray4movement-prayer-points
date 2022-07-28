@@ -1374,6 +1374,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                         <img src="<?php Pray4Movement_Prayer_Points_Utilities::display_library_icon( $library['id'] ) ?>" width="35px">
                         <?php echo esc_html( $library['name'] ); ?>
                     </h1>
+                    <br>
                 </td>
                 <td style="text-align: right;">
                     <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_library=<?php echo esc_attr( $library['id'] ); ?>" title="<?php esc_attr_e( 'Edit library', 'pray4movement_prayer_points' ); ?>"><?php esc_html_e( 'Edit', 'pray4movement_prayer_points' ); ?></a> | 
@@ -1386,7 +1387,7 @@ class Pray4Movement_Prayer_Points_View_Library {
             <thead>
                 <tr>
                     <?php if ( !empty( $library ) ) : ?>
-                        <th colspan="5"><?php echo esc_html( $library['name'] ); ?></th>
+                        <th colspan="5"><?php esc_html_e( 'Prayer Points', 'prat4movement_prayer_points' ); ?></th>
                         <th style="text-align: right;"><?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::get_language_flag( $library['language'] ) ); ?></th>
                     <?php endif; ?>
                 </tr>
@@ -1549,6 +1550,7 @@ class Pray4Movement_Prayer_Points_View_Library {
                         <img src="<?php Pray4Movement_Prayer_Points_Utilities::display_library_icon( $child_library['id'] ) ?>" width="35px">
                         <?php echo esc_html( $child_library['name'] ); ?>
                     </h1>
+                    <br>
                 </td>
                 <td style="text-align: right;">
                     <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_library=<?php echo esc_attr( $child_library_id ); ?>" title="<?php esc_attr_e( 'Edit library', 'pray4movement_prayer_points' ); ?>"><?php esc_html_e( 'Edit', 'pray4movement_prayer_points' ); ?></a> | 
@@ -2233,7 +2235,6 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
         ?>
         <table class="widefat striped">
             <thead>
-                <h1><?php echo esc_html( 'Localization Rules', 'pray4movement_prayer_points' ); ?></h1>
                 <tr>
                     <th><?php echo esc_html( 'Library', 'pray4movement_prayer_points' ); ?></th>
                     <th><?php echo esc_html( 'Rule', 'pray4movement_prayer_points' ); ?></th>
