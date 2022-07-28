@@ -7,6 +7,7 @@ class Pray4Movement_Prayer_Points_Endpoints
 
     public function add_api_routes() {
         self::register_delete_prayer_library_endpoint();
+        self::register_delete_parent_prayer_library_endpoint();
         self::register_delete_prayer_point_endpoint();
         self::register_delete_localization_rule_endpoint();
         self::register_get_prayer_points_endpoint();
@@ -94,6 +95,40 @@ class Pray4Movement_Prayer_Points_Endpoints
             $wpdb->prepare(
                 "DELETE FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d;", $library_id
             )
+        );
+    }
+
+    private function register_delete_parent_prayer_library_endpoint() {
+        register_rest_route(
+            $this->get_namespace(), '/delete_parent_prayer_library/(?P<library_id>\d+)', [
+                'methods'  => 'POST',
+                'callback' => [ $this, 'endpoint_for_delete_parent_prayer_library' ],
+                'permission_callback' => function( WP_REST_Request $request ) {
+                    return $this->has_permission();
+                },
+            ]
+        );
+    }
+
+    public function endpoint_for_delete_parent_prayer_library( WP_REST_Request $request ) {
+        $params = $request->get_params();
+        if ( isset( $params['library_id'] ) ) {
+            $child_libraries = self::get_child_libraries_from_parent_id( $params['library_id'] );
+            self::delete_prayer_points_in_library( $params['library_id'] );
+            self::delete_prayer_library( $params['library_id'] );
+            if ( $child_libraries ) {
+                foreach ( $child_libraries as $child_library ) {
+                    self::delete_prayer_points_in_library( $child_library );
+                    self::delete_prayer_library( $child_library );
+                }
+            }
+        }
+    }
+
+    private function get_child_libraries_from_parent_id( $parent_id ) {
+        global $wpdb;
+        return $wpdb->get_col(
+            $wpdb->prepare( "SELECT `id` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `parent_id` = %d;", $parent_id )
         );
     }
 
@@ -360,7 +395,8 @@ class Pray4Movement_Prayer_Points_Endpoints
 
     public function endpoint_for_get_prayer_points_by_tag( WP_REST_Request $request ) {
         $params = $request->get_params();
-        return self::get_prayer_points_by_tag( $params['tag'] );
+        $tag = urldecode( $params['tag'] );
+        return self::get_prayer_points_by_tag( $tag );
     }
 
     private function get_prayer_points_by_tag( $tag ) {

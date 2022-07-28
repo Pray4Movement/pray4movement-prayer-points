@@ -354,6 +354,32 @@ class Pray4Movement_Prayer_Points_Utilities {
                 `;
             jQuery('.nav-tab-wrapper').before(adminNotice);
         }
+
+        function deleteParentLibrary( libraryId, libraryName ) {
+            if(confirm(`Delete the '${libraryName}' Prayer Library and all its child libraries?`)) {
+                jQuery.ajax({
+                    type: 'POST',
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    url: window.location.origin + '/wp-json/pray4movement-prayer-points/v1/delete_parent_prayer_library/' + libraryId,
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('X-WP-Nonce', '<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>' );
+                    },
+                    success: deleteParentLibrarySuccess( libraryId, libraryName ),
+                });
+            }
+        }
+
+        function deleteParentLibrarySuccess( libraryId, libraryName ) {
+            jQuery( '#delete-library-' + libraryId ).remove();
+                let adminNotice = `
+                    <div class="notice notice-success is-dismissible">
+                        <p>'${libraryName}' Prayer Library and all child libraries deleted successfully!</p>
+                    </div>
+                `;
+            jQuery('.nav-tab-wrapper').before(adminNotice);
+        }
+
         </script>
         <?php
     }
@@ -1038,7 +1064,7 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             <td><?php Pray4Movement_Prayer_Points_Utilities::display_library_translation_links( $library['id'] ); ?></td>
             <td>
                 <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_library=<?php echo esc_attr( $library['id'] ); ?>"><?php esc_html_e( 'Edit', 'pray4movement_prayer_points' ); ?></a> | 
-                <a href="javascript:deleteLibrary(<?php echo esc_attr( $library['id'] ); ?>, `<?php echo esc_attr( $library['name'] ); ?>`);" style="color:#b32d2e;"><?php esc_html_e( 'Delete', 'pray4movement_prayer_points' ); ?></a>
+                <a href="javascript:deleteParentLibrary(<?php echo esc_attr( $library['id'] ); ?>, `<?php echo esc_attr( $library['name'] ); ?>`);" style="color:#b32d2e;"><?php esc_html_e( 'Delete', 'pray4movement_prayer_points' ); ?></a>
             </td>
         </tr>
         <?php endforeach;
