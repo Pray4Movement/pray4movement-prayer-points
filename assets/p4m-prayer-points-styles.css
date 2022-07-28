@@ -9,30 +9,6 @@
     background-color: rgba(0,0,0,0.4);
     font-family: sans-serif;
 }
-.p4m-localization-box {
-    margin: auto;
-    font-family: sans-serif;
-    background-color: #d6d6d6;
-    display: table;
-    text-align: right;
-    padding: 32px;
-    border: solid 2px black;
-}
-.p4m-localization-box-label {
-    text-align: left;
-    margin-top: 18px;
-    font-weight: bold;
-}
-.p4m-localization-box-title {
-    text-align: center;
-    font-weight: 400;
-    margin: -12px 0 12px 0;
-    color: #343434;
-}
-.p4m-localization-box-button {
-    width: 100%;
-    margin-top: 12px;
-}
 .p4m-modal-box {
     position: relative;
     margin: 12% auto;
@@ -117,12 +93,29 @@
 }
 .export-buttons {
     display: block;
-    margin: 24px 7.5% 0 7.5%;
-    width: 85%;
     font-family: sans-serif;
     text-align: right;
 }
 .p4m-library-name {
     display: block;
+    text-align: center;
+    font-size: 6.8rem;
     width: 95%;
+}
+.p4m-localization-rules-table {
+    width: 85%;
+    margin: auto;
+}
+.p4m-back-link-div {
+    width:100%;
+    display:block;
+    margin:auto;
+    text-align:center;
+}
+.p4m-download-span {
+    display:block;
+    width: 95%;
+    margin-bottom: 10px;
+    font-family: sans-serif;
+    text-align: right;
 }

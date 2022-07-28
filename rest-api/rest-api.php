@@ -1,5 +1,5 @@
 <?php
-if ( !defined( 'ABSPATH' ) ) { exit; } // Exit if accessed directly.
+if ( !defined( 'ABSPATH' ) ) { exit; }
 
 class Pray4Movement_Prayer_Points_Endpoints
 {
@@ -16,8 +16,8 @@ class Pray4Movement_Prayer_Points_Endpoints
         self::register_get_prayer_libraries_by_language_endpoint();
         self::register_get_prayer_points_by_tag_endpoint();
         self::register_set_location_and_people_group_endpoint();
-        self::register_save_child_prayer_point();
-        self::register_save_child_prayer_point_tags();
+        self::register_save_child_prayer_point_endpoint();
+        self::register_save_child_prayer_point_tags_endpoint();
     }
 
     private function get_namespace() {
@@ -118,7 +118,7 @@ class Pray4Movement_Prayer_Points_Endpoints
 
     private function register_delete_localization_rule_endpoint() {
         register_rest_route(
-            $this->get_namespace(), '/delete_localization_rule/(?P<rule_id>\d+)', [
+            $this->get_namespace(), '/delete_localization_rule/(?P<library_id>\d+)/(?P<rule_id>\d+)', [
                 'methods'  => 'POST',
                 'callback' => [ $this, 'endpoint_for_delete_localization_rule' ],
                 'permission_callback' => function( WP_REST_Request $request ) {
@@ -130,18 +130,34 @@ class Pray4Movement_Prayer_Points_Endpoints
 
     public function endpoint_for_delete_localization_rule( WP_REST_Request $request ) {
         $params = $request->get_params();
-        if ( isset( $params['rule_id'] ) ) {
+        if ( isset( $params['library_id'] ) && isset( $params['rule_id'] ) ) {
+            $library_id = sanitize_text_field( wp_unslash( $params['library_id'] ) );
             $rule_id = sanitize_text_field( wp_unslash( $params['rule_id'] ) );
-            self::delete_localization_rule( $rule_id );
+            self::delete_localization_rule( $library_id, $rule_id );
         }
     }
 
-    private function delete_localization_rule( $rule_id ) {
+    private function delete_localization_rule( $library_id, $rule_id ) {
+        $rules = self::get_localization_rules( $library_id );
+        $rules = self::remove_rule_from_array_by_id( $rules, $rule_id );
+        $rules = maybe_serialize( $rules );
         global $wpdb;
-        $wpdb->query(
-            $wpdb->prepare( "DELETE FROM `{$wpdb->prefix}dt_prayer_points_localization` WHERE `rule_id` = %d;", $rule_id )
+        $wpdb->update(
+            $wpdb->prefix . 'dt_prayer_points_lib',
+            [ 'rules' => $rules ],
+            [ 'id' => $library_id ],
+            [ '%s' ],
+            [ '%d' ]
         );
-        return;
+    }
+
+    private function remove_rule_from_array_by_id( $rules, $rule_id ) {
+        foreach ( $rules as $key => $value ) {
+            if ( $value['id'] == $rule_id ) {
+                unset( $rules[$key] );
+            }
+        }
+        return $rules;
     }
 
     private function register_get_prayer_points_endpoint() {
@@ -217,12 +233,12 @@ class Pray4Movement_Prayer_Points_Endpoints
     }
 
     private function get_localization_rules( $library_id ) {
-        if ( !get_current_user_id() ) {
-            return;
-        }
         global $wpdb;
-        return $wpdb->get_results(
-        $wpdb->prepare( "SELECT * FROM `{$wpdb->prefix}dt_prayer_points_localization` WHERE `library_id` = %d AND `user_id` = %d ORDER BY `library_id` ASC;", $library_id, get_current_user_id() ), ARRAY_A );
+        $rules = $wpdb->get_var(
+            $wpdb->prepare( "SELECT `rules` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `id` = %d;", $library_id )
+        );
+        $rules = maybe_unserialize( $rules );
+        return $rules;
     }
 
     private function apply_rules_to_prayer_points( $prayer_points, $rules ) {
@@ -230,7 +246,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         foreach ( $prayer_points as $prayer_point ) {
             $prayer_point_localized = $prayer_point;
             foreach ( $rules as $rule ) {
-                $prayer_point_localized = str_replace( $rule['from'], $rule['to'], $prayer_point_localized );
+                $prayer_point_localized = str_replace( $rule['replace_from'], $rule['replace_to'], $prayer_point_localized );
             }
             $prayer_points_localized[] = $prayer_point_localized;
         }
@@ -383,12 +399,17 @@ class Pray4Movement_Prayer_Points_Endpoints
     private function set_meta_key_and_value( $meta_key, $meta_value ) {
         $meta_value = urldecode( $meta_value );
         global $wpdb;
-        return $wpdb->query(
-            $wpdb->prepare( "INSERT INTO `{$wpdb->prefix}dt_prayer_points_meta` ( meta_key, meta_value ) VALUES ( %s, %s )", $meta_key, $meta_value )
+        $wpdb->insert(
+            $wpdb->prefix . 'dt_prayer_points_meta',
+            [
+                'meta_key' => $meta_key,
+                'meta_value' => $meta_value,
+            ],
+            [ '%s', '%s' ]
         );
     }
 
-    private function register_save_child_prayer_point() {
+    private function register_save_child_prayer_point_endpoint() {
         register_rest_route(
             $this->get_namespace(), 'save_child_prayer_point/(?P<parent_prayer_point_id>\d+)/(?P<library_id>\d+)/(?P<title>.+)/(?P<content>.+)', [
                 'methods' => 'POST',
@@ -402,7 +423,7 @@ class Pray4Movement_Prayer_Points_Endpoints
 
     public function endpoint_for_save_child_prayer_point( WP_REST_Request $request ) {
         $params = $request->get_params();
-        if ( !isset( $params['parent_prayer_point_id'] ) && !isset( $params['library_id'] ) && !isset( $params['title'] ) && !isset( $params['content'] ) ) {
+        if ( !isset( $params['parent_prayer_point_id'] ) || !isset( $params['library_id'] ) || !isset( $params['title'] ) || !isset( $params['content'] ) ) {
             return new WP_Error( __METHOD__, 'Missing parameters.' );
         }
         if ( self::prayer_point_exists( $params['parent_prayer_point_id'], $params['library_id'] ) ) {
@@ -421,7 +442,7 @@ class Pray4Movement_Prayer_Points_Endpoints
 
         global $wpdb;
         $wpdb->update(
-            $wpdb->prefix.'dt_prayer_points',
+            $wpdb->prefix . 'dt_prayer_points',
             [
                 'title' => urldecode( wp_unslash( $wp_rest_params['title'] ) ),
                 'content' => urldecode( wp_unslash( $wp_rest_params['content'] ) ),
@@ -525,7 +546,7 @@ class Pray4Movement_Prayer_Points_Endpoints
 
         global $wpdb;
         $wpdb->insert(
-            $wpdb->prefix.'dt_prayer_points',
+            $wpdb->prefix . 'dt_prayer_points',
             [
                 'library_id' => $wp_rest_params['library_id'],
                 'parent_id' => $parent_prayer_point['id'],
@@ -560,7 +581,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         );
     }
 
-    private function register_save_child_prayer_point_tags() {
+    private function register_save_child_prayer_point_tags_endpoint() {
         register_rest_route(
             $this->get_namespace(), 'save_child_prayer_point_tags/(?P<parent_prayer_id>\d+)/(?P<language>.+)/(?P<tags>.*)', [
                 'methods' => 'POST',
@@ -614,7 +635,7 @@ class Pray4Movement_Prayer_Points_Endpoints
         foreach ( $tags as $tag ) {
             if ( $tag !== '' ) {
                 $wpdb->insert(
-                    $wpdb->prefix.'dt_prayer_points_meta',
+                    $wpdb->prefix . 'dt_prayer_points_meta',
                     [
                         'prayer_id' => $prayer_id,
                         'meta_key' => 'tags',
@@ -633,7 +654,7 @@ class Pray4Movement_Prayer_Points_Endpoints
             self::$_instance = new self();
         }
         return self::$_instance;
-    } // End instance()
+    }
     public function __construct() {
         add_action( 'rest_api_init', [ $this, 'add_api_routes' ] );
     }
