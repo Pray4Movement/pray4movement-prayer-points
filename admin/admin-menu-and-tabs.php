@@ -563,24 +563,8 @@ class Pray4Movement_Prayer_Points_Utilities {
                 "SELECT
                     id,
                     library_id,
-                    REPLACE(
-                        REPLACE(
-                            `title`,
-                            'XXX',
-                            IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'people_group'), 'XXX')
-                        ),
-                        'YYY',
-                        IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'location'), 'YYY')
-                    ) AS `title`,
-                    REPLACE(
-                        REPLACE(
-                            `content`,
-                            'XXX',
-                            IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'people_group'), 'XXX')
-                        ),
-                        'YYY',
-                        IFNULL((SELECT meta_value FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'location'), 'YYY')
-                    ) AS `content`,
+                    title,
+                    content,
                     reference,
                     book,
                     verse,
@@ -814,7 +798,7 @@ class Pray4Movement_Prayer_Points_Utilities {
 
     public static function insert_all_tags( $prayer_id, $tags ) {
         global $wpdb;
-        if ( is_string( $tags ) ) {
+        if ( is_string( $tags ) && !empty( $tags ) ) {
             $tags = [ $tags ];
         }
         foreach ( $tags as $tag ) {
