@@ -143,6 +143,7 @@ class Pray4Movement_Prayer_Points_Utilities {
     public static function display_bible_book_dropdown() {
         ?>
         <select name="prayer_reference_book" id="prayer_reference_book">
+            <option value="">(No Reference)</option>
             <option value="Genesis"><?php echo esc_html( 'Genesis', 'pray4movement_prayer_points' ); ?></option>
             <option value="Exodus"><?php echo esc_html( 'Exodus', 'pray4movement_prayer_points' ); ?></option>
             <option value="Leviticus"><?php echo esc_html( 'Leviticus', 'pray4movement_prayer_points' ); ?></option>
