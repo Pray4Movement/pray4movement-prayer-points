@@ -1648,6 +1648,9 @@ class Pray4Movement_Prayer_Points_View_Library {
                 var title = titleInputBox[0].value;
                 var content = jQuery(`#content-${parentPrayerPointId}`)[0].value;
                 var tags = jQuery(`#tags-${parentPrayerPointId}`)[0].value;
+                if ( tags === '' ) {
+                    tags = '{null_tags}';
+                }
                 var child_library_id = jQuery('#child-library-id')[0].value;
                 jQuery.ajax( {
                         type: 'POST',
