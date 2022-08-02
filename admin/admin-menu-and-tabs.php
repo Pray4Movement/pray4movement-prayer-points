@@ -290,7 +290,7 @@ class Pray4Movement_Prayer_Points_Utilities {
     public static function get_library_translation_links( $library_id ) {
         global $wpdb;
         return $wpdb->get_results(
-            $wpdb->prepare( "SELECT `id`, `language` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE parent_id = %d", $library_id ), ARRAY_A
+            $wpdb->prepare( "SELECT `id`, `language` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE id = %d OR parent_id = %d", $library_id, $library_id ), ARRAY_A
         );
     }
 

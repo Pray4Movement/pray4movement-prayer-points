@@ -110,7 +110,7 @@ function get_libraries_by_language( language ) {
                 <tr>
                     <td><a href="?view_library_id=${library['id']}">${library['name']}</a></td>
                     <td>${library['description']}</td>
-                    <td><a href="/?download_library_id=${library['id']}">Download</a></td>
+                    <td><a href="?download_library_id=${library['id']}">Download</a></td>
                 </tr>`);
             });
         },
@@ -197,7 +197,7 @@ function loadPrayerPoints() {
             <h1 class="p4m-library-name">${p4mPrayerPoints.libraryName}</h1>
                 <span class="export-buttons" style="max-width: 100%;">
                     <div>
-                        <a href="/?download_library_id=${p4mPrayerPoints.libraryId}">Download</a>
+                        <a href="?download_library_id=${p4mPrayerPoints.libraryId}">Download</a>
                     </div>
                 </span>`);
         },
