@@ -17,7 +17,6 @@ class Pray4Movement_Prayer_Points_Endpoints
         self::register_get_prayer_points_by_tag_endpoint();
         self::register_set_location_and_people_group_endpoint();
         self::register_save_child_prayer_point_endpoint();
-        self::register_save_child_prayer_point_tags_endpoint();
     }
 
     private function get_namespace() {
@@ -39,16 +38,23 @@ class Pray4Movement_Prayer_Points_Endpoints
     public function endpoint_for_delete_prayer_library( WP_REST_Request $request ) {
         $params = $request->get_params();
         if ( isset( $params['library_id'] ) ) {
-            self::delete_prayer_points_in_library( $params['library_id'] );
+            $child_library_ids = self::get_child_libraries_from_parent_id( $params['library_id'] );
+            if ( $child_library_ids ) {
+                foreach ( $child_library_ids as $child_library_id ) {
+                    self::delete_prayer_points_and_meta_by_library_id( $child_library_id );
+                    self::delete_prayer_library( $child_library_id );
+                }
+            }
+            self::delete_prayer_points_and_meta_by_library_id( $params['library_id'] );
             self::delete_prayer_library( $params['library_id'] );
         }
     }
 
-    public function delete_prayer_points_in_library( $library_id ) {
+    public function delete_prayer_points_and_meta_by_library_id( $library_id ) {
         if ( isset( $library_id ) ) {
             $prayer_ids = self::get_prayer_ids_from_library_id( $library_id );
             foreach ( $prayer_ids as $prayer_id ) {
-                self::delete_prayer_point( $prayer_id );
+                self::delete_prayer_point_and_meta( $prayer_id );
             }
         }
     }
@@ -62,12 +68,12 @@ class Pray4Movement_Prayer_Points_Endpoints
         }
     }
 
-    private function delete_prayer_point( $prayer_id ) {
-        self::delete_prayer_point_content( $prayer_id );
+    public function delete_prayer_point_and_meta( $prayer_id ) {
+        self::delete_prayer_point( $prayer_id );
         self::delete_prayer_point_meta( $prayer_id );
     }
 
-    private function delete_prayer_point_content( $prayer_id ) {
+    private function delete_prayer_point( $prayer_id ) {
         global $wpdb;
         $wpdb->query(
             $wpdb->prepare( "DELETE FROM `{$wpdb->prefix}dt_prayer_points` WHERE id = %d;", $prayer_id )
@@ -97,6 +103,13 @@ class Pray4Movement_Prayer_Points_Endpoints
         );
     }
 
+    private function get_child_libraries_from_parent_id( $parent_id ) {
+        global $wpdb;
+        return $wpdb->get_col(
+            $wpdb->prepare( "SELECT `id` FROM `{$wpdb->prefix}dt_prayer_points_lib` WHERE `parent_id` = %d;", $parent_id )
+        );
+    }
+
     private function register_delete_prayer_point_endpoint() {
         register_rest_route(
             $this->get_namespace(), '/delete_prayer_point/(?P<prayer_id>\d+)', [
@@ -112,7 +125,7 @@ class Pray4Movement_Prayer_Points_Endpoints
     public function endpoint_for_delete_prayer_point( WP_REST_Request $request ) {
         $params = $request->get_params();
         if ( isset( $params['prayer_id'] ) ) {
-            self::delete_prayer_point( $params['prayer_id'] );
+            self::delete_prayer_point_and_meta( $params['prayer_id'] );
         }
     }
 
@@ -262,7 +275,7 @@ class Pray4Movement_Prayer_Points_Endpoints
 
     private function register_get_replaced_prayer_points_endpoint() {
         register_rest_route(
-            $this->get_namespace(), '/get_prayer_points/(?P<library_id>\d*[,\d+]*)/(?P<location>.+)/(?P<people_group>.+)', [
+            $this->get_namespace(), '/get_prayer_points/(?P<library_id>\d*[,\d+]*)', [
                 'methods' => 'POST',
                 'callback' => [ $this , 'endpoint_for_get_replaced_prayer_points' ],
                 'permission_callback' => '__return_true',
@@ -272,18 +285,10 @@ class Pray4Movement_Prayer_Points_Endpoints
 
     public function endpoint_for_get_replaced_prayer_points( WP_REST_Request $request ) {
         $params = $request->get_params();
-        $location = sanitize_text_field( wp_unslash( $params['location'] ) );
-        $people_group = sanitize_text_field( wp_unslash( $params['people_group'] ) );
-        if ( !isset( $params['location'] ) || empty( $params['location'] ) || is_null( $params['location'] ) || $params['location'] === 'null' ) {
-            $location = 'the world';
-        }
-        if ( !isset( $params['people_group'] ) || empty( $params['people_group'] ) || is_null( $params['people_group'] ) || $params['people_group'] === 'null' ) {
-            $people_group = 'people';
-        }
         if ( isset( $params['library_id'] ) ) {
             $library_ids = self::validate_library_ids_string( $params['library_id'] );
             $library_ids = explode( ',', $library_ids );
-            return self::get_full_replaced_prayer_points_from_library_id( $library_ids, $location, $people_group );
+            return self::get_full_prayer_points_from_library_ids( $library_ids );
         }
     }
 
@@ -291,14 +296,14 @@ class Pray4Movement_Prayer_Points_Endpoints
         return sanitize_text_field( wp_unslash( $library_ids ) );
     }
 
-    private function get_full_replaced_prayer_points_from_library_id( $library_id, $location, $people_group ) {
+    private function get_full_prayer_points_from_library_ids( $library_id ) {
         global $wpdb;
         return $wpdb->get_results(
             $wpdb->prepare(
                 "SELECT
                     pp.id AS `id`,
-                    REPLACE( REPLACE( pp.title, 'XXX', %s ), 'YYY', %s ) AS `title`,
-	                REPLACE( REPLACE( pp.content, 'XXX', %s ), 'YYY', %s ) AS `content`,
+                    pp.title AS `title`,
+                    pp.content AS `content`,
                     (SELECT IFNULL( GROUP_CONCAT(meta_value), '' ) FROM `{$wpdb->prefix}dt_prayer_points_meta` WHERE meta_key = 'tags' AND prayer_id = pp.id) AS 'tags',
                     IFNULL( pp.reference, '' ) AS 'reference',
                     IFNULL( pp.book, '' ) AS 'book',
@@ -310,7 +315,7 @@ class Pray4Movement_Prayer_Points_Endpoints
                 INNER JOIN `{$wpdb->prefix}dt_prayer_points_lib` pl
                 ON pl.id = pp.library_id
                 WHERE pp.library_id IN ( %d )
-                ORDER BY pp.library_id ASC;", $location, $people_group, $location, $people_group, $library_id[0]
+                ORDER BY pp.library_id ASC;", $library_id[0]
             ), ARRAY_A
         );
     }
@@ -360,7 +365,8 @@ class Pray4Movement_Prayer_Points_Endpoints
 
     public function endpoint_for_get_prayer_points_by_tag( WP_REST_Request $request ) {
         $params = $request->get_params();
-        return self::get_prayer_points_by_tag( $params['tag'] );
+        $tag = urldecode( $params['tag'] );
+        return self::get_prayer_points_by_tag( $tag );
     }
 
     private function get_prayer_points_by_tag( $tag ) {
@@ -411,7 +417,7 @@ class Pray4Movement_Prayer_Points_Endpoints
 
     private function register_save_child_prayer_point_endpoint() {
         register_rest_route(
-            $this->get_namespace(), 'save_child_prayer_point/(?P<parent_prayer_point_id>\d+)/(?P<library_id>\d+)/(?P<title>.+)/(?P<content>.+)', [
+            $this->get_namespace(), 'save_child_prayer_point/(?P<parent_prayer_point_id>\d+)/(?P<library_id>\d+)/(?P<title>.+)/(?P<content>.+)/(?P<tags>.*)', [
                 'methods' => 'POST',
                 'callback' => [ $this, 'endpoint_for_save_child_prayer_point' ],
                 'permission_callback' => function( WP_REST_Request $request ) {
@@ -458,7 +464,12 @@ class Pray4Movement_Prayer_Points_Endpoints
                 'parent_id' => $wp_rest_params['parent_prayer_point_id'],
             ]
         );
-        return;
+        $prayer_id = self::get_translated_prayer_point_id( $wp_rest_params['parent_prayer_point_id'], $child_library_language );
+        self::delete_all_tags( $prayer_id );
+        if ( urldecode( wp_unslash( $wp_rest_params['tags'] ) ) !== '{null_tags}' ) {
+            $tags = self::sanitize_tags( $wp_rest_params['tags'] );
+            self::insert_all_tags( $tags, $prayer_id );
+        }
     }
 
     private function get_library_language( $library_id ) {
@@ -543,7 +554,6 @@ class Pray4Movement_Prayer_Points_Endpoints
 
     public function insert_child_prayer_point( $wp_rest_params ) {
         $parent_prayer_point = self::get_prayer_point( $wp_rest_params['parent_prayer_point_id'] );
-
         global $wpdb;
         $wpdb->insert(
             $wpdb->prefix . 'dt_prayer_points',
@@ -558,6 +568,12 @@ class Pray4Movement_Prayer_Points_Endpoints
             ],
             [ '%d', '%d', '%s', '%s', '%s', '%s', '%s' ]
         );
+        $prayer_id = $wpdb->insert_id;
+        self::delete_all_tags( $prayer_id );
+        if ( urldecode( wp_unslash( $wp_rest_params['tags'] ) ) !== '{null_tags}' ) {
+            $tags = self::sanitize_tags( $wp_rest_params['tags'] );
+            self::insert_all_tags( $tags, $prayer_id );
+        }
     }
 
     private function prayer_point_exists( $parent_prayer_point_id, $library_id ) {
@@ -581,32 +597,6 @@ class Pray4Movement_Prayer_Points_Endpoints
         );
     }
 
-    private function register_save_child_prayer_point_tags_endpoint() {
-        register_rest_route(
-            $this->get_namespace(), 'save_child_prayer_point_tags/(?P<parent_prayer_id>\d+)/(?P<language>.+)/(?P<tags>.*)', [
-                'methods' => 'POST',
-                'callback' => [ $this, 'endpoint_for_save_child_prayer_point_tags' ],
-                'permission_callback' => function( WP_REST_Request $request ) {
-                    return $this->has_permission();
-                }
-            ]
-        );
-    }
-
-    public function endpoint_for_save_child_prayer_point_tags( WP_REST_Request $request ) {
-        $params = $request->get_params();
-        if ( !isset( $params['parent_prayer_id'] ) || !isset( $params['language'] ) ) {
-            return new WP_Error( __METHOD__, 'Missing parameters.' );
-        }
-        $prayer_id = self::get_translated_prayer_point_id( $params['parent_prayer_id'], $params['language'] );
-        self::delete_all_tags( $prayer_id );
-        if ( urldecode( $params['tags'] ) !== '{null_tags}' ) {
-            $tags = self::sanitize_tags( $params['tags'] );
-            self::insert_all_tags( $prayer_id, $tags );
-        }
-        return;
-    }
-
     public function get_translated_prayer_point_id( $parent_id, $language ) {
         global $wpdb;
         return $wpdb->get_var(
@@ -627,25 +617,37 @@ class Pray4Movement_Prayer_Points_Endpoints
         );
     }
 
-    public function insert_all_tags( $prayer_id, $tags ) {
+    public function insert_all_tags( $tags, $prayer_id = null ) {
+        if ( is_null( $prayer_id ) || !isset( $prayer_id ) || empty( $prayer_id ) ) {
+            $prayer_id = self::get_last_prayer_point_id();
+        }
         global $wpdb;
         if ( is_string( $tags ) ) {
             $tags = [ $tags ];
         }
-        foreach ( $tags as $tag ) {
-            if ( $tag !== '' ) {
-                $wpdb->insert(
-                    $wpdb->prefix . 'dt_prayer_points_meta',
-                    [
-                        'prayer_id' => $prayer_id,
-                        'meta_key' => 'tags',
-                        'meta_value' => $tag
-                    ],
-                    [ '%d', '%s', '%s' ]
-                );
+        if ( isset( $tags ) && !empty( $tags ) ) {
+            foreach ( $tags as $tag ) {
+                if ( $tag !== '' ) {
+                    $wpdb->insert(
+                        $wpdb->prefix . 'dt_prayer_points_meta',
+                        [
+                            'prayer_id' => $prayer_id,
+                            'meta_key' => 'tags',
+                            'meta_value' => $tag
+                        ],
+                        [ '%d', '%s', '%s' ]
+                    );
+                }
             }
+            return;
         }
-        return;
+    }
+
+    public static function get_last_prayer_point_id() {
+        global $wpdb;
+        return $wpdb->get_var(
+            "SELECT id FROM `{$wpdb->prefix}dt_prayer_points` ORDER BY id DESC LIMIT 1;"
+        );
     }
 
     private static $_instance = null;
