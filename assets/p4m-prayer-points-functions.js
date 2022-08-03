@@ -265,7 +265,7 @@ function loadPrayerPointsByTag() {
 
 function loadLibraryRules() {
     removeHeaderBlock();
-    if ( jQuery.isEmptyObject(p4mPrayerPoints.libraryName )) { //foobar
+    if ( jQuery.isEmptyObject(p4mPrayerPoints.libraryName )) {
         jQuery('#p4m-content').prepend(`
             <h1 class="p4m-library-name">Whoops! Library not found</h1>
             <div class="p4m-back-link-div">

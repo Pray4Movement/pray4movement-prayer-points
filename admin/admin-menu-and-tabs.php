@@ -924,6 +924,9 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
                 </tr>
                 <?php
                 $prayer_libraries = Pray4Movement_Prayer_Points_Utilities::get_parent_prayer_libraries();
+                if ( !$prayer_libraries ) : ?>
+                    <td colspan="6" style="text-align:center;"><i><?php echo esc_html( 'No prayer libraries yet', 'pray4movement_prayer_points' ); ?></i></td>
+                <?php endif;
                 if ( isset( $_GET['lang'] ) ) {
                     $language = sanitize_text_field( wp_unslash( $_GET['lang'] ) );
                     $prayer_libraries = Pray4Movement_Prayer_Points_Utilities::get_libraries_by_language( $language );
@@ -1037,8 +1040,12 @@ class Pray4Movement_Prayer_Points_Tab_Explore {
             <td><?php echo esc_html( Pray4Movement_Prayer_Points_Utilities::count_prayer_points_in_library( $library['id'] ) ); ?></td>
             <td><?php Pray4Movement_Prayer_Points_Utilities::display_library_translation_links( $library['id'] ); ?></td>
             <td>
+                <?php if ( user_can( get_current_user_id(), 'edit_posts' ) ) : ?>
                 <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_library=<?php echo esc_attr( $library['id'] ); ?>"><?php esc_html_e( 'Edit', 'pray4movement_prayer_points' ); ?></a> | 
+                <?php endif; ?>
+                <?php if ( user_can( get_current_user_id(), 'delete_posts' ) ) : ?>
                 <a href="javascript:deleteLibrary(<?php echo esc_attr( $library['id'] ); ?>, `<?php echo esc_attr( $library['name'] ); ?>`);" style="color:#b32d2e;"><?php esc_html_e( 'Delete', 'pray4movement_prayer_points' ); ?></a>
+                <?php endif; ?>
             </td>
         </tr>
         <?php endforeach;
@@ -1376,8 +1383,10 @@ class Pray4Movement_Prayer_Points_View_Library {
                     <br>
                 </td>
                 <td style="text-align: right;">
+                    <?php if ( user_can( get_current_user_id(), 'delete_posts' ) ) : ?>
                     <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_library=<?php echo esc_attr( $library['id'] ); ?>" title="<?php esc_attr_e( 'Edit library', 'pray4movement_prayer_points' ); ?>"><?php esc_html_e( 'Edit', 'pray4movement_prayer_points' ); ?></a> | 
                     <a href="javascript:deleteLibrary( <?php echo esc_attr( $library['id'] ); ?>, `<?php echo esc_attr( $library['name'] ); ?>`);" title="<?php echo esc_attr( 'Delete library', 'pray4movement_prayer_points' ); ?>" style="color:#b32d2e;"><?php esc_html_e( 'Delete', 'pray4movement_prayer_points' ); ?></a>
+                    <?php endif; ?>
                 </td>
             </tr>
         </table>
@@ -1410,8 +1419,7 @@ class Pray4Movement_Prayer_Points_View_Library {
         endif;
 
         foreach ( $prayer_points as $prayer ) :
-            $prayer['tags'] = Pray4Movement_Prayer_Points_Utilities::get_prayer_tags( $prayer['id'] );
-            ?>
+            $prayer['tags'] = Pray4Movement_Prayer_Points_Utilities::get_prayer_tags( $prayer['id'] ); ?>
                 <tr id="delete-prayer-<?php echo esc_html( $prayer['id'] ); ?>">
                     <td>
                         <?php echo esc_html( $prayer['id'] ); ?>
@@ -1429,21 +1437,12 @@ class Pray4Movement_Prayer_Points_View_Library {
                         <?php echo esc_html( implode( ', ', $prayer['tags'] ) ); ?>
                     </td>
                     <td>
-                        <?php
-                        if ( Pray4Movement_Prayer_Points_Utilities::check_user_can( 'edit_posts', false ) ) {
-                            ?>
-                            <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_prayer=<?php echo esc_html( $prayer['id'] ); ?>"" >Edit</a> 
-                            <?php
-                        }
-                        if ( Pray4Movement_Prayer_Points_Utilities::check_user_can( 'edit_posts', false ) && Pray4Movement_Prayer_Points_Utilities::check_user_can( 'delete_posts', false ) ) {
-                            echo esc_html( ' | ' );
-                        }
-                        if ( Pray4Movement_Prayer_Points_Utilities::check_user_can( 'delete_posts', false ) ) {
-                            ?>
-                            <a href="javascript:deletePrayer(<?php echo esc_attr( $prayer['id'] ); ?>, `<?php echo esc_attr( $prayer['title'] ); ?>`);" style="color:#b32d2e;">Delete</a>
-                            <?php
-                        }
-                        ?>
+                    <?php if ( user_can( get_current_user_id(), 'edit_posts' ) ) : ?>
+                    <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_prayer=<?php echo esc_html( $prayer['id'] ); ?>">Edit</a>
+                    <?php endif; ?>
+                    <?php if ( user_can( get_current_user_id(), 'delete_posts' ) ) : ?>
+                    | <a href="javascript:deletePrayer(<?php echo esc_attr( $prayer['id'] ); ?>, `<?php echo esc_attr( $prayer['title'] ); ?>`);" style="color:#b32d2e;">Delete</a>
+                    <?php endif; ?>
                     </td>
                 </tr>
         <?php endforeach; ?>
@@ -1552,8 +1551,10 @@ class Pray4Movement_Prayer_Points_View_Library {
                     <br>
                 </td>
                 <td style="text-align: right;">
+                    <?php if ( user_can( get_current_user_id(), 'delete_posts' ) ) : ?>
                     <a href="/wp-admin/admin.php?page=pray4movement_prayer_points&edit_library=<?php echo esc_attr( $child_library_id ); ?>" title="<?php esc_attr_e( 'Edit library', 'pray4movement_prayer_points' ); ?>"><?php esc_html_e( 'Edit', 'pray4movement_prayer_points' ); ?></a> | 
                     <a href="javascript:deleteLibrary( <?php echo esc_attr( $child_library_id ); ?>, `<?php echo esc_attr( $child_library['name'] ); ?>`);" title="<?php echo esc_attr( 'Delete library', 'pray4movement_prayer_points' ); ?>" style="color:#b32d2e;"><?php esc_html_e( 'Delete', 'pray4movement_prayer_points' ); ?></a>
+                    <?php endif; ?>
                 </td>
             </tr>
         </table>
@@ -1617,13 +1618,17 @@ class Pray4Movement_Prayer_Points_View_Library {
                 </tr>
                 <tr>
                     <td style="text-align: left;" colspan="2">
+                        <?php if ( user_can( get_current_user_id(), 'edit_posts' ) ) : ?>
                         <a href="admin.php?page=pray4movement_prayer_points&edit_prayer=<?php echo esc_attr( $parent_prayer_point['id'] ); ?>"><?php echo esc_html( 'edit', 'pray4movement_prayer_points' ); ?></a>
+                        <?php endif; ?>
                     </td>
                     <td style="text-align: right;">
-                    <?php if ( $child_prayer_point ) : ?>
-                    <button class="button" id="delete-button-<?php echo esc_attr( $parent_prayer_point['id'] ); ?>" onclick="deleteChildPrayer(<?php echo esc_attr( $child_prayer_point['id'] ); ?>, '<?php echo esc_attr( $child_prayer_point['title'] ); ?>', <?php echo esc_attr( $parent_prayer_point['id'] ); ?>);" style="color:#b32d2e;border-color:#b32d2e;"><?php esc_html_e( 'Delete', 'pray4movement-prayer-points' ); ?></button>
-                    <?php endif; ?>
-                    <button class="button" onclick="saveChildPrayer(<?php echo esc_attr( $parent_prayer_point['id'] ); ?>);"><?php esc_html_e( 'Save', 'pray4movement-prayer-points' ); ?></button>
+                        <?php if ( $child_prayer_point && user_can( get_current_user_id(), 'delete_posts' ) ) : ?>
+                        <button class="button" id="delete-button-<?php echo esc_attr( $parent_prayer_point['id'] ); ?>" onclick="deleteChildPrayer(<?php echo esc_attr( $child_prayer_point['id'] ); ?>, '<?php echo esc_attr( $child_prayer_point['title'] ); ?>', <?php echo esc_attr( $parent_prayer_point['id'] ); ?>);" style="color:#b32d2e;border-color:#b32d2e;"><?php esc_html_e( 'Delete', 'pray4movement-prayer-points' ); ?></button>
+                        <?php endif; ?>
+                        <?php if ( user_can( get_current_user_id(), 'publish_posts' ) ) : ?>
+                        <button class="button" onclick="saveChildPrayer(<?php echo esc_attr( $parent_prayer_point['id'] ); ?>);"><?php esc_html_e( 'Save', 'pray4movement-prayer-points' ); ?></button>
+                        <?php endif; ?>
                     </td>
                 </tr>
             </tbody>
@@ -2261,7 +2266,7 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
                 <?php self::display_localization_rules(); ?>
             </tbody>
         </table>
-
+        <?php if ( user_can( get_current_user_id(), 'publish_posts' ) ) : ?>
         <form method="post">
             <?php wp_nonce_field( 'new_localization_rule', 'new_localization_rule_nonce' ); ?>
             <table class="widefat" style="margin-top:12px;">
@@ -2308,8 +2313,7 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
                 jQuery('.nav-tab-wrapper').before(adminNotice);
             }
         </script>
-        </script>
-        <?php
+        <?php endif;
     }
 
     private static function display_localization_rules() {
@@ -2335,15 +2339,16 @@ class Pray4Movement_Prayer_Points_Localize_Prayers {
                 <?php
                 continue;
             }
-            foreach ( $library_rules as $rule ) {
-                // var_dump( $library_rules );die();
-                ?>
+            foreach ( $library_rules as $rule ) : ?>
             <tr id="p4m-localization-rule-<?php echo esc_attr( $library['id'] . '_' . $rule['id'] ); ?>">
                 <td></td>
                 <td><?php echo esc_html( $rule['replace_from'] ); ?> → <?php echo esc_html( $rule['replace_to'] ); ?></td>
-                <td><a href="#" onclick="javascript:deleteLocalizationRule(<?php echo esc_attr( $library['id'] ); ?>, <?php echo esc_attr( $rule['id'] ); ?>);" style="color:#b32d2e;">Delete</a></td>
+                <td>
+                    <?php if ( user_can( get_current_user_id(), 'publish_posts' ) ) : ?>
+                    <a href="#" onclick="javascript:deleteLocalizationRule(<?php echo esc_attr( $library['id'] ); ?>, <?php echo esc_attr( $rule['id'] ); ?>);" style="color:#b32d2e;">Delete</a></td>
+                    <?php endif; ?>
             </tr>
-            <?php }
+            <?php endforeach;
         }
     }
 

@@ -147,21 +147,14 @@ function get_prayer_library_rules_by_id( $library_id ) {
 function get_prayer_library_rule_example( $library_id, $replace_from ) {
     global $wpdb;
     return $wpdb->get_var(
-        $wpdb->prepare( "SELECT `title` FROM `{$wpdb->prefix}dt_prayer_points` WHERE `library_id` = %d AND `title` LIKE CONCAT( '%', %s, '%' ) ORDER BY CHAR_LENGTH(`title`) ASC LIMIT 1;", $library_id, $replace_from )
+        $wpdb->prepare( "SELECT `title` FROM `{$wpdb->prefix}dt_prayer_points` WHERE `library_id` = %d AND `title` LIKE CONCAT( '%', %s, '%' ) ORDER BY CHAR_LENGTH(`title`) ASC LIMIT 1;", $library_id, $replace_from ) // @phpcs:ignore
     );
 }
 
 function get_prayer_library_rule_example_for_tag( $tag, $library_id, $replace_from ) {
     global $wpdb;
     return $wpdb->get_var(
-        $wpdb->prepare( "SELECT pp.title FROM `{$wpdb->prefix}dt_prayer_points` pp
-                         INNER JOIN `{$wpdb->prefix}dt_prayer_points_meta` pm
-                         ON pp.id = pm.prayer_id
-                         WHERE pp.library_id = %d
-                         AND pp.title LIKE CONCAT( '%', %s, '%' )
-                         AND pm.meta_value = %s
-                         ORDER BY CHAR_LENGTH(pp.title)
-                         ASC LIMIT 1;", $library_id, $replace_from, $tag )
+        $wpdb->prepare( "SELECT pp.title FROM `{$wpdb->prefix}dt_prayer_points` pp INNER JOIN `{$wpdb->prefix}dt_prayer_points_meta` pm ON pp.id = pm.prayer_id WHERE pp.library_id = %d AND pp.title LIKE CONCAT( '%', %s, '%' ) AND pm.meta_value = %s ORDER BY CHAR_LENGTH(pp.title) ASC LIMIT 1;", $library_id, $replace_from, $tag ) // @phpcs:ignore
     );
 }
 
