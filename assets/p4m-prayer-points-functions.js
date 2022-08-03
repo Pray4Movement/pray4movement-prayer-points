@@ -265,7 +265,7 @@ function loadPrayerPointsByTag() {
 
 function loadLibraryRules() {
     removeHeaderBlock();
-    if ( jQuery.isEmptyObject(p4mPrayerPoints.libraryName )) { //foobar
+    if ( jQuery.isEmptyObject(p4mPrayerPoints.libraryName )) {
         jQuery('#p4m-content').prepend(`
             <h1 class="p4m-library-name">Whoops! Library not found</h1>
             <div class="p4m-back-link-div">
@@ -365,7 +365,8 @@ function downloadTagCSV( tag ) {
             
             if ( !jQuery.isEmptyObject(p4mPrayerPoints.rules) ) {
                 p4mPrayerPoints.rules.forEach(function(rule) {
-                    var regexRule = new RegExp(rule.replace_from, 'g');
+                    var cleanRegexRule =   rule.replace_from.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+                    var regexRule = new RegExp(cleanRegexRule, 'g');
                     var replaceTo = jQuery(`#p4m-replace-rule-to-${rule.id}_${rule.library_id}`).val();
                     output = output.replace(regexRule, replaceTo);
                 });
