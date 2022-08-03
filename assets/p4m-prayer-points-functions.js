@@ -365,7 +365,8 @@ function downloadTagCSV( tag ) {
             
             if ( !jQuery.isEmptyObject(p4mPrayerPoints.rules) ) {
                 p4mPrayerPoints.rules.forEach(function(rule) {
-                    var regexRule = new RegExp(rule.replace_from, 'g');
+                    var cleanRegexRule =   rule.replace_from.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+                    var regexRule = new RegExp(cleanRegexRule, 'g');
                     var replaceTo = jQuery(`#p4m-replace-rule-to-${rule.id}_${rule.library_id}`).val();
                     output = output.replace(regexRule, replaceTo);
                 });
