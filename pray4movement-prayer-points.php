@@ -1,15 +1,14 @@
 <?php
 /**
- * Plugin Name: Disciple.Tools - Pray4Movement Prayer Points
- * Plugin URI: https://github.com/DiscipleTools/pray4movement-prayer-points
- * Description: Disciple.Tools - Pray4Movement Prayer Points is intended to help developers and integrator jumpstart their extension of the Disciple.Tools system.
+ * Plugin Name:Pray4Movement Prayer Points
+ * Plugin URI: https://github.com/Pray4Movement/pray4movement-prayer-points
+ * Description: Libraries of prayer points for Pray4Movement
  * Text Domain: pray4movement-prayer-points
  * Domain Path: /languages
- * Version:  0.1
+ * Version:  2023.03.06
  * Author URI: https://github.com/DiscipleTools
  * GitHub Plugin URI: https://github.com/DiscipleTools/pray4movement-prayer-points
  * Requires at least: 4.7.0
- * (Requires 4.7+ because of the integration of the REST API at 4.7 and the security requirements of this milestone version.)
  * Tested up to: 5.6
  *
  * @package Disciple_Tools
