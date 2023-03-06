@@ -232,3 +232,14 @@ require_once( 'functions/shortcodes.php' );
 //        }
 //    }
 //} );
+
+
+function iwp_example_allow_xml_uploads( $mime_types ){
+    $mime_types['xml'] = 'text/xml';
+    $mime_types['json'] = 'application/json';
+    $mime_types['csv'] = 'text/csv';
+
+    return $mime_types;
+}
+
+add_filter( 'upload_mimes', 'iwp_example_allow_xml_uploads', 1 );
